@@ -1,0 +1,20 @@
+services:
+  backend:
+    build: .
+    container_name: patienthq-backend
+    ports:
+      - "8080:8080"
+    environment:
+      SPRING_PROFILES_ACTIVE: ${SPRING_PROFILES_ACTIVE:-dev}
+    depends_on:
+      - postgres
+
+  postgres:
+    image: postgres:16
+    container_name: patienth
+    environment:
+      POSTGRES_DB: patienthq_db
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5435:5432"
