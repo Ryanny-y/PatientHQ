@@ -7,7 +7,8 @@ import com.patienthq.backend.features.user.model.Role;
 import com.patienthq.backend.features.user.model.User;
 import com.patienthq.backend.features.user.repository.RoleRepository;
 import com.patienthq.backend.features.user.repository.UserRepository;
-import com.patienthq.backend.shared.exception.AppException;
+import com.patienthq.backend.shared.exceptions.AppException;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
