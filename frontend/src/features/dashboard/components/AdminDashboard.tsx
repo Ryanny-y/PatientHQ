@@ -5,6 +5,8 @@ import Navbar from '@/features/dashboard/components/Navbar';
 import DashboardHome from '@/features/dashboard/components/DashboardHome';
 import PlaceholderPage from '@/features/dashboard/components/PlaceholderPage';
 import AdminAccountsPage from '@/features/adminAccounts/components/AdminAccountsPage';
+import DoctorAccountsPage from '@/features/doctorAccounts/components/DoctorAccountsPage';
+import NurseAccountsPage from '@/features/nurseAccounts/components/NurseAccountsPage';
 
 const pageTitles: Record<string, string> = {
   '/admin/dashboard': 'Dashboard',
@@ -40,6 +42,8 @@ const AdminDashboard = (): ReactElement => {
     switch (activePath) {
       case '/admin/dashboard': return <DashboardHome />;
       case '/admin/users/admins': return <AdminAccountsPage />;
+      case '/admin/users/doctors': return <DoctorAccountsPage />;
+      case '/admin/users/nurses': return <NurseAccountsPage />;
       default: return <PlaceholderPage title={pageTitle} />;
     }
   };

@@ -28,7 +28,7 @@ export const addAdminSchema = z
       .regex(/[^A-Za-z0-9]/, 'Must contain a special character'),
     confirm_password: z.string().min(1, 'Please confirm your password'),
     full_name: z.string().min(2, 'Full name is required'),
-    email: z.string().email('Enter a valid email address'),
+    email: z.email('Enter a valid email address'),
     contact_number: z
       .string()
       .min(7, 'Enter a valid contact number')
