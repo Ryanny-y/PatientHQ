@@ -8,9 +8,11 @@ import AdminAccountsPage from "./features/adminAccounts/components/AdminAccounts
 import DoctorAccountsPage from "./features/doctorAccounts/components/DoctorAccountsPage";
 import NurseAccountsPage from "./features/nurseAccounts/NurseAccountsPage";
 import PatientListPage from "./features/patients/pages/PatientListPage";
-import RegisterPatientPage from "./features/patients/pages/RegisterPatientPage";import AssignDoctorPage from './features/patients/pages/AssignDoctorPage';
+import RegisterPatientPage from "./features/patients/pages/RegisterPatientPage";
+import AssignDoctorPage from './features/patients/pages/AssignDoctorPage';
 import MedicalRecordsPage from './features/medicalRecords/pages/MedicalRecordsPage';
 import AppointmentsPage from './features/appointments/pages/AppointmentsPage';
+import ReportsHistoryPage from './features/reports/pages/ReportsHistoryPage';
 const ProtectedRoute = ({
   children,
 }: {
@@ -41,6 +43,7 @@ const AppRoutes = (): ReactElement => (
       <Route path="patients/assign" element={<AssignDoctorPage />} />
       <Route path="records" element={<MedicalRecordsPage />} />
       <Route path="appointments" element={<AppointmentsPage />} />
+      <Route path="reports" element={<ReportsHistoryPage />} />
     </Route>
     <Route path="*" element={<Navigate to="/login" replace />} />
   </Routes>

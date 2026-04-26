@@ -56,7 +56,7 @@ export const AppointmentCardListMobile = ({
                       <MoreHorizontal className="h-4 w-4" />
                     </Button>
                   </DropdownMenuTrigger>
-                  <DropdownMenuContent align="end" className="w-[180px]">
+                  <DropdownMenuContent align="end" className="w-45">
                     <DropdownMenuItem onClick={() => onViewAppointment(appointment)}>
                       <Eye className="mr-2 h-4 w-4" />
                       View Details

@@ -131,7 +131,7 @@ export const RescheduleAppointmentModal = ({
               <Textarea
                 id="reason"
                 placeholder="Update the reason if needed..."
-                className="min-h-[60px]"
+                className="min-h-15"
                 {...register("reason")}
               />
             </div>
@@ -141,7 +141,7 @@ export const RescheduleAppointmentModal = ({
               <Textarea
                 id="notes"
                 placeholder="Add any additional notes..."
-                className="min-h-[60px]"
+                className="min-h-15"
                 {...register("notes")}
               />
             </div>

@@ -155,7 +155,7 @@ export const ViewAppointmentDrawer = ({
               <h3 className="text-lg font-semibold text-slate-900 mb-4">Timeline</h3>
               <div className="space-y-4">
                 <div className="flex items-start gap-3">
-                  <div className="flex-shrink-0 w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
+                  <div className="shrink-0 w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
                     <Clock className="h-4 w-4 text-blue-600" />
                   </div>
                   <div>
@@ -168,7 +168,7 @@ export const ViewAppointmentDrawer = ({
 
                 {appointment.status === 'CONFIRMED' && (
                   <div className="flex items-start gap-3">
-                    <div className="flex-shrink-0 w-8 h-8 bg-green-100 rounded-full flex items-center justify-center">
+                    <div className="shrink-0 w-8 h-8 bg-green-100 rounded-full flex items-center justify-center">
                       <CheckCircle className="h-4 w-4 text-green-600" />
                     </div>
                     <div>
@@ -180,7 +180,7 @@ export const ViewAppointmentDrawer = ({
 
                 {appointment.status === 'COMPLETED' && (
                   <div className="flex items-start gap-3">
-                    <div className="flex-shrink-0 w-8 h-8 bg-green-100 rounded-full flex items-center justify-center">
+                    <div className="shrink-0 w-8 h-8 bg-green-100 rounded-full flex items-center justify-center">
                       <CheckCircle className="h-4 w-4 text-green-600" />
                     </div>
                     <div>
@@ -192,7 +192,7 @@ export const ViewAppointmentDrawer = ({
 
                 {appointment.status === 'CANCELLED' && (
                   <div className="flex items-start gap-3">
-                    <div className="flex-shrink-0 w-8 h-8 bg-red-100 rounded-full flex items-center justify-center">
+                    <div className="shrink-0 w-8 h-8 bg-red-100 rounded-full flex items-center justify-center">
                       <Clock className="h-4 w-4 text-red-600" />
                     </div>
                     <div>

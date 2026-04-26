@@ -54,7 +54,7 @@ export const AppointmentTable = ({
             <TableHead className="font-semibold text-slate-700">Reason</TableHead>
             <TableHead className="font-semibold text-slate-700">Status</TableHead>
             <TableHead className="font-semibold text-slate-700">Created</TableHead>
-            <TableHead className="font-semibold text-slate-700 w-[70px]">Actions</TableHead>
+            <TableHead className="font-semibold text-slate-700 w-17.5">Actions</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -78,7 +78,7 @@ export const AppointmentTable = ({
                 <TableCell className="text-slate-700">{appointment.doctor_name}</TableCell>
                 <TableCell className="text-slate-700">{appointment.specialization}</TableCell>
                 <TableCell>
-                  <div title={appointment.reason} className="max-w-[200px]">
+                  <div title={appointment.reason} className="max-w-50 text-slate-600">
                     {truncateText(appointment.reason)}
                   </div>
                 </TableCell>
@@ -95,7 +95,7 @@ export const AppointmentTable = ({
                         <MoreHorizontal className="h-4 w-4" />
                       </Button>
                     </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end" className="w-[180px]">
+                    <DropdownMenuContent align="end" className="w-45">
                       <DropdownMenuItem onClick={() => onViewAppointment(appointment)}>
                         <Eye className="mr-2 h-4 w-4" />
                         View Details

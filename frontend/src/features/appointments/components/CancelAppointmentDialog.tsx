@@ -60,7 +60,7 @@ export const CancelAppointmentDialog = ({
             <Textarea
               id="cancellation_reason"
               placeholder="Why is this appointment being cancelled?"
-              className="mt-1 min-h-[80px]"
+              className="mt-1 min-h-20"
               value={cancellationReason}
               onChange={(e) => setCancellationReason(e.target.value)}
             />

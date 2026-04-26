@@ -193,7 +193,7 @@ export const AppointmentFormModal = ({
               <Textarea
                 id="reason"
                 placeholder="Enter the reason for consultation..."
-                className="min-h-[80px]"
+                className="min-h-20"
                 {...register("reason")}
               />
               {errors.reason && (
@@ -206,7 +206,7 @@ export const AppointmentFormModal = ({
               <Textarea
                 id="notes"
                 placeholder="Any special instructions or notes..."
-                className="min-h-[60px]"
+                className="min-h-15"
                 {...register("notes")}
               />
             </div>

@@ -29,7 +29,7 @@ export const AppointmentFilterToolbar = ({
     <div className="bg-white rounded-xl border border-slate-200 p-6 mb-6 shadow-sm">
       <div className="flex flex-col lg:flex-row gap-4 items-start lg:items-end flex-wrap">
         {/* Search */}
-        <div className="flex-1 min-w-0 lg:min-w-[300px]">
+        <div className="flex-1 min-w-0 lg:min-w-75">
           <Label htmlFor="search" className="text-sm font-medium text-slate-700 mb-2 block">
             Search Appointments
           </Label>
@@ -58,7 +58,7 @@ export const AppointmentFilterToolbar = ({
                 ...filters.dateRange,
                 from: e.target.value ? new Date(e.target.value) : null
               })}
-              className="w-full lg:w-[140px]"
+              className="w-full lg:w-35"
             />
             <Input
               type="date"
@@ -67,7 +67,7 @@ export const AppointmentFilterToolbar = ({
                 ...filters.dateRange,
                 to: e.target.value ? new Date(e.target.value) : null
               })}
-              className="w-full lg:w-[140px]"
+              className="w-full lg:w-35"
             />
           </div>
         </div>
@@ -78,7 +78,7 @@ export const AppointmentFilterToolbar = ({
             Status
           </Label>
           <Select value={filters.status} onValueChange={(value) => updateFilter('status', value)}>
-            <SelectTrigger className="w-full lg:w-[140px]">
+            <SelectTrigger className="w-full lg:w-35">
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
@@ -98,7 +98,7 @@ export const AppointmentFilterToolbar = ({
             Doctor
           </Label>
           <Select value={filters.doctor} onValueChange={(value) => updateFilter('doctor', value)}>
-            <SelectTrigger className="w-full lg:w-[180px]">
+            <SelectTrigger className="w-full lg:w-45">
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
@@ -118,7 +118,7 @@ export const AppointmentFilterToolbar = ({
             Specialization
           </Label>
           <Select value={filters.specialization} onValueChange={(value) => updateFilter('specialization', value)}>
-            <SelectTrigger className="w-full lg:w-[150px]">
+            <SelectTrigger className="w-full lg:w-37.5">
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
@@ -138,7 +138,7 @@ export const AppointmentFilterToolbar = ({
             Sort By
           </Label>
           <Select value={filters.sortBy} onValueChange={(value: any) => updateFilter('sortBy', value)}>
-            <SelectTrigger className="w-full lg:w-[140px]">
+            <SelectTrigger className="w-full lg:w-35">
               <SelectValue />
             </SelectTrigger>
             <SelectContent>

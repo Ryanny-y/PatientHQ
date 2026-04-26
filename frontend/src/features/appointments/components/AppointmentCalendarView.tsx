@@ -125,7 +125,7 @@ export const AppointmentCalendarView = ({
             {calendarDays.map((day, index) => (
               <div
                 key={index}
-                className={`min-h-[120px] p-2 border border-slate-100 rounded-lg ${
+                className={`min-h-30 p-2 border border-slate-100 rounded-lg ${
                   day.isCurrentMonth ? 'bg-white' : 'bg-slate-50'
                 } ${day.isToday ? 'ring-2 ring-blue-500 ring-inset' : ''}`}
               >
