@@ -48,7 +48,7 @@ const PatientHistoryModal = ({ patient, open, onClose }: PatientHistoryModalProp
           ) : (
             <div className="relative space-y-6">
               <div className="absolute left-4 top-0 bottom-0 w-0.5 bg-slate-200" />
-              {history.map((event, index) => (
+              {history.map((event) => (
                 <div key={event.id} className="relative flex gap-4">
                   <div className="relative z-10 flex h-8 w-8 items-center justify-center rounded-full bg-blue-600 ring-4 ring-white">
                     <Clock className="h-4 w-4 text-white" />

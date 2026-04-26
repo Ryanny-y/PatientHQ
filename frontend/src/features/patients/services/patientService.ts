@@ -134,14 +134,14 @@ export const archivePatient = async (id: number): Promise<ApiResponse<null>> => 
   return { data: null, message: 'Patient archived successfully', success: true };
 };
 
-export const getPatientHistory = async (id: number): Promise<ApiResponse<PatientHistoryEvent[]>> => {
+export const getPatientHistory = async (_id: number): Promise<ApiResponse<PatientHistoryEvent[]>> => {
   await new Promise((resolve) => setTimeout(resolve, 400));
   const mockHistory: PatientHistoryEvent[] = [
-    { id: 1, event: 'Patient Registered', description: 'Patient record created in the system', timestamp: '2026-04-01 09:30:00', actor: 'Admin User' },
-    { id: 2, event: 'Doctor Assigned', description: 'Assigned to Dr. Antonio Garcia', timestamp: '2026-04-01 10:15:00', actor: 'Admin User' },
-    { id: 3, event: 'Medical Record Added', description: 'Initial consultation record created', timestamp: '2026-04-02 14:20:00', actor: 'Dr. Antonio Garcia' },
-    { id: 4, event: 'Vitals Recorded', description: 'Blood pressure, temperature, and heart rate logged', timestamp: '2026-04-03 08:45:00', actor: 'Nurse Clara' },
-    { id: 5, event: 'Appointment Scheduled', description: 'Follow-up appointment set for 2026-04-10', timestamp: '2026-04-03 09:00:00', actor: 'Reception Staff' },
+    { id: 1, event: 'Patient Registered', description: 'Patient record created in the system', timestamp: '2026-04-01 09:30:00', actor: 'Admin User', date: '2026-04-01', type: 'registration' },
+    { id: 2, event: 'Doctor Assigned', description: 'Assigned to Dr. Antonio Garcia', timestamp: '2026-04-01 10:15:00', actor: 'Admin User', date: '2026-04-01', type: 'assignment' },
+    { id: 3, event: 'Medical Record Added', description: 'Initial consultation record created', timestamp: '2026-04-02 14:20:00', actor: 'Dr. Antonio Garcia', date: '2026-04-02', type: 'record' },
+    { id: 4, event: 'Vitals Recorded', description: 'Blood pressure, temperature, and heart rate logged', timestamp: '2026-04-03 08:45:00', actor: 'Nurse Clara', date: '2026-04-03', type: 'vitals' },
+    { id: 5, event: 'Appointment Scheduled', description: 'Follow-up appointment set for 2026-04-10', timestamp: '2026-04-03 09:00:00', actor: 'Reception Staff', date: '2026-04-03', type: 'appointment' },
   ];
   return { data: mockHistory, message: 'Patient history retrieved successfully', success: true };
 };
