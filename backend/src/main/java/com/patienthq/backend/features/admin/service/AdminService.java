@@ -1,4 +1,4 @@
-package com.patienthq.backend.features.admin;
+package com.patienthq.backend.features.admin.service;
 
 import com.patienthq.backend.features.admin.dto.request.CreateAdminRequest;
 import com.patienthq.backend.features.admin.dto.request.UpdateAdminRequest;

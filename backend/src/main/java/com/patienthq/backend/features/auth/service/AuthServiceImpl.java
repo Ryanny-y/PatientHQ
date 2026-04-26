@@ -1,7 +1,6 @@
-package com.patienthq.backend.features.auth;
+package com.patienthq.backend.features.auth.service;
 
 import com.patienthq.backend.features.auth.dto.request.LoginRequest;
-import com.patienthq.backend.features.auth.dto.request.SignupRequest;
 import com.patienthq.backend.features.auth.exceptions.InvalidCredentialsException;
 import com.patienthq.backend.features.user.model.User;
 import com.patienthq.backend.features.user.repository.UserRepository;

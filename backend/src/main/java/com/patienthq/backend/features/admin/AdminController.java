@@ -4,6 +4,7 @@ import com.patienthq.backend.features.admin.dto.request.CreateAdminRequest;
 import com.patienthq.backend.features.admin.dto.request.UpdateAdminRequest;
 import com.patienthq.backend.features.admin.dto.response.AdminResponse;
 import com.patienthq.backend.features.admin.model.Admin;
+import com.patienthq.backend.features.admin.service.AdminService;
 import com.patienthq.backend.shared.response.ApiResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;

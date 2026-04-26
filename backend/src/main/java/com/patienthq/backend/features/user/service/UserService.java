@@ -1,4 +1,4 @@
-package com.patienthq.backend.features.user;
+package com.patienthq.backend.features.user.service;
 
 import com.patienthq.backend.features.user.dto.request.UpdateUserRequest;
 import com.patienthq.backend.features.user.model.User;

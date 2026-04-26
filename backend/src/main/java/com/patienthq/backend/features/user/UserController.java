@@ -3,6 +3,7 @@ package com.patienthq.backend.features.user;
 import com.patienthq.backend.features.user.dto.UserDto;
 import com.patienthq.backend.features.user.dto.request.UpdateUserRequest;
 import com.patienthq.backend.features.user.model.User;
+import com.patienthq.backend.features.user.service.UserService;
 import com.patienthq.backend.shared.response.ApiResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
