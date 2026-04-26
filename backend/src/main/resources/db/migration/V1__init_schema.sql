@@ -1,14 +1,19 @@
--- 1. ROLE TABLE
+-- Enable UUID support
+CREATE EXTENSION IF NOT EXISTS pgcrypto;
+
+-- 1. ROLES (UNCHANGED - INT PK)
 CREATE TABLE roles (
     role_id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     role_name VARCHAR(50) NOT NULL UNIQUE
 );
 
--- 2. USERS TABLE
+-- 2. USERS
 CREATE TABLE users (
-    user_id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    user_id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     username VARCHAR(50) NOT NULL UNIQUE,
     password_hash VARCHAR(255) NOT NULL,
+    refresh_token TEXT,
+    refresh_token_exp TIMESTAMP,
     role_id INT NOT NULL,
     is_active BOOLEAN DEFAULT TRUE,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -17,10 +22,10 @@ CREATE TABLE users (
         FOREIGN KEY (role_id) REFERENCES roles(role_id)
 );
 
--- 3. ADMIN PROFILE
+-- 3. ADMIN PROFILES
 CREATE TABLE admin_profiles (
-    admin_id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-    user_id INT NOT NULL UNIQUE,
+    admin_id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    user_id UUID NOT NULL UNIQUE,
     full_name VARCHAR(100) NOT NULL,
     contact_number VARCHAR(20),
     email VARCHAR(100),
@@ -30,10 +35,10 @@ CREATE TABLE admin_profiles (
         ON DELETE CASCADE
 );
 
--- 4. DOCTOR PROFILE
+-- 4. DOCTOR PROFILES
 CREATE TABLE doctor_profiles (
-    doctor_id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-    user_id INT NOT NULL UNIQUE,
+    doctor_id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    user_id UUID NOT NULL UNIQUE,
     full_name VARCHAR(100) NOT NULL,
     specialization VARCHAR(100),
     license_number VARCHAR(100) UNIQUE,
@@ -45,10 +50,10 @@ CREATE TABLE doctor_profiles (
         ON DELETE CASCADE
 );
 
--- 5. NURSE PROFILE
+-- 5. NURSE PROFILES
 CREATE TABLE nurse_profiles (
-    nurse_id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-    user_id INT NOT NULL UNIQUE,
+    nurse_id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    user_id UUID NOT NULL UNIQUE,
     full_name VARCHAR(100) NOT NULL,
     assigned_ward VARCHAR(100),
     license_number VARCHAR(100) UNIQUE,
@@ -62,7 +67,7 @@ CREATE TABLE nurse_profiles (
 
 -- 6. PATIENTS
 CREATE TABLE patients (
-    patient_id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    patient_id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     full_name VARCHAR(100) NOT NULL,
     date_of_birth DATE,
     gender VARCHAR(20),
@@ -79,9 +84,9 @@ CREATE TABLE patients (
 
 -- 7. DOCTOR ASSIGNMENTS
 CREATE TABLE doctor_assignments (
-    assignment_id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-    patient_id INT NOT NULL,
-    doctor_id INT NOT NULL,
+    assignment_id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    patient_id UUID NOT NULL,
+    doctor_id UUID NOT NULL,
     assigned_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     is_active BOOLEAN DEFAULT TRUE,
 
@@ -96,9 +101,9 @@ CREATE TABLE doctor_assignments (
 
 -- 8. MEDICAL RECORDS
 CREATE TABLE medical_records (
-    record_id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-    patient_id INT NOT NULL,
-    doctor_id INT NOT NULL,
+    record_id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    patient_id UUID NOT NULL,
+    doctor_id UUID NOT NULL,
     diagnosis TEXT NOT NULL,
     treatment TEXT,
     prescription TEXT,
@@ -116,9 +121,9 @@ CREATE TABLE medical_records (
 
 -- 9. VITAL SIGNS
 CREATE TABLE vital_signs (
-    vital_id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-    patient_id INT NOT NULL,
-    recorded_by INT NOT NULL,
+    vital_id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    patient_id UUID NOT NULL,
+    recorded_by UUID NOT NULL,
     temperature DECIMAL(5,2),
     heart_rate INT,
     respiratory_rate INT,
@@ -140,9 +145,9 @@ CREATE TABLE vital_signs (
 
 -- 10. APPOINTMENTS
 CREATE TABLE appointments (
-    appointment_id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-    patient_id INT NOT NULL,
-    doctor_id INT NOT NULL,
+    appointment_id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    patient_id UUID NOT NULL,
+    doctor_id UUID NOT NULL,
     appointment_date TIMESTAMP NOT NULL,
     reason TEXT,
     status VARCHAR(50) DEFAULT 'PENDING',
@@ -160,9 +165,9 @@ CREATE TABLE appointments (
 
 -- 11. REPORTS
 CREATE TABLE reports (
-    report_id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-    patient_id INT NOT NULL,
-    generated_by INT NOT NULL,
+    report_id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    patient_id UUID NOT NULL,
+    generated_by UUID NOT NULL,
     report_type VARCHAR(100),
     summary TEXT,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -178,11 +183,11 @@ CREATE TABLE reports (
 
 -- 12. AUDIT LOGS
 CREATE TABLE audit_logs (
-    log_id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-    user_id INT NOT NULL,
+    log_id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    user_id UUID NOT NULL,
     action VARCHAR(255) NOT NULL,
     entity_type VARCHAR(100),
-    entity_id INT,
+    entity_id UUID,
     description TEXT,
     ip_address VARCHAR(50),
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -194,8 +199,8 @@ CREATE TABLE audit_logs (
 
 -- 13. DATA INTEGRITY
 CREATE TABLE data_integrity (
-    integrity_id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-    patient_id INT NOT NULL UNIQUE,
+    integrity_id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    patient_id UUID NOT NULL UNIQUE,
     hash_value VARCHAR(255) NOT NULL,
     last_checked TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     status VARCHAR(50) DEFAULT 'VALID',
@@ -207,7 +212,7 @@ CREATE TABLE data_integrity (
 
 -- 14. SYSTEM SETTINGS
 CREATE TABLE system_settings (
-    setting_id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    setting_id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     setting_name VARCHAR(100) NOT NULL UNIQUE,
     setting_value VARCHAR(255),
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
@@ -215,6 +220,7 @@ CREATE TABLE system_settings (
 
 -- 15. PATIENT HISTORY VIEW
 CREATE VIEW patient_history AS
+
 SELECT
     patient_id,
     'MEDICAL_RECORD' AS event_type,
