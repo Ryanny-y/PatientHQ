@@ -7,6 +7,8 @@ import PlaceholderPage from '@/features/dashboard/components/PlaceholderPage';
 import AdminAccountsPage from '@/features/adminAccounts/components/AdminAccountsPage';
 import DoctorAccountsPage from '@/features/doctorAccounts/components/DoctorAccountsPage';
 import NurseAccountsPage from '@/features/nurseAccounts/components/NurseAccountsPage';
+import PatientListPage from '@/features/patients/components/PatientListPage';
+import RegisterPatientPage from '@/features/patients/components/RegisterPatientPage';
 
 const pageTitles: Record<string, string> = {
   '/admin/dashboard': 'Dashboard',
@@ -44,6 +46,8 @@ const AdminDashboard = (): ReactElement => {
       case '/admin/users/admins': return <AdminAccountsPage />;
       case '/admin/users/doctors': return <DoctorAccountsPage />;
       case '/admin/users/nurses': return <NurseAccountsPage />;
+      case '/admin/patients': return <PatientListPage />;
+      case '/admin/patients/register': return <RegisterPatientPage />;
       default: return <PlaceholderPage title={pageTitle} />;
     }
   };
