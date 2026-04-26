@@ -18,7 +18,7 @@ interface PatientTableProps {
 const PatientTable = ({ patients, onViewProfile, onEditPatient, onViewHistory, onArchivePatient }: PatientTableProps): ReactElement => {
   return (
     <div className="bg-white rounded-xl border border-slate-100 shadow-sm overflow-hidden">
-      <div className="overflow-x-auto">
+      <div className="bg-white rounded-xl border border-slate-100 shadow-sm overflow-hidden">
         <Table>
           <TableHeader>
             <TableRow className="bg-slate-50">
