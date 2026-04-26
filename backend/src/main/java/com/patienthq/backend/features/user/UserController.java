@@ -2,6 +2,7 @@ package com.patienthq.backend.features.user;
 
 import com.patienthq.backend.features.user.dto.UserDto;
 import com.patienthq.backend.features.user.dto.request.UpdateUserRequest;
+import com.patienthq.backend.features.user.model.User;
 import com.patienthq.backend.shared.response.ApiResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -18,22 +19,29 @@ import java.util.List;
 public class UserController {
 
     private final UserService userService;
+    private final UserMapper userMapper;
 
     @GetMapping
     public ResponseEntity<ApiResponse<List<UserDto>>> getUsers() {
-        return ResponseEntity.ok(ApiResponse.success("Users retrieved successfully", userService.getUsers()));
+        List<User> users = userService.getUsers();
+        List<UserDto> userDtos = users.stream().map(userMapper::toDto).toList();
+        return ResponseEntity.ok(ApiResponse.success("Users retrieved successfully", userDtos));
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<ApiResponse<UserDto>> getUserById(@PathVariable Integer id) {
-        return ResponseEntity.ok(ApiResponse.success("User retrieved successfully", userService.getUserById(id)));
+        User user = userService.getUserById(id);
+        UserDto userDto = userMapper.toDto(user);
+        return ResponseEntity.ok(ApiResponse.success("User retrieved successfully", userDto));
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<ApiResponse<UserDto>> updateUser(
             @PathVariable Integer id,
             @Valid @RequestBody UpdateUserRequest request) {
-        return ResponseEntity.ok(ApiResponse.success("User updated successfully", userService.updateUser(id, request)));
+        User user = userService.updateUser(id, request);
+        UserDto userDto = userMapper.toDto(user);
+        return ResponseEntity.ok(ApiResponse.success("User updated successfully", userDto));
     }
 
     @DeleteMapping("/{id}")

@@ -1,12 +1,12 @@
-package com.ecocycle.backend.auth;
+package com.patienthq.backend.features.auth;
 
-import com.ecocycle.backend.auth.dto.request.LoginRequest;
-import com.ecocycle.backend.auth.dto.request.SignupRequest;
-import com.ecocycle.backend.auth.exceptions.InvalidCredentialsException;
-import com.ecocycle.backend.security.UserPrincipal;
-import com.ecocycle.backend.security.jwt.JwtService;
-import com.ecocycle.backend.user.model.User;
-import com.ecocycle.backend.user.repository.UserRepository;
+import com.patienthq.backend.features.auth.dto.request.LoginRequest;
+import com.patienthq.backend.features.auth.dto.request.SignupRequest;
+import com.patienthq.backend.features.auth.exceptions.InvalidCredentialsException;
+import com.patienthq.backend.features.user.model.User;
+import com.patienthq.backend.features.user.repository.UserRepository;
+import com.patienthq.backend.shared.security.UserPrincipal;
+import com.patienthq.backend.shared.security.jwt.JwtService;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -17,7 +17,6 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.rememberme.InvalidCookieException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -25,7 +24,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.Duration;
 import java.time.LocalDateTime;
 
-// TODO: Make a test for this service
 @Service
 @RequiredArgsConstructor
 @Slf4j
@@ -34,21 +32,7 @@ public class AuthServiceImpl implements AuthService {
     private final UserRepository userRepository;
     private final AuthenticationManager authenticationManager;
     private final JwtService jwtService;
-    private final PasswordEncoder passwordEncoder;
     private final UserDetailsService userDetailsService;
-
-    @Override
-//    TODO: Add Confirm password Field
-    public User createUser(SignupRequest request) {
-        User user = User.builder()
-                .username(request.getUsername())
-                .email(request.getEmail())
-                .role(request.getRole())
-                .password(passwordEncoder.encode(request.getPassword()))
-                .build();
-
-        return userRepository.save(user);
-    }
 
     @Transactional
     @Override

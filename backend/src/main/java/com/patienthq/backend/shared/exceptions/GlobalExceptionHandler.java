@@ -1,5 +1,6 @@
 package com.patienthq.backend.shared.exceptions;
 
+import com.patienthq.backend.features.auth.exceptions.InvalidCredentialsException;
 import com.patienthq.backend.features.user.exceptions.UserNotFoundException;
 import com.patienthq.backend.shared.response.ApiErrorResponse;
 import io.jsonwebtoken.ExpiredJwtException;
@@ -102,18 +103,18 @@ public class GlobalExceptionHandler {
 
     // -------- UNAUTHORIZED --------
 
-//    @ExceptionHandler(InvalidCredentialsException.class)
-//    public ResponseEntity<ApiErrorResponse> handleInvalidCredentialsException(
-//            InvalidCredentialsException ex) {
-//
-//        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(
-//                ApiErrorResponse.of(
-//                        HttpStatus.UNAUTHORIZED,
-//                        ex.getMessage(),
-//                        "INVALID_CREDENTIALS"
-//                )
-//        );
-//    }
+    @ExceptionHandler(InvalidCredentialsException.class)
+    public ResponseEntity<ApiErrorResponse> handleInvalidCredentialsException(
+            InvalidCredentialsException ex) {
+
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(
+                ApiErrorResponse.of(
+                        HttpStatus.UNAUTHORIZED,
+                        ex.getMessage(),
+                        "INVALID_CREDENTIALS"
+                )
+        );
+    }
 
     @ExceptionHandler(InvalidCookieException.class)
     public ResponseEntity<ApiErrorResponse> handleInvalidCookieException(

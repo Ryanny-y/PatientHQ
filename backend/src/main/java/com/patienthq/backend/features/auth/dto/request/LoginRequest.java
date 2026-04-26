@@ -1,4 +1,4 @@
-package com.ecocycle.backend.auth.dto.request;
+package com.patienthq.backend.features.auth.dto.request;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

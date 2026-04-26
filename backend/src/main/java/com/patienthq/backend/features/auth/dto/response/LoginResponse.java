@@ -1,12 +1,10 @@
-    package com.ecocycle.backend.auth.dto.response;
+    package com.patienthq.backend.features.auth.dto.response;
 
-    import com.ecocycle.backend.user.model.UserRole;
+    import com.patienthq.backend.features.user.model.Role;
     import lombok.AllArgsConstructor;
     import lombok.Builder;
     import lombok.Data;
     import lombok.NoArgsConstructor;
-
-    import java.util.Set;
 
     @Data
     @AllArgsConstructor
@@ -15,5 +13,5 @@
     public class LoginResponse {
         private String accessToken;
         private String username;
-        UserRole role;
+        private Role role;
     }

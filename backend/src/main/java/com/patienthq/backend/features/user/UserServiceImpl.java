@@ -27,18 +27,17 @@ public class UserServiceImpl implements UserService {
     private final PasswordEncoder passwordEncoder;
 
     @Override
-    public List<UserDto> getUsers() {
-        return userRepository.findAll(Sort.by(Sort.Direction.DESC, "createdAt"))
-                .stream().map(userMapper::toDto).toList();
+    public List<User> getUsers() {
+        return userRepository.findAll(Sort.by(Sort.Direction.DESC, "createdAt"));
     }
 
     @Override
-    public UserDto getUserById(Integer userId) {
-        return userMapper.toDto(findUserById(userId));
+    public User getUserById(Integer userId) {
+        return findUserById(userId);
     }
 
     @Override
-    public UserDto updateUser(Integer userId, UpdateUserRequest request) {
+    public User updateUser(Integer userId, UpdateUserRequest request) {
         User user = findUserById(userId);
 
         Role role = roleRepository.findByRoleName(request.getRoleName())
@@ -55,12 +54,18 @@ public class UserServiceImpl implements UserService {
             user.setPassword(passwordEncoder.encode(request.getPassword()));
         }
 
-        return userMapper.toDto(userRepository.save(user));
+        return userRepository.save(user);
     }
 
     @Override
     public void deleteUser(Integer userId) {
         userRepository.delete(findUserById(userId));
+    }
+
+    @Override
+    public User getUserByUsername(String username) {
+        return userRepository.findByUsername(username)
+                .orElseThrow(() -> new UserNotFoundException("User not found with username: " + username));
     }
 
     private User findUserById(Integer id) {

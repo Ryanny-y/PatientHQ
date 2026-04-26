@@ -1,13 +1,12 @@
-package com.ecocycle.backend.auth;
+package com.patienthq.backend.features.auth;
 
-import com.ecocycle.backend.auth.dto.request.LoginRequest;
-import com.ecocycle.backend.auth.dto.request.SignupRequest;
-import com.ecocycle.backend.user.model.User;
+import com.patienthq.backend.features.auth.dto.request.LoginRequest;
+import com.patienthq.backend.features.auth.dto.request.SignupRequest;
+import com.patienthq.backend.features.user.model.User;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.security.core.userdetails.UserDetails;
 
 public interface AuthService {
-    User createUser(SignupRequest request);
     UserDetails authenticate(LoginRequest request, HttpServletResponse response);
     String refreshToken(String token);
     void logout(User user, HttpServletResponse response);

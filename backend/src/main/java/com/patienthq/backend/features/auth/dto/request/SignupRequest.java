@@ -1,13 +1,11 @@
-package com.ecocycle.backend.auth.dto.request;
+package com.patienthq.backend.features.auth.dto.request;
 
-import com.ecocycle.backend.user.model.UserRole;
+import com.patienthq.backend.features.user.model.Role;
 import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
-import java.util.Set;
 
 @Data
 @AllArgsConstructor
@@ -24,7 +22,7 @@ public class SignupRequest {
     private String email;
 
     @NotNull(message = "At least one role is required")
-    private UserRole role;
+    private Role role;
 
     @NotBlank(message = "Password is required")
     @Size(min = 8, message = "Password must be at least 8 characters long")

@@ -34,6 +34,12 @@ public class User {
     @Builder.Default
     private Boolean isActive = true;
 
+    @Column(name = "refresh_token")
+    private String refreshToken;
+
+    @Column(name = "refresh_token_exp")
+    private LocalDateTime refreshTokenExp;
+
     @CreationTimestamp
     @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt;

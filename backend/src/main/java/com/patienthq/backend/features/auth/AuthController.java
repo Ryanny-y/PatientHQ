@@ -1,20 +1,16 @@
-package com.ecocycle.backend.auth;
+package com.patienthq.backend.features.auth;
 
-import com.ecocycle.backend.auth.dto.request.SignupRequest;
-import com.ecocycle.backend.auth.dto.response.RefreshResponse;
-import com.ecocycle.backend.auth.dto.response.SignupResponse;
-import com.ecocycle.backend.common.web.ApiResponse;
-import com.ecocycle.backend.auth.dto.response.LoginResponse;
-import com.ecocycle.backend.auth.dto.request.LoginRequest;
-import com.ecocycle.backend.security.UserPrincipal;
-import com.ecocycle.backend.security.jwt.JwtService;
-import com.ecocycle.backend.security.ratelimit.RateLimit;
-import com.ecocycle.backend.user.UserService;
-import com.ecocycle.backend.user.model.User;
+import com.patienthq.backend.features.auth.dto.request.LoginRequest;
+import com.patienthq.backend.features.auth.dto.response.LoginResponse;
+import com.patienthq.backend.features.auth.dto.response.RefreshResponse;
+import com.patienthq.backend.features.user.UserService;
+import com.patienthq.backend.features.user.model.User;
+import com.patienthq.backend.shared.response.ApiResponse;
+import com.patienthq.backend.shared.security.UserPrincipal;
+import com.patienthq.backend.shared.security.jwt.JwtService;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -31,29 +27,6 @@ public class AuthController {
     private final JwtService jwtService;
     private final UserService userService;
 
-    @RateLimit(limit = 5, duration = 1)
-    @PostMapping("/sign-up")
-    public ResponseEntity<ApiResponse<SignupResponse>> signup(
-            @Valid @RequestBody SignupRequest signupRequest
-    ) {
-        User createdUser = authService.createUser(signupRequest);
-
-        SignupResponse signupResponse = new SignupResponse(
-                createdUser.getId(),
-                createdUser.getUsername(),
-                createdUser.getEmail()
-        );
-
-        ApiResponse<SignupResponse> apiResponse = ApiResponse.<SignupResponse>builder()
-                .success(true)
-                .message("Signup Successful.")
-                .data(signupResponse)
-                .build();
-
-        return new ResponseEntity<>(apiResponse, HttpStatus.CREATED);
-    }
-
-    @RateLimit(limit = 5, duration = 1)
     @PostMapping("/login")
     public ResponseEntity<ApiResponse<LoginResponse>> login (
             @Valid @RequestBody LoginRequest loginRequest,
@@ -78,7 +51,6 @@ public class AuthController {
         return ResponseEntity.ok(apiResponse);
     }
 
-    @RateLimit(limit = 10, duration = 15)
     @PostMapping("/refresh-token")
     public ResponseEntity<ApiResponse<RefreshResponse>> refreshToken(
             @CookieValue(name = "refreshToken", required = false) String token
@@ -102,7 +74,6 @@ public class AuthController {
         return ResponseEntity.ok(apiResponse);
     }
 
-    @RateLimit(limit = 10, duration = 1)
     @PostMapping("/logout")
     public ResponseEntity<Void> logout(
             @AuthenticationPrincipal UserPrincipal userPrincipal,
