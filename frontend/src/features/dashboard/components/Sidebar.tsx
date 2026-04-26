@@ -145,14 +145,14 @@ interface SidebarProps {
 
 const Sidebar = ({ activePath, onNavigate, mobileOpen, onMobileClose }: SidebarProps): ReactElement => (
   <>
-    <aside className="hidden lg:flex flex-col w-[260px] shrink-0 bg-white border-r border-slate-100 h-screen sticky top-0">
+    <aside className="hidden lg:flex flex-col w-65 shrink-0 bg-white border-r border-slate-100 h-screen sticky top-0">
       <SidebarContent activePath={activePath} onNavigate={onNavigate} />
     </aside>
 
     {mobileOpen && (
       <div className="lg:hidden fixed inset-0 z-50 flex">
         <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" onClick={onMobileClose} />
-        <aside className="relative w-[260px] bg-white h-full shadow-2xl flex flex-col">
+        <aside className="relative w-65 bg-white h-full shadow-2xl flex flex-col">
           <button
             onClick={onMobileClose}
             className="absolute top-4 right-4 h-7 w-7 rounded-lg bg-slate-100 flex items-center justify-center text-slate-500 hover:bg-slate-200 transition-colors"

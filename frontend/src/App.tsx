@@ -9,6 +9,7 @@ import DoctorAccountsPage from "./features/doctorAccounts/components/DoctorAccou
 import NurseAccountsPage from "./features/nurseAccounts/NurseAccountsPage";
 import PatientListPage from "./features/patients/pages/PatientListPage";
 import RegisterPatientPage from "./features/patients/pages/RegisterPatientPage";import AssignDoctorPage from './features/patients/pages/AssignDoctorPage';
+import MedicalRecordsPage from './features/medicalRecords/pages/MedicalRecordsPage';
 const ProtectedRoute = ({
   children,
 }: {
@@ -37,6 +38,7 @@ const AppRoutes = (): ReactElement => (
       <Route path="patients" element={<PatientListPage />} />
       <Route path="patients/register" element={<RegisterPatientPage />} />
       <Route path="patients/assign" element={<AssignDoctorPage />} />
+      <Route path="records" element={<MedicalRecordsPage />} />
     </Route>
     <Route path="*" element={<Navigate to="/login" replace />} />
   </Routes>
