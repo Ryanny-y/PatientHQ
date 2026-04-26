@@ -1,4 +1,4 @@
-package com.patienthq.backend.features.doctor.dto.request;
+package com.patienthq.backend.features.nurse.dto.request;
 
 import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class CreateDoctorRequest {
+public class CreateNurseRequest {
 
     // User fields
     @NotBlank(message = "Username is required")
@@ -19,18 +19,22 @@ public class CreateDoctorRequest {
 
     @NotBlank(message = "Password is required")
     @Size(min = 8, max = 100, message = "Password must be at least 8 characters long")
+    @Pattern(
+            regexp = "^(?=.*[A-Z])(?=.*[a-z])(?=.*\\d).+$",
+            message = "Password must contain upper, lower case letters and a number"
+    )
     private String password;
 
     @NotBlank(message = "Confirm password is required")
     private String confirmPassword;
 
-    // Doctor profile fields
+    // Nurse profile fields
     @NotBlank(message = "Full name is required")
     @Size(max = 100, message = "Full name must not exceed 100 characters")
     private String fullName;
 
-    @Size(max = 100, message = "Specialization must not exceed 100 characters")
-    private String specialization;
+    @Size(max = 100, message = "Assigned ward must not exceed 100 characters")
+    private String assignedWard;
 
     @Size(max = 100, message = "License number must not exceed 100 characters")
     private String licenseNumber;

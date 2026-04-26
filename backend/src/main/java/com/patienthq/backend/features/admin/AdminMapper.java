@@ -9,7 +9,7 @@ import org.mapstruct.ReportingPolicy;
 @Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public interface AdminMapper {
 
-    @Mapping(source = "user.id", target = "userId")
+    @Mapping(source = "user.userId", target = "userId")
     @Mapping(source = "user.username", target = "username")
     @Mapping(source = "user.role.roleName", target = "roleName")
     @Mapping(source = "user.isActive", target = "isActive")

@@ -5,11 +5,12 @@ import com.patienthq.backend.features.admin.dto.request.UpdateAdminRequest;
 import com.patienthq.backend.features.admin.model.Admin;
 
 import java.util.List;
+import java.util.UUID;
 
 public interface AdminService {
     Admin createAdmin(CreateAdminRequest request);
-    Admin getAdminById(Integer adminId);
+    Admin getAdminById(UUID adminId);
     List<Admin> getAllAdmins();
-    Admin updateAdmin(Integer adminId, UpdateAdminRequest request);
-    void deleteAdmin(Integer adminId);
+    Admin updateAdmin(UUID adminId, UpdateAdminRequest request);
+    void deleteAdmin(UUID adminId);
 }

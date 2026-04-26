@@ -1,11 +1,8 @@
 package com.patienthq.backend.features.doctor.service;
 
 import com.patienthq.backend.features.admin.exceptions.AdminNotFoundException;
-import com.patienthq.backend.features.admin.model.Admin;
 import com.patienthq.backend.features.doctor.dto.request.CreateDoctorRequest;
 import com.patienthq.backend.features.doctor.dto.request.UpdateDoctorRequest;
-import com.patienthq.backend.features.doctor.dto.DoctorDto;
-import com.patienthq.backend.features.doctor.mapper.DoctorMapper;
 import com.patienthq.backend.features.doctor.model.Doctor;
 import com.patienthq.backend.features.doctor.repository.DoctorRepository;
 import com.patienthq.backend.features.user.model.Role;
@@ -21,7 +18,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -45,7 +41,7 @@ public class DoctorServiceImpl implements DoctorService {
         Role doctorRole = roleRepository.findByRoleName("DOCTOR")
                 .orElseThrow(() -> new IllegalArgumentException("DOCTOR role not found"));
 
-        if(!request.getPassword().equals(request.getConfirmPassword())) {
+        if (!request.getPassword().equals(request.getConfirmPassword())) {
             throw new AppException(HttpStatus.BAD_REQUEST, "Password and Confirm Password is incorrect");
         }
 
@@ -90,10 +86,31 @@ public class DoctorServiceImpl implements DoctorService {
         Doctor doctor = findDoctorById(id);
 
         // Update Fields
-        doctor.setFullName(request.getFullName());
-        doctor.setEmail(request.getEmail());
-        doctor.setContactNumber(request.getContactNumber());
-        doctor.setLicenseNumber(request.getLicenseNumber());
+        if (request.getFullName() != null) {
+            doctor.setFullName(request.getFullName());
+        }
+
+        if (request.getEmail() != null) {
+            doctor.setEmail(request.getEmail());
+        }
+
+        if (request.getContactNumber() != null) {
+            doctor.setContactNumber(request.getContactNumber());
+        }
+
+        if (request.getLicenseNumber() != null) {
+            if (doctorRepository.existsByLicenseNumberAndDoctorIdNot(
+                            request.getLicenseNumber(),
+                            doctor.getDoctorId()
+                    )) {
+                throw new IllegalArgumentException("License number already exists");
+            }
+            doctor.setLicenseNumber(request.getLicenseNumber());
+        }
+
+        if (request.getSpecialization() != null) {
+            doctor.setSpecialization(request.getSpecialization());
+        }
 
         // Handle user updates if provided (e.g., isActive)
         if (request.getIsActive() != null && doctor.getUser() != null) {

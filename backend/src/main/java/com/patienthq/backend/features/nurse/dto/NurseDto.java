@@ -1,4 +1,4 @@
-package com.patienthq.backend.features.doctor.dto;
+package com.patienthq.backend.features.nurse.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -8,15 +8,15 @@ import lombok.NoArgsConstructor;
 import java.util.UUID;
 
 @Data
-@Builder
-@NoArgsConstructor
 @AllArgsConstructor
-public class DoctorDto {
-    private UUID doctorId;
+@NoArgsConstructor
+@Builder
+public class NurseDto {
+    private UUID nurseId;
     private String username;
     private Boolean isActive;
     private String fullName;
-    private String specialization;
+    private String assignedWard;
     private String licenseNumber;
     private String contactNumber;
     private String email;

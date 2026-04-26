@@ -18,7 +18,7 @@ public class Admin {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     @Column(name = "admin_id")
-    private UUID id;
+    private UUID adminId;
 
     @OneToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "user_id", referencedColumnName = "user_id", nullable = false)

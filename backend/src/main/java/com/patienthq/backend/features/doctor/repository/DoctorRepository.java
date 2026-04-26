@@ -8,5 +8,6 @@ import java.util.UUID;
 
 @Repository
 public interface DoctorRepository extends JpaRepository<Doctor, UUID> {
-    Boolean existsByLicenseNumber(String licenseNumber);
+    boolean existsByLicenseNumber(String licenseNumber);
+    boolean existsByLicenseNumberAndDoctorIdNot(String licenseNumber, UUID doctorId);
 }

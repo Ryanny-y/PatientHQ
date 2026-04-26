@@ -28,11 +28,13 @@ public class DoctorController {
     @PostMapping
     public ResponseEntity<ApiResponse<DoctorDto>> createDoctor(@Valid @RequestBody CreateDoctorRequest request) {
         Doctor doctor = doctorService.createDoctor(request);
+        DoctorDto doctorDto = doctorMapper.toDto(doctor);
+
         return ResponseEntity.status(HttpStatus.CREATED).body(
                 ApiResponse.<DoctorDto>builder()
                         .success(true)
                         .message("Doctor created successfully")
-                        .data(doctorMapper.toDto(doctor))
+                        .data(doctorDto)
                         .build()
         );
     }
@@ -64,7 +66,7 @@ public class DoctorController {
         );
     }
 
-    @PutMapping("/{id}")
+    @PatchMapping("/{id}")
     public ResponseEntity<ApiResponse<DoctorDto>> updateDoctor(
             @PathVariable UUID id,
             @Valid @RequestBody UpdateDoctorRequest request) {

@@ -1,6 +1,5 @@
 package com.patienthq.backend.features.doctor.service;
 
-import com.patienthq.backend.features.doctor.dto.DoctorDto;
 import com.patienthq.backend.features.doctor.dto.request.CreateDoctorRequest;
 import com.patienthq.backend.features.doctor.dto.request.UpdateDoctorRequest;
 import com.patienthq.backend.features.doctor.model.Doctor;

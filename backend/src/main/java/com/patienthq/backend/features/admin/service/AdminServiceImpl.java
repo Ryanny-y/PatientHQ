@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -58,7 +59,7 @@ public class AdminServiceImpl implements AdminService {
     }
 
     @Override
-    public Admin getAdminById(Integer adminId) {
+    public Admin getAdminById(UUID adminId) {
         return findAdminById(adminId);
     }
 
@@ -69,7 +70,7 @@ public class AdminServiceImpl implements AdminService {
 
     @Override
     @Transactional
-    public Admin updateAdmin(Integer adminId, UpdateAdminRequest request) {
+    public Admin updateAdmin(UUID adminId, UpdateAdminRequest request) {
         Admin admin = findAdminById(adminId);
 
         admin.setFullName(request.getFullName());
@@ -80,7 +81,7 @@ public class AdminServiceImpl implements AdminService {
         if (request.getUsername() != null && !request.getUsername().isBlank()) {
             // Check if username is taken by another user
             userRepository.findByUsername(request.getUsername()).ifPresent(existingUser -> {
-                if (!existingUser.getId().equals(user.getId())) {
+                if (!existingUser.getUserId().equals(user.getUserId())) {
                     throw new AppException(HttpStatus.BAD_REQUEST, "Username already exists");
                 }
             });
@@ -103,7 +104,7 @@ public class AdminServiceImpl implements AdminService {
 
     @Override
     @Transactional
-    public void deleteAdmin(Integer adminId) {
+    public void deleteAdmin(UUID adminId) {
         Admin admin = findAdminById(adminId);
         User user = admin.getUser();
         
@@ -111,7 +112,7 @@ public class AdminServiceImpl implements AdminService {
         userRepository.delete(user);
     }
 
-    private Admin findAdminById(Integer adminId) {
+    private Admin findAdminById(UUID adminId) {
         return adminRepository.findById(adminId)
                 .orElseThrow(() -> new AdminNotFoundException("Admin profile not found with ID: " + adminId));
     }

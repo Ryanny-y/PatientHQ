@@ -13,6 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @RestController
@@ -51,7 +52,7 @@ public class AdminController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<ApiResponse<AdminResponse>> getAdminById(@PathVariable Integer id) {
+    public ResponseEntity<ApiResponse<AdminResponse>> getAdminById(@PathVariable UUID id) {
         Admin admin = adminService.getAdminById(id);
         return ResponseEntity.ok(
                 ApiResponse.<AdminResponse>builder()
@@ -64,7 +65,7 @@ public class AdminController {
 
     @PutMapping("/{id}")
     public ResponseEntity<ApiResponse<AdminResponse>> updateAdmin(
-            @PathVariable Integer id,
+            @PathVariable UUID id,
             @Valid @RequestBody UpdateAdminRequest request) {
         Admin admin = adminService.updateAdmin(id, request);
         return ResponseEntity.ok(
@@ -77,7 +78,7 @@ public class AdminController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<ApiResponse<Void>> deleteAdmin(@PathVariable Integer id) {
+    public ResponseEntity<ApiResponse<Void>> deleteAdmin(@PathVariable UUID id) {
         adminService.deleteAdmin(id);
         return ResponseEntity.ok(
                 ApiResponse.<Void>builder()
