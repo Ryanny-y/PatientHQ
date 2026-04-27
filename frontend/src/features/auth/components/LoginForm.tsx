@@ -1,15 +1,18 @@
-import { useState, type ReactElement } from 'react';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { Eye, EyeOff, ShieldCheck, Loader2 } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Checkbox } from '@/components/ui/checkbox';
-import { useAuth } from '@/shared/context/AuthContext';
-import { loginSchema, type loginFormValues } from '@/features/auth/types/loginSchema';
-import { cn } from '@/shared/utils/cn';
+import { useState, type ReactElement } from "react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { Eye, EyeOff, ShieldCheck, Loader2 } from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Checkbox } from "@/components/ui/checkbox";
+import { useAuth } from "@/shared/context/AuthContext";
+import {
+  loginSchema,
+  type loginFormValues,
+} from "@/features/auth/types/loginSchema";
+import { cn } from "@/shared/utils/cn";
 
 const LoginForm = (): ReactElement => {
   const [showPassword, setShowPassword] = useState(false);
@@ -26,20 +29,27 @@ const LoginForm = (): ReactElement => {
     formState: { errors },
   } = useForm<loginFormValues>({
     resolver: zodResolver(loginSchema),
-    defaultValues: { username: '', password: '', rememberMe: false },
+    defaultValues: { username: "", password: "", rememberMe: false },
   });
 
-  const rememberMe = watch('rememberMe');
+  const rememberMe = watch("rememberMe");
 
   const onSubmit = async (values: loginFormValues): Promise<void> => {
     setIsLoading(true);
     setAuthError(null);
-    await new Promise((r) => setTimeout(r, 800));
-    const success = login(values.username, values.password);
-    if (success) {
-      navigate('/admin/dashboard');
-    } else {
-      setAuthError('Invalid credentials. Please try again.');
+    try {
+      const success = await login(values.username, values.password);
+      if (success) {
+        navigate("/admin/dashboard");
+      } else {
+        setAuthError("Invalid credentials. Please try again.");
+      }
+    } catch (error) {
+      setAuthError(
+        error instanceof Error
+          ? error.message
+          : "An unexpected error occurred.",
+      );
     }
     setIsLoading(false);
   };
@@ -54,7 +64,9 @@ const LoginForm = (): ReactElement => {
           </div>
           <span className="text-lg font-bold text-slate-800">PatientHQ</span>
         </div>
-        <h1 className="text-2xl font-bold text-slate-900 mb-1">Hospital Secure Access</h1>
+        <h1 className="text-2xl font-bold text-slate-900 mb-1">
+          Hospital Secure Access
+        </h1>
         <p className="text-sm text-slate-500 flex items-center gap-1.5">
           <span className="inline-block h-1.5 w-1.5 rounded-full bg-amber-400"></span>
           Authorized Personnel Only
@@ -74,8 +86,10 @@ const LoginForm = (): ReactElement => {
             id="username"
             placeholder="Enter your username"
             autoComplete="username"
-            className={cn(errors.username && 'border-red-400 focus:ring-red-400')}
-            {...register('username')}
+            className={cn(
+              errors.username && "border-red-400 focus:ring-red-400",
+            )}
+            {...register("username")}
           />
           {errors.username && (
             <p className="text-xs text-red-500">{errors.username.message}</p>
@@ -87,11 +101,14 @@ const LoginForm = (): ReactElement => {
           <div className="relative">
             <Input
               id="password"
-              type={showPassword ? 'text' : 'password'}
+              type={showPassword ? "text" : "password"}
               placeholder="Enter your password"
               autoComplete="current-password"
-              className={cn('pr-10', errors.password && 'border-red-400 focus:ring-red-400')}
-              {...register('password')}
+              className={cn(
+                "pr-10",
+                errors.password && "border-red-400 focus:ring-red-400",
+              )}
+              {...register("password")}
             />
             <button
               type="button"
@@ -99,7 +116,11 @@ const LoginForm = (): ReactElement => {
               className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 transition-colors"
               tabIndex={-1}
             >
-              {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+              {showPassword ? (
+                <EyeOff className="h-4 w-4" />
+              ) : (
+                <Eye className="h-4 w-4" />
+              )}
             </button>
           </div>
           {errors.password && (
@@ -111,21 +132,30 @@ const LoginForm = (): ReactElement => {
           <Checkbox
             id="rememberMe"
             checked={rememberMe}
-            onCheckedChange={(checked) => setValue('rememberMe', checked === true)}
+            onCheckedChange={(checked) =>
+              setValue("rememberMe", checked === true)
+            }
           />
-          <Label htmlFor="rememberMe" className="font-normal text-slate-600 cursor-pointer">
+          <Label
+            htmlFor="rememberMe"
+            className="font-normal text-slate-600 cursor-pointer"
+          >
             Remember me for 30 days
           </Label>
         </div>
 
-        <Button type="submit" className="w-full h-11 text-base" disabled={isLoading}>
+        <Button
+          type="submit"
+          className="w-full h-11 text-base"
+          disabled={isLoading}
+        >
           {isLoading ? (
             <>
               <Loader2 className="h-4 w-4 animate-spin" />
               Authenticating...
             </>
           ) : (
-            'Sign In'
+            "Sign In"
           )}
         </Button>
       </form>

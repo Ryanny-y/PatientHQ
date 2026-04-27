@@ -55,6 +55,9 @@ export const AuthProvider = ({ children }: AuthProviderProps): ReactElement => {
         throw new Error(data.message || response.statusText);
       }
 
+      console.log(data);
+      
+
       setUser(data.data);
       return true;
     } catch (error: any) {
