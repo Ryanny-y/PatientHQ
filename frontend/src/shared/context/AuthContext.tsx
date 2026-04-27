@@ -32,6 +32,12 @@ interface AuthProviderProps {
   children: ReactNode;
 }
 
+let globalAccessToken: string | null = null;
+export const getAccessToken = () => globalAccessToken;
+export const setGlobalAccessToken = (token: string | null) => {
+  globalAccessToken = token;
+};
+
 export const AuthProvider = ({ children }: AuthProviderProps): ReactElement => {
   const [user, setUser] = useState<AuthUser | null>(null);
 
@@ -56,9 +62,9 @@ export const AuthProvider = ({ children }: AuthProviderProps): ReactElement => {
       }
 
       console.log(data);
-      
 
       setUser(data.data);
+      setGlobalAccessToken(data.data.accessToken);
       return true;
     } catch (error: any) {
       setUser(null);
@@ -83,6 +89,7 @@ export const AuthProvider = ({ children }: AuthProviderProps): ReactElement => {
       }
 
       setUser(data.data);
+      setGlobalAccessToken(data.data.accessToken);
       return data;
     } catch (error: any) {
       toast.error(error.message || "Session expired. Please log in again.");
@@ -101,6 +108,7 @@ export const AuthProvider = ({ children }: AuthProviderProps): ReactElement => {
       toast.error(error.message || "Session expired. Please log in again.");
     } finally {
       setUser(null);
+      setGlobalAccessToken(null);
     }
   };
 
