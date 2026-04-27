@@ -13,6 +13,8 @@ import AssignDoctorPage from './features/patients/pages/AssignDoctorPage';
 import MedicalRecordsPage from './features/medicalRecords/pages/MedicalRecordsPage';
 import AppointmentsPage from './features/appointments/pages/AppointmentsPage';
 import ReportsHistoryPage from './features/reports/pages/ReportsHistoryPage';
+import AuditLogsPage from './features/auditLogs/components/AuditLogsPage';
+import { Toaster } from "sonner";
 const ProtectedRoute = ({
   children,
 }: {
@@ -44,6 +46,7 @@ const AppRoutes = (): ReactElement => (
       <Route path="records" element={<MedicalRecordsPage />} />
       <Route path="appointments" element={<AppointmentsPage />} />
       <Route path="reports" element={<ReportsHistoryPage />} />
+      <Route path="audit" element={<AuditLogsPage />} />
     </Route>
     <Route path="*" element={<Navigate to="/login" replace />} />
   </Routes>
@@ -53,6 +56,7 @@ const App = (): ReactElement => (
   <BrowserRouter>
     <AuthProvider>
       <AppRoutes />
+      <Toaster />
     </AuthProvider>
   </BrowserRouter>
 );

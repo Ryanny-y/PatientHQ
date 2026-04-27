@@ -1,13 +1,28 @@
-import { createContext, useContext, useState, type ReactNode, type ReactElement } from 'react';
+import {
+  createContext,
+  useContext,
+  useState,
+  type ReactNode,
+  type ReactElement,
+} from "react";
+import { API_URL } from "../config/env";
+import type { ApiResponse } from "../types/api";
+import { toast } from "sonner";
+
+type UserRole = "ADMIN" | "DOCTOR" | "NURSE";
 
 interface AuthUser {
+  accessToken: string;
   username: string;
-  role: 'Admin' | 'Doctor' | 'Nurse';
+  role: UserRole;
 }
+
+type AuthResponseType = ApiResponse<AuthUser>;
 
 interface AuthContextValue {
   user: AuthUser | null;
-  login: (username: string, password: string) => boolean;
+  login: (username: string, password: string) => Promise<boolean>;
+  refreshToken: () => Promise<AuthResponseType | null>;
   logout: () => void;
 }
 
@@ -20,18 +35,74 @@ interface AuthProviderProps {
 export const AuthProvider = ({ children }: AuthProviderProps): ReactElement => {
   const [user, setUser] = useState<AuthUser | null>(null);
 
-  const login = (username: string, password: string): boolean => {
-    if (username.trim() && password.trim()) {
-      setUser({ username, role: 'Admin' });
+  const login = async (
+    username: string,
+    password: string,
+  ): Promise<boolean> => {
+    try {
+      const response = await fetch(`${API_URL}/auth/login`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ username, password }),
+        credentials: "include",
+      });
+
+      const data: AuthResponseType = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.message || response.statusText);
+      }
+
+      setUser(data.data);
       return true;
+    } catch (error: any) {
+      setUser(null);
+      throw error;
     }
-    return false;
   };
 
-  const logout = (): void => setUser(null);
+  const refreshToken = async (): Promise<AuthResponseType | null> => {
+    try {
+      const response = await fetch(`${API_URL}/auth/refresh-token`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        credentials: "include",
+      });
+
+      const data: AuthResponseType = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.message || response.statusText);
+      }
+
+      setUser(data.data);
+      return data;
+    } catch (error: any) {
+      toast.error(error.message || "Session expired. Please log in again.");
+      return null;
+    }
+  };
+
+  const logout = async (): Promise<void> => {
+    try {
+      await fetch(`${API_URL}/auth/logout`, {
+        method: "POST",
+        credentials: "include",
+      });
+      toast.success("Logged out.");
+    } catch (error: any) {
+      toast.error(error.message || "Session expired. Please log in again.");
+    } finally {
+      setUser(null);
+    }
+  };
 
   return (
-    <AuthContext.Provider value={{ user, login, logout }}>
+    <AuthContext.Provider value={{ user, login, refreshToken, logout }}>
       {children}
     </AuthContext.Provider>
   );
@@ -39,6 +110,6 @@ export const AuthProvider = ({ children }: AuthProviderProps): ReactElement => {
 
 export const useAuth = (): AuthContextValue => {
   const ctx = useContext(AuthContext);
-  if (!ctx) throw new Error('useAuth must be used within AuthProvider');
+  if (!ctx) throw new Error("useAuth must be used within AuthProvider");
   return ctx;
 };
