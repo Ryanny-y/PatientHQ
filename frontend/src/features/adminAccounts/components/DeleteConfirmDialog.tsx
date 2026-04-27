@@ -36,7 +36,7 @@ const DeleteConfirmDialog = ({ admin, open, onClose, onConfirm }: DeleteConfirmD
               <DialogTitle className="text-red-700">Delete Admin Account</DialogTitle>
               <p className="text-sm text-slate-500 mt-1">
                 You are about to permanently delete{' '}
-                <span className="font-semibold text-slate-700">{admin?.full_name}</span>
+                <span className="font-semibold text-slate-700">{admin?.fullName}</span>
                 {' '}(@{admin?.username}).
               </p>
             </div>

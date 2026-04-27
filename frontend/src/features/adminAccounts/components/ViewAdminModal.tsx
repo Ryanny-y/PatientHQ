@@ -38,11 +38,11 @@ const ViewAdminModal = ({ admin, open, onClose, onEdit }: ViewAdminModalProps): 
           <div className="flex items-center gap-3">
             <div className="h-10 w-10 rounded-full bg-blue-100 flex items-center justify-center shrink-0">
               <span className="text-blue-700 text-sm font-bold">
-                {admin.full_name.split(' ').map((n) => n[0]).join('').slice(0, 2)}
+                {admin.fullName.split(' ').map((n) => n[0]).join('').slice(0, 2)}
               </span>
             </div>
             <div>
-              <DialogTitle>{admin.full_name}</DialogTitle>
+              <DialogTitle>{admin.fullName}</DialogTitle>
               <DialogDescription>@{admin.username}</DialogDescription>
             </div>
           </div>
@@ -57,13 +57,13 @@ const ViewAdminModal = ({ admin, open, onClose, onEdit }: ViewAdminModalProps): 
             </div>
             <div className="space-y-3.5">
               <div className="grid grid-cols-2 gap-3">
-                <Field label="Admin ID" value={`ADM-${String(admin.admin_id).padStart(4, '0')}`} />
-                <Field label="User ID" value={`USR-${String(admin.user_id).padStart(4, '0')}`} />
+                <Field label="Admin ID" value={`ADM-${String(admin.adminId).padStart(4, '0')}`} />
+                <Field label="User ID" value={`USR-${String(admin.userId).padStart(4, '0')}`} />
               </div>
               <Field label="Username" value={admin.username} icon={User} />
-              <Field label="Full Name" value={admin.full_name} icon={User} />
-              <Field label="Email Address" value={admin.email} icon={Mail} />
-              <Field label="Contact Number" value={admin.contact_number} icon={Phone} />
+              <Field label="Full Name" value={admin.fullName} icon={User} />
+              <Field label="Email Address" value={admin.email ?? "N/A"} icon={Mail} />
+              <Field label="Contact Number" value={admin.contactNumber ?? "N/A"} icon={Phone} />
               <div className="grid grid-cols-2 gap-3">
                 <div>
                   <p className="text-xs text-slate-400 mb-1">Role</p>
@@ -73,10 +73,10 @@ const ViewAdminModal = ({ admin, open, onClose, onEdit }: ViewAdminModalProps): 
                 </div>
                 <div>
                   <p className="text-xs text-slate-400 mb-1">Status</p>
-                  <StatusBadge isActive={admin.is_active} />
+                  <StatusBadge isActive={admin.isActive} />
                 </div>
               </div>
-              <Field label="Created Date" value={new Date(admin.created_at).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })} icon={Calendar} />
+              <Field label="Created Date" value={new Date(admin.createdAt).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })} icon={Calendar} />
             </div>
           </div>
 
@@ -91,7 +91,7 @@ const ViewAdminModal = ({ admin, open, onClose, onEdit }: ViewAdminModalProps): 
             </div>
             <div className="space-y-3.5">
               <Field label="Last Login" value={admin.last_login} icon={Clock} />
-              <Field label="Password Last Reset" value={new Date(admin.password_last_reset).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })} icon={KeyRound} />
+              {/* <Field label="Password Last Reset" value={new Date(admin.password_last_reset).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })} icon={KeyRound} /> */}
             </div>
           </div>
         </div>

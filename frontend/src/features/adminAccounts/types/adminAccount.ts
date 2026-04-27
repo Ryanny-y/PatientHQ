@@ -1,17 +1,17 @@
 import { z } from 'zod';
 
 export interface AdminAccount {
-  admin_id: number;
-  user_id: number;
+  adminId: number;
+  userId: number;
   username: string;
-  full_name: string;
+  fullName: string;
   email: string;
-  contact_number: string;
-  is_active: boolean;
-  created_at: string;
+  contactNumber: string;
+  isActive: boolean;
+  createdAt: string;
   // mock security fields
   last_login: string;
-  password_last_reset: string;
+  // password_last_reset: string;
 }
 
 export type modalMode = 'add' | 'edit' | 'view' | 'reset-password' | 'delete' | null;
@@ -27,13 +27,13 @@ export const addAdminSchema = z
       .regex(/[0-9]/, 'Must contain a number')
       .regex(/[^A-Za-z0-9]/, 'Must contain a special character'),
     confirm_password: z.string().min(1, 'Please confirm your password'),
-    full_name: z.string().min(2, 'Full name is required'),
+    fullName: z.string().min(2, 'Full name is required'),
     email: z.email('Enter a valid email address'),
-    contact_number: z
+    contactNumber: z
       .string()
       .min(7, 'Enter a valid contact number')
       .regex(/^[0-9+\-\s()]+$/, 'Invalid phone number format'),
-    is_active: z.boolean(),
+    isActive: z.boolean(),
   })
   .refine((d) => d.password === d.confirm_password, {
     message: 'Passwords do not match',
@@ -45,13 +45,13 @@ export type addAdminFormValues = z.infer<typeof addAdminSchema>;
 // ── Edit Admin ─────────────────────────────────────────────────────────────
 export const editAdminSchema = z.object({
   username: z.string().min(4, 'Username must be at least 4 characters'),
-  full_name: z.string().min(2, 'Full name is required'),
+  fullName: z.string().min(2, 'Full name is required'),
   email: z.string().email('Enter a valid email address'),
-  contact_number: z
+  contactNumber: z
     .string()
     .min(7, 'Enter a valid contact number')
     .regex(/^[0-9+\-\s()]+$/, 'Invalid phone number format'),
-  is_active: z.boolean(),
+  isActive: z.boolean(),
 });
 
 export type editAdminFormValues = z.infer<typeof editAdminSchema>;

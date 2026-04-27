@@ -1,10 +1,10 @@
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { AuthProvider, useAuth } from "@/shared/context/AuthContext";
-import LoginPage from "@/features/auth/components/LoginPage";
+import LoginPage from "@/features/auth/LoginPage";
 import AdminDashboard from "@/features/dashboard/AdminDashboard";
 import { type ReactNode, type ReactElement } from "react";
 import DashboardHome from "./features/dashboard/components/DashboardHome";
-import AdminAccountsPage from "./features/adminAccounts/components/AdminAccountsPage";
+import AdminAccountsPage from "./features/adminAccounts/AdminAccountsPage";
 import DoctorAccountsPage from "./features/doctorAccounts/components/DoctorAccountsPage";
 import NurseAccountsPage from "./features/nurseAccounts/NurseAccountsPage";
 import PatientListPage from "./features/patients/pages/PatientListPage";
@@ -56,7 +56,7 @@ const App = (): ReactElement => (
   <BrowserRouter>
     <AuthProvider>
       <AppRoutes />
-      <Toaster />
+      <Toaster richColors/>
     </AuthProvider>
   </BrowserRouter>
 );

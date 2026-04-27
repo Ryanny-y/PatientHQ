@@ -29,17 +29,17 @@ const AdminCardListMobile = ({
       </div>
     )}
     {admins.map((admin) => (
-      <div key={admin.admin_id} className="bg-white rounded-xl border border-slate-100 shadow-sm p-4">
+      <div key={admin.adminId} className="bg-white rounded-xl border border-slate-100 shadow-sm p-4">
         <div className="flex items-start justify-between gap-3">
           <div className="flex items-center gap-3">
             <div className="h-10 w-10 rounded-full bg-blue-100 flex items-center justify-center shrink-0">
               <span className="text-blue-700 text-sm font-bold">
-                {admin.full_name.split(' ').map((n) => n[0]).join('').slice(0, 2)}
+                {admin.fullName.split(' ').map((n) => n[0]).join('').slice(0, 2)}
               </span>
             </div>
             <div>
               <div className="flex items-center gap-1.5 mb-0.5">
-                <p className="text-sm font-semibold text-slate-800">{admin.full_name}</p>
+                <p className="text-sm font-semibold text-slate-800">{admin.fullName}</p>
                 {admin.username === currentUsername && (
                   <span className="text-[10px] bg-blue-100 text-blue-600 px-1.5 py-0.5 rounded font-medium">You</span>
                 )}
@@ -65,7 +65,7 @@ const AdminCardListMobile = ({
               </DropdownMenuItem>
               <DropdownMenuSeparator />
               <DropdownMenuItem onClick={() => onToggleStatus(admin)}>
-                {admin.is_active
+                {admin.isActive
                   ? <><PowerOff className="h-3.5 w-3.5 text-amber-500" /> Deactivate</>
                   : <><Power className="h-3.5 w-3.5 text-emerald-500" /> Activate</>
                 }
@@ -89,7 +89,7 @@ const AdminCardListMobile = ({
           </div>
           <div>
             <p className="text-slate-400 mb-0.5">Status</p>
-            <StatusBadge isActive={admin.is_active} />
+            <StatusBadge isActive={admin.isActive} />
           </div>
         </div>
       </div>

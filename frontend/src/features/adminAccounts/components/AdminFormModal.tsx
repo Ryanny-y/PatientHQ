@@ -37,10 +37,10 @@ const AddAdminForm = ({ onClose, onSubmit }: AddFormProps): ReactElement => {
 
   const { register, handleSubmit, setValue, watch, formState: { errors } } = useForm<addAdminFormValues>({
     resolver: zodResolver(addAdminSchema),
-    defaultValues: { username: '', password: '', confirm_password: '', full_name: '', email: '', contact_number: '', is_active: true },
+    defaultValues: { username: '', password: '', confirm_password: '', fullName: '', email: '', contactNumber: '', isActive: true },
   });
 
-  const isActive = watch('is_active');
+  const isActive = watch('isActive');
 
   const submit = async (values: addAdminFormValues): Promise<void> => {
     setIsSubmitting(true);
@@ -80,15 +80,15 @@ const AddAdminForm = ({ onClose, onSubmit }: AddFormProps): ReactElement => {
       </div>
 
       <SectionLabel>Profile Information</SectionLabel>
-      <FormField label="Full Name" error={errors.full_name?.message} required>
-        <Input placeholder="e.g. Maria Santos" className={cn(errors.full_name && 'border-red-400')} {...register('full_name')} />
+      <FormField label="Full Name" error={errors.fullName?.message} required>
+        <Input placeholder="e.g. Maria Santos" className={cn(errors.fullName && 'border-red-400')} {...register('fullName')} />
       </FormField>
       <div className="grid grid-cols-2 gap-3">
         <FormField label="Email Address" error={errors.email?.message} required>
           <Input type="email" placeholder="admin@hospital.com" className={cn(errors.email && 'border-red-400')} {...register('email')} />
         </FormField>
-        <FormField label="Contact Number" error={errors.contact_number?.message} required>
-          <Input placeholder="09XXXXXXXXX" className={cn(errors.contact_number && 'border-red-400')} {...register('contact_number')} />
+        <FormField label="Contact Number" error={errors.contactNumber?.message} required>
+          <Input placeholder="09XXXXXXXXX" className={cn(errors.contactNumber && 'border-red-400')} {...register('contactNumber')} />
         </FormField>
       </div>
 
@@ -108,7 +108,7 @@ const AddAdminForm = ({ onClose, onSubmit }: AddFormProps): ReactElement => {
             {isActive ? 'Admin can log in and access the system.' : 'Admin access is currently disabled.'}
           </p>
         </div>
-        <Switch checked={isActive} onCheckedChange={(v) => setValue('is_active', v)} />
+        <Switch checked={isActive} onCheckedChange={(v) => setValue('isActive', v)} />
       </div>
 
       <div className="flex items-center justify-end gap-3 pt-2">
@@ -134,14 +134,14 @@ const EditAdminForm = ({ admin, onClose, onSubmit }: EditFormProps): ReactElemen
 
   const { register, handleSubmit, setValue, watch, reset, formState: { errors } } = useForm<editAdminFormValues>({
     resolver: zodResolver(editAdminSchema),
-    defaultValues: { username: admin.username, full_name: admin.full_name, email: admin.email, contact_number: admin.contact_number, is_active: admin.is_active },
+    defaultValues: { username: admin.username, fullName: admin.fullName, email: admin.email, contactNumber: admin.contactNumber, isActive: admin.isActive },
   });
 
   useEffect(() => {
-    reset({ username: admin.username, full_name: admin.full_name, email: admin.email, contact_number: admin.contact_number, is_active: admin.is_active });
+    reset({ username: admin.username, fullName: admin.fullName, email: admin.email, contactNumber: admin.contactNumber, isActive: admin.isActive });
   }, [admin, reset]);
 
-  const isActive = watch('is_active');
+  const isActive = watch('isActive');
 
   const submit = async (values: editAdminFormValues): Promise<void> => {
     setIsSubmitting(true);
@@ -157,15 +157,15 @@ const EditAdminForm = ({ admin, onClose, onSubmit }: EditFormProps): ReactElemen
       <FormField label="Username" error={errors.username?.message} required>
         <Input placeholder="e.g. admin.santos" className={cn(errors.username && 'border-red-400')} {...register('username')} />
       </FormField>
-      <FormField label="Full Name" error={errors.full_name?.message} required>
-        <Input placeholder="e.g. Maria Santos" className={cn(errors.full_name && 'border-red-400')} {...register('full_name')} />
+      <FormField label="Full Name" error={errors.fullName?.message} required>
+        <Input placeholder="e.g. Maria Santos" className={cn(errors.fullName && 'border-red-400')} {...register('fullName')} />
       </FormField>
       <div className="grid grid-cols-2 gap-3">
         <FormField label="Email Address" error={errors.email?.message} required>
           <Input type="email" placeholder="admin@hospital.com" className={cn(errors.email && 'border-red-400')} {...register('email')} />
         </FormField>
-        <FormField label="Contact Number" error={errors.contact_number?.message} required>
-          <Input placeholder="09XXXXXXXXX" className={cn(errors.contact_number && 'border-red-400')} {...register('contact_number')} />
+        <FormField label="Contact Number" error={errors.contactNumber?.message} required>
+          <Input placeholder="09XXXXXXXXX" className={cn(errors.contactNumber && 'border-red-400')} {...register('contactNumber')} />
         </FormField>
       </div>
 
@@ -185,7 +185,7 @@ const EditAdminForm = ({ admin, onClose, onSubmit }: EditFormProps): ReactElemen
             {isActive ? 'Admin can log in and access the system.' : 'Admin access is currently disabled.'}
           </p>
         </div>
-        <Switch checked={isActive} onCheckedChange={(v) => setValue('is_active', v)} />
+        <Switch checked={isActive} onCheckedChange={(v) => setValue('isActive', v)} />
       </div>
 
       <div className="flex items-center justify-end gap-3 pt-2">
@@ -220,7 +220,7 @@ const AdminFormModal = ({ mode, admin, open, onClose, onSubmitAdd, onSubmitEdit 
           <div>
             <DialogTitle>{mode === 'add' ? 'Create Admin Account' : 'Edit Admin Account'}</DialogTitle>
             <DialogDescription>
-              {mode === 'add' ? 'Add a new hospital administrator.' : `Editing account for ${admin?.full_name ?? ''}`}
+              {mode === 'add' ? 'Add a new hospital administrator.' : `Editing account for ${admin?.fullName ?? ''}`}
             </DialogDescription>
           </div>
         </div>

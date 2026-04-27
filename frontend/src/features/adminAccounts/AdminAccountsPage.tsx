@@ -33,13 +33,13 @@ const AdminAccountsPage = (): ReactElement => {
 
   const handleUpdate = (values: editAdminFormValues): void => {
     if (!selectedAdmin) return;
-    updateAdmin(selectedAdmin.admin_id, values);
+    updateAdmin(selectedAdmin.adminId, values);
     toast('Account changes saved successfully.');
   };
 
   const handleResetPassword = (): void => {
     if (!selectedAdmin) return;
-    resetPassword(selectedAdmin.admin_id);
+    resetPassword(selectedAdmin.adminId);
     toast('Password reset successfully. Credentials updated.', 'success');
   };
 
@@ -53,7 +53,7 @@ const AdminAccountsPage = (): ReactElement => {
 
   const handleDelete = (): void => {
     if (!selectedAdmin) return;
-    deleteAdmin(selectedAdmin.admin_id);
+    deleteAdmin(selectedAdmin.adminId);
     toast('Admin account permanently deleted.', 'error');
   };
 
@@ -108,7 +108,7 @@ const AdminAccountsPage = (): ReactElement => {
           onView={(a) => openModal('view', a)}
           onEdit={(a) => openModal('edit', a)}
           onResetPassword={(a) => openModal('reset-password', a)}
-          onToggleStatus={(a) => handleToggleStatus(a.admin_id, a.is_active)}
+          onToggleStatus={(a) => handleToggleStatus(a.adminId, a.isActive)}
           onDelete={(a) => openModal('delete', a)}
           page={page}
           totalPages={totalPages}
@@ -126,7 +126,7 @@ const AdminAccountsPage = (): ReactElement => {
           onView={(a) => openModal('view', a)}
           onEdit={(a) => openModal('edit', a)}
           onResetPassword={(a) => openModal('reset-password', a)}
-          onToggleStatus={(a) => handleToggleStatus(a.admin_id, a.is_active)}
+          onToggleStatus={(a) => handleToggleStatus(a.adminId, a.isActive)}
           onDelete={(a) => openModal('delete', a)}
         />
       </div>
