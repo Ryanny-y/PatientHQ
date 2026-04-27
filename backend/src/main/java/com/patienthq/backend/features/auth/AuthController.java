@@ -40,7 +40,7 @@ public class AuthController {
         LoginResponse loginResponse = new LoginResponse(
                 accessToken,
                 user.getUsername(),
-                user.getRole()
+                user.getRole().getRoleName()
         );
 
         ApiResponse<LoginResponse> apiResponse = ApiResponse.<LoginResponse>builder()

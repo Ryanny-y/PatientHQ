@@ -1,4 +1,4 @@
-package com.patienthq.backend.features.patient.mapper;
+package com.patienthq.backend.features.patient;
 
 import com.patienthq.backend.features.patient.dto.PatientDto;
 import com.patienthq.backend.features.patient.model.Patient;

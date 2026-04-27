@@ -1,4 +1,4 @@
-package com.patienthq.backend.features.admin.dto.response;
+package com.patienthq.backend.features.admin.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -12,16 +12,17 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class AdminResponse {
-    private UUID id;
-    private String fullName;
-    private String contactNumber;
-    private String email;
-    
-    // User fields
+public class AdminDto {
+    // User Fields
     private UUID userId;
     private String username;
     private String roleName;
     private Boolean isActive;
-    private LocalDateTime userCreatedAt;
+    private LocalDateTime createdAt;
+
+    //  Admin Fields
+    private String adminId;
+    private String fullName;
+    private String contactNumber;
+    private String email;
 }

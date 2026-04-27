@@ -3,7 +3,6 @@ package com.patienthq.backend.features.nurse;
 import com.patienthq.backend.features.nurse.dto.NurseDto;
 import com.patienthq.backend.features.nurse.dto.request.CreateNurseRequest;
 import com.patienthq.backend.features.nurse.dto.request.UpdateNurseRequest;
-import com.patienthq.backend.features.nurse.mapper.NurseMapper;
 import com.patienthq.backend.features.nurse.model.Nurse;
 import com.patienthq.backend.features.nurse.service.NurseService;
 import com.patienthq.backend.shared.response.ApiResponse;

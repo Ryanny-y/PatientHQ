@@ -2,7 +2,7 @@ package com.patienthq.backend.features.admin;
 
 import com.patienthq.backend.features.admin.dto.request.CreateAdminRequest;
 import com.patienthq.backend.features.admin.dto.request.UpdateAdminRequest;
-import com.patienthq.backend.features.admin.dto.response.AdminResponse;
+import com.patienthq.backend.features.admin.dto.AdminDto;
 import com.patienthq.backend.features.admin.model.Admin;
 import com.patienthq.backend.features.admin.service.AdminService;
 import com.patienthq.backend.shared.response.ApiResponse;
@@ -25,25 +25,25 @@ public class AdminController {
     private final AdminMapper adminMapper;
 
     @PostMapping
-    public ResponseEntity<ApiResponse<AdminResponse>> createAdmin(@Valid @RequestBody CreateAdminRequest request) {
+    public ResponseEntity<ApiResponse<AdminDto>> createAdmin(@Valid @RequestBody CreateAdminRequest request) {
         Admin admin = adminService.createAdmin(request);
         return ResponseEntity.status(HttpStatus.CREATED).body(
-                ApiResponse.<AdminResponse>builder()
+                ApiResponse.<AdminDto>builder()
                         .success(true)
                         .message("Admin created successfully")
-                        .data(adminMapper.toResponse(admin))
+                        .data(adminMapper.toDto(admin))
                         .build()
         );
     }
 
     @GetMapping
-    public ResponseEntity<ApiResponse<List<AdminResponse>>> getAllAdmins() {
-        List<AdminResponse> admins = adminService.getAllAdmins().stream()
-                .map(adminMapper::toResponse)
+    public ResponseEntity<ApiResponse<List<AdminDto>>> getAllAdmins() {
+        List<AdminDto> admins = adminService.getAllAdmins().stream()
+                .map(adminMapper::toDto)
                 .collect(Collectors.toList());
 
         return ResponseEntity.ok(
-                ApiResponse.<List<AdminResponse>>builder()
+                ApiResponse.<List<AdminDto>>builder()
                         .success(true)
                         .message("Admins retrieved successfully")
                         .data(admins)
@@ -52,27 +52,27 @@ public class AdminController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<ApiResponse<AdminResponse>> getAdminById(@PathVariable UUID id) {
+    public ResponseEntity<ApiResponse<AdminDto>> getAdminById(@PathVariable UUID id) {
         Admin admin = adminService.getAdminById(id);
         return ResponseEntity.ok(
-                ApiResponse.<AdminResponse>builder()
+                ApiResponse.<AdminDto>builder()
                         .success(true)
                         .message("Admin retrieved successfully")
-                        .data(adminMapper.toResponse(admin))
+                        .data(adminMapper.toDto(admin))
                         .build()
         );
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<ApiResponse<AdminResponse>> updateAdmin(
+    public ResponseEntity<ApiResponse<AdminDto>> updateAdmin(
             @PathVariable UUID id,
             @Valid @RequestBody UpdateAdminRequest request) {
         Admin admin = adminService.updateAdmin(id, request);
         return ResponseEntity.ok(
-                ApiResponse.<AdminResponse>builder()
+                ApiResponse.<AdminDto>builder()
                         .success(true)
                         .message("Admin updated successfully")
-                        .data(adminMapper.toResponse(admin))
+                        .data(adminMapper.toDto(admin))
                         .build()
         );
     }

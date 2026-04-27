@@ -1,6 +1,5 @@
     package com.patienthq.backend.features.auth.dto.response;
 
-    import com.patienthq.backend.features.user.model.Role;
     import lombok.AllArgsConstructor;
     import lombok.Builder;
     import lombok.Data;
@@ -13,5 +12,5 @@
     public class LoginResponse {
         private String accessToken;
         private String username;
-        private Role role;
+        private String role;
     }

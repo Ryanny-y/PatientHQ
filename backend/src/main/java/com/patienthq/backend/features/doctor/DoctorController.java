@@ -3,7 +3,6 @@ package com.patienthq.backend.features.doctor;
 import com.patienthq.backend.features.doctor.dto.DoctorDto;
 import com.patienthq.backend.features.doctor.dto.request.CreateDoctorRequest;
 import com.patienthq.backend.features.doctor.dto.request.UpdateDoctorRequest;
-import com.patienthq.backend.features.doctor.mapper.DoctorMapper;
 import com.patienthq.backend.features.doctor.model.Doctor;
 import com.patienthq.backend.features.doctor.service.DoctorService;
 import com.patienthq.backend.shared.response.ApiResponse;

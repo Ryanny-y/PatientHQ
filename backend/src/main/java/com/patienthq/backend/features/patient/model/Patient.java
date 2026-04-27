@@ -53,6 +53,7 @@ public class Patient {
 
     @Column(name = "status", length = 50)
     @Enumerated(EnumType.STRING)
+    @Builder.Default
     private PatientStatus status = PatientStatus.ACTIVE;
 
     @Column(name = "created_at", updatable = false)
