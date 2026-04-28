@@ -10,8 +10,12 @@ import java.util.UUID;
 
 public interface DoctorService {
     Doctor createDoctor(CreateDoctorRequest request);
-    Page<Doctor> getAllDoctors(Pageable pageable);
+
+    Page<Doctor> getAllDoctors(Boolean isActive, String search, Pageable pageable);
+
     Doctor getDoctorById(UUID id);
+
     Doctor updateDoctor(UUID id, UpdateDoctorRequest request);
+
     void deleteDoctor(UUID id);
 }

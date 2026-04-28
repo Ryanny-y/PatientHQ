@@ -44,9 +44,11 @@ public class DoctorController {
 
     @GetMapping
     public ResponseEntity<ApiResponse<PageResponse<DoctorDto>>> getAllDoctors(
+            @RequestParam(required = false) Boolean isActive,
+            @RequestParam(required = false) String search,
             Pageable pageable
     ) {
-        Page<Doctor> doctors = doctorService.getAllDoctors(pageable);
+        Page<Doctor> doctors = doctorService.getAllDoctors(isActive, search, pageable);
 
         List<DoctorDto> doctorDto = doctors.map(doctorMapper::toDto).stream().toList();
         PageResponse<DoctorDto> pageResponse = PageResponse.<DoctorDto>builder()

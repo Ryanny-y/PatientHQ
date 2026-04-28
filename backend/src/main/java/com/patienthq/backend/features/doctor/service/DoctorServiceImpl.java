@@ -11,6 +11,7 @@ import com.patienthq.backend.features.user.repository.RoleRepository;
 import com.patienthq.backend.features.user.repository.UserRepository;
 import com.patienthq.backend.shared.exceptions.AppException;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -18,9 +19,9 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
 import java.util.UUID;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class DoctorServiceImpl implements DoctorService {
@@ -72,8 +73,9 @@ public class DoctorServiceImpl implements DoctorService {
     }
 
     @Transactional(readOnly = true)
-    public Page<Doctor> getAllDoctors(Pageable pageable) {
-        return doctorRepository.findAll(pageable);
+    public Page<Doctor> getAllDoctors(Boolean isActive, String search, Pageable pageable) {
+        String formattedSearch = (search == null) ? null : "%" + search.toLowerCase() + "%";
+        return doctorRepository.findAllDoctors(isActive, formattedSearch, pageable);
     }
 
     @Transactional(readOnly = true)
@@ -86,7 +88,7 @@ public class DoctorServiceImpl implements DoctorService {
     public Doctor updateDoctor(UUID id, UpdateDoctorRequest request) {
         Doctor doctor = findDoctorById(id);
 
-        if(request.getUsername() != null) {
+        if (request.getUsername() != null) {
             doctor.getUser().setUsername(request.getUsername());
         }
 
@@ -105,9 +107,9 @@ public class DoctorServiceImpl implements DoctorService {
 
         if (request.getLicenseNumber() != null) {
             if (doctorRepository.existsByLicenseNumberAndDoctorIdNot(
-                            request.getLicenseNumber(),
-                            doctor.getDoctorId()
-                    )) {
+                    request.getLicenseNumber(),
+                    doctor.getDoctorId()
+            )) {
                 throw new IllegalArgumentException("License number already exists");
             }
             doctor.setLicenseNumber(request.getLicenseNumber());
