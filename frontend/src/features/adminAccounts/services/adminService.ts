@@ -14,16 +14,16 @@ export const adminService = {
     fetchWithAuth<ApiResponse<AdminAccount>>("admins", {
       method: "POST",
       body: JSON.stringify(values),
-    }).then((r) => r.data),
+    }),
 
   updateAdmin: (id: string, values: editAdminFormValues) =>
     fetchWithAuth<ApiResponse<AdminAccount>>(`admins/${id}`, {
       method: "PUT",
       body: JSON.stringify(values),
-    }).then((r) => r.data),
+    }),
 
   deleteAdmin: (id: string) =>
-    fetchWithAuth(`admins/${id}`, {
+    fetchWithAuth<ApiResponse<void>>(`admins/${id}`, {
       method: "DELETE",
     }),
 
@@ -31,7 +31,7 @@ export const adminService = {
     fetchWithAuth<ApiResponse<AdminAccount>>(
       `admins/${id}/toggle-status`,
       { method: "PATCH" },
-    ).then((r) => r.data),
+    ),
 
   resetPassword: (id: string) =>
     fetchWithAuth(`admins/${id}/reset-password`, { method: "POST" }),

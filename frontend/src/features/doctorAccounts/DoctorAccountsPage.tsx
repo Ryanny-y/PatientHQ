@@ -1,30 +1,28 @@
 import { type ReactElement } from "react";
-import { UserPlus, Download, ShieldCheck } from "lucide-react";
+import { UserPlus, Download, Stethoscope } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { useAuth } from "@/shared/context/AuthContext";
-import { useAdminAccounts } from "@/features/adminAccounts/hooks/useAdminAccounts";
-import AdminStatsCards from "@/features/adminAccounts/components/AdminStatsCards";
-import SearchToolbar from "@/features/adminAccounts/components/SearchToolbar";
-import AdminTable from "@/features/adminAccounts/components/AdminTable";
-import AdminCardListMobile from "@/features/adminAccounts/components/AdminCardListMobile";
-import ViewAdminModal from "@/features/adminAccounts/components/ViewAdminModal";
-import AdminFormModal from "@/features/adminAccounts/components/AdminFormModal";
-import ResetPasswordModal from "@/features/adminAccounts/components/ResetPasswordModal";
-import DeleteConfirmDialog from "@/features/adminAccounts/components/DeleteConfirmDialog";
+import { useDoctorAccounts } from "@/features/doctorAccounts/hooks/useDoctorAccounts";
+import DoctorStatsCards from "@/features/doctorAccounts/components/DoctorStatsCards";
+import DoctorSearchToolbar from "@/features/doctorAccounts/components/DoctorSearchToolbar";
+import DoctorTable from "@/features/doctorAccounts/components/DoctorTable";
+import DoctorCardListMobile from "@/features/doctorAccounts/components/DoctorCardListMobile";
+import ViewDoctorModal from "@/features/doctorAccounts/components/ViewDoctorModal";
+import DoctorFormModal from "@/features/doctorAccounts/components/DoctorFormModal";
+import DoctorResetPasswordModal from "@/features/doctorAccounts/components/DoctorResetPasswordModal";
+import DoctorDeleteConfirmDialog from "@/features/doctorAccounts/components/DoctorDeleteConfirmDialog";
 import type {
-  addAdminFormValues,
-  editAdminFormValues,
-} from "@/features/adminAccounts/types/adminAccount";
+  addDoctorFormValues,
+  editDoctorFormValues,
+} from "@/features/doctorAccounts/types/doctorAccount";
 import { toast } from "sonner";
 
-const AdminAccountsPage = (): ReactElement => {
-  const { user } = useAuth();
+const DoctorAccountsPage = (): ReactElement => {
   const {
     filtered,
     totalCount,
     activeCount,
     inactiveCount,
-    recentCount,
+    specializationCount,
     allFilteredCount,
     page,
     pageSize,
@@ -34,22 +32,25 @@ const AdminAccountsPage = (): ReactElement => {
     setSearch,
     statusFilter,
     setStatusFilter,
+    specializationFilter,
+    setSpecializationFilter,
     sortOption,
     setSortOption,
+    allSpecializations,
     modalMode,
-    selectedAdmin,
+    selectedDoctor,
     openModal,
     closeModal,
-    createAdmin,
-    updateAdmin,
+    createDoctor,
+    updateDoctor,
     resetPassword,
     toggleStatus,
-    deleteAdmin,
-  } = useAdminAccounts();
+    deleteDoctor,
+  } = useDoctorAccounts();
 
-  const handleCreate = async (values: addAdminFormValues): Promise<void> => {
+  const handleCreate = async (values: addDoctorFormValues): Promise<void> => {
     try {
-      const res = await createAdmin(values);
+      const res = await createDoctor(values);
       if (res.success) {
         toast.success(res.message);
       }
@@ -57,16 +58,16 @@ const AdminAccountsPage = (): ReactElement => {
       toast.error(
         error instanceof Error
           ? error.message
-          : "Failed to create admin account. Please try again.",
+          : "Failed to create doctor account. Please try again.",
       );
     }
   };
 
-  const handleUpdate = async (values: editAdminFormValues): Promise<void> => {
+  const handleUpdate = async (values: editDoctorFormValues): Promise<void> => {
     try {
-      if (!selectedAdmin) return;
-      const res = await updateAdmin({
-        id: selectedAdmin.adminId,
+      if (!selectedDoctor) return;
+      const res = await updateDoctor({
+        id: selectedDoctor.doctorId,
         values,
       });
       if (res.success) {
@@ -76,31 +77,33 @@ const AdminAccountsPage = (): ReactElement => {
       toast.error(
         error instanceof Error
           ? error.message
-          : "Failed to update admin account. Please try again.",
+          : "Failed to update doctor account. Please try again.",
       );
     }
   };
 
   const handleResetPassword = async (): Promise<void> => {
+    if (!selectedDoctor) return;
     try {
-      if (!selectedAdmin) return;
-      await resetPassword(selectedAdmin.adminId);
-      toast.success("Password reset successfully. Credentials updated.");
+      const res = await resetPassword(selectedDoctor.doctorId);
+      if (res.success) {
+        toast.success(res.message);
+      }
     } catch (error) {
       toast.error(
         error instanceof Error
           ? error.message
-          : "Failed to update admin account. Please try again.",
+          : "Failed to reset doctor password. Please try again.",
       );
     }
   };
 
   const handleToggleStatus = async (
-    adminId: string,
+    doctorId: string,
     isCurrentlyActive: boolean,
   ): Promise<void> => {
     try {
-      await toggleStatus(adminId);
+      await toggleStatus(doctorId);
 
       if (isCurrentlyActive) {
         toast.warning("Account has been deactivated.");
@@ -117,9 +120,9 @@ const AdminAccountsPage = (): ReactElement => {
   };
 
   const handleDelete = async (): Promise<void> => {
-    if (!selectedAdmin) return;
+    if (!selectedDoctor) return;
     try {
-      const res = await deleteAdmin(selectedAdmin.adminId);
+      const res = await deleteDoctor(selectedDoctor.doctorId);
       if (res.success) {
         toast.success(res.message);
       }
@@ -127,9 +130,15 @@ const AdminAccountsPage = (): ReactElement => {
       toast.error(
         error instanceof Error
           ? error.message
-          : "Failed to delete admin account. Please try again.",
+          : "Failed to delete doctor account. Please try again.",
       );
     }
+  };
+
+  const handleRefresh = (): void => {
+    setSearch("");
+    setSpecializationFilter("all");
+    setStatusFilter("all");
   };
 
   return (
@@ -138,11 +147,13 @@ const AdminAccountsPage = (): ReactElement => {
       <div className="flex items-start justify-between gap-4">
         <div>
           <div className="flex items-center gap-2 mb-1">
-            <ShieldCheck className="h-5 w-5 text-blue-600" />
-            <h2 className="text-xl font-bold text-slate-900">Admin Accounts</h2>
+            <Stethoscope className="h-5 w-5 text-emerald-600" />
+            <h2 className="text-xl font-bold text-slate-900">
+              Doctor Accounts
+            </h2>
           </div>
           <p className="text-sm text-slate-500">
-            Manage hospital administrator access and credentials.
+            Manage physician access, credentials, and clinical profiles.
           </p>
         </div>
         <div className="flex items-center gap-2 shrink-0">
@@ -157,44 +168,46 @@ const AdminAccountsPage = (): ReactElement => {
           <Button
             size="sm"
             onClick={() => openModal("add")}
-            className="gap-1.5"
+            className="gap-1.5 bg-emerald-600 hover:bg-emerald-700"
           >
             <UserPlus className="h-3.5 w-3.5" />
-            Add Admin
+            Add Doctor
           </Button>
         </div>
       </div>
 
       {/* Stats */}
-      <AdminStatsCards
+      <DoctorStatsCards
         total={totalCount}
         active={activeCount}
         inactive={inactiveCount}
-        recent={recentCount}
+        specializationCount={specializationCount}
       />
 
       {/* Toolbar */}
-      <SearchToolbar
+      <DoctorSearchToolbar
         search={search}
         onSearchChange={setSearch}
         statusFilter={statusFilter}
         onStatusChange={setStatusFilter}
+        specializationFilter={specializationFilter}
+        onSpecializationChange={setSpecializationFilter}
         sortOption={sortOption}
         onSortChange={setSortOption}
-        onRefresh={() => setSearch("")}
+        onRefresh={handleRefresh}
         totalFiltered={allFilteredCount}
+        specializations={allSpecializations}
       />
 
       {/* Desktop Table */}
       <div className="hidden md:block">
-        <AdminTable
-          admins={filtered}
-          currentUsername={user?.username ?? ""}
-          onView={(a) => openModal("view", a)}
-          onEdit={(a) => openModal("edit", a)}
-          onResetPassword={(a) => openModal("reset-password", a)}
-          onToggleStatus={(a) => handleToggleStatus(a.adminId, a.isActive)}
-          onDelete={(a) => openModal("delete", a)}
+        <DoctorTable
+          doctors={filtered}
+          onView={(d) => openModal("view", d)}
+          onEdit={(d) => openModal("edit", d)}
+          onResetPassword={(d) => openModal("reset-password", d)}
+          onToggleStatus={(d) => handleToggleStatus(d.doctorId, d.isActive)}
+          onDelete={(d) => openModal("delete", d)}
           page={page}
           totalPages={totalPages}
           onPageChange={setPage}
@@ -205,52 +218,51 @@ const AdminAccountsPage = (): ReactElement => {
 
       {/* Mobile Card List */}
       <div className="md:hidden">
-        <AdminCardListMobile
-          admins={filtered}
-          currentUsername={user?.username ?? ""}
-          onView={(a) => openModal("view", a)}
-          onEdit={(a) => openModal("edit", a)}
-          onResetPassword={(a) => openModal("reset-password", a)}
-          onToggleStatus={(a) => handleToggleStatus(a.adminId, a.isActive)}
-          onDelete={(a) => openModal("delete", a)}
+        <DoctorCardListMobile
+          doctors={filtered}
+          onView={(d) => openModal("view", d)}
+          onEdit={(d) => openModal("edit", d)}
+          onResetPassword={(d) => openModal("reset-password", d)}
+          onToggleStatus={(d) => handleToggleStatus(d.doctorId, d.isActive)}
+          onDelete={(d) => openModal("delete", d)}
         />
       </div>
 
       {/* Modals */}
-      <ViewAdminModal
-        admin={selectedAdmin}
+      <ViewDoctorModal
+        doctor={selectedDoctor}
         open={modalMode === "view"}
         onClose={closeModal}
         onEdit={() => {
           closeModal();
-          openModal("edit", selectedAdmin ?? undefined);
+          openModal("edit", selectedDoctor ?? undefined);
         }}
       />
 
-      <AdminFormModal
+      <DoctorFormModal
         mode="add"
         open={modalMode === "add"}
         onClose={closeModal}
         onSubmitAdd={handleCreate}
       />
 
-      <AdminFormModal
+      <DoctorFormModal
         mode="edit"
-        admin={selectedAdmin}
+        doctor={selectedDoctor}
         open={modalMode === "edit"}
         onClose={closeModal}
         onSubmitEdit={handleUpdate}
       />
 
-      <ResetPasswordModal
-        admin={selectedAdmin}
+      <DoctorResetPasswordModal
+        doctor={selectedDoctor}
         open={modalMode === "reset-password"}
         onClose={closeModal}
         onSubmit={handleResetPassword}
       />
 
-      <DeleteConfirmDialog
-        admin={selectedAdmin}
+      <DoctorDeleteConfirmDialog
+        doctor={selectedDoctor}
         open={modalMode === "delete"}
         onClose={closeModal}
         onConfirm={handleDelete}
@@ -259,4 +271,4 @@ const AdminAccountsPage = (): ReactElement => {
   );
 };
 
-export default AdminAccountsPage;
+export default DoctorAccountsPage;

@@ -28,16 +28,16 @@ const DoctorCardListMobile = ({
       </div>
     )}
     {doctors.map((doc) => (
-      <div key={doc.doctor_id} className="bg-white rounded-xl border border-slate-100 shadow-sm p-4">
+      <div key={doc.doctorId} className="bg-white rounded-xl border border-slate-100 shadow-sm p-4">
         <div className="flex items-start justify-between gap-3">
           <div className="flex items-center gap-3">
             <div className="h-10 w-10 rounded-full bg-emerald-100 flex items-center justify-center shrink-0">
               <span className="text-emerald-700 text-sm font-bold">
-                {doc.full_name.replace('Dr. ', '').split(' ').map((n) => n[0]).join('').slice(0, 2)}
+                {doc.fullName.replace('Dr. ', '').split(' ').map((n) => n[0]).join('').slice(0, 2)}
               </span>
             </div>
             <div>
-              <p className="text-sm font-semibold text-slate-800 mb-0.5">{doc.full_name}</p>
+              <p className="text-sm font-semibold text-slate-800 mb-0.5">{doc.fullName}</p>
               <p className="text-xs text-slate-400">@{doc.username}</p>
             </div>
           </div>
@@ -59,7 +59,7 @@ const DoctorCardListMobile = ({
               </DropdownMenuItem>
               <DropdownMenuSeparator />
               <DropdownMenuItem onClick={() => onToggleStatus(doc)}>
-                {doc.is_active
+                {doc.isActive
                   ? <><PowerOff className="h-3.5 w-3.5 text-amber-500" /> Deactivate</>
                   : <><Power className="h-3.5 w-3.5 text-emerald-500" /> Activate</>
                 }
@@ -75,7 +75,7 @@ const DoctorCardListMobile = ({
         <div className="mt-3 pt-3 border-t border-slate-50 space-y-2">
           <div className="flex items-center justify-between">
             <SpecializationBadge specialization={doc.specialization} />
-            <StatusBadge isActive={doc.is_active} />
+            <StatusBadge isActive={doc.isActive} />
           </div>
           <div className="grid grid-cols-2 gap-2 text-xs">
             <div>
@@ -84,7 +84,7 @@ const DoctorCardListMobile = ({
             </div>
             <div>
               <p className="text-slate-400 mb-0.5">License</p>
-              <p className="text-slate-600 font-mono">{doc.license_number}</p>
+              <p className="text-slate-600 font-mono">{doc.licenseNumber}</p>
             </div>
           </div>
         </div>

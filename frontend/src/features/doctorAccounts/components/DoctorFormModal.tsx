@@ -39,13 +39,13 @@ const AddDoctorForm = ({ onClose, onSubmit }: AddFormProps): ReactElement => {
   const { register, handleSubmit, setValue, watch, formState: { errors } } = useForm<addDoctorFormValues>({
     resolver: zodResolver(addDoctorSchema),
     defaultValues: {
-      username: '', password: '', confirm_password: '',
-      full_name: '', specialization: '', license_number: '',
-      email: '', contact_number: '', is_active: true,
+      username: '', password: '', confirmPassword: '',
+      fullName: '', specialization: '', licenseNumber: '',
+      email: '', contactNumber: '', isActive: true,
     },
   });
 
-  const isActive = watch('is_active');
+  const isActive = watch('isActive');
   const specialization = watch('specialization');
 
   const submit = async (values: addDoctorFormValues): Promise<void> => {
@@ -73,10 +73,10 @@ const AddDoctorForm = ({ onClose, onSubmit }: AddFormProps): ReactElement => {
             </button>
           </div>
         </FormField>
-        <FormField label="Confirm Password" error={errors.confirm_password?.message} required>
+        <FormField label="Confirm Password" error={errors.confirmPassword?.message} required>
           <div className="relative">
             <Input type={showConfirm ? 'text' : 'password'} placeholder="Re-enter"
-              className={cn('pr-9', errors.confirm_password && 'border-red-400')} {...register('confirm_password')} />
+              className={cn('pr-9', errors.confirmPassword && 'border-red-400')} {...register('confirmPassword')} />
             <button type="button" tabIndex={-1} onClick={() => setShowConfirm((v) => !v)}
               className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600">
               {showConfirm ? <EyeOff className="h-3.5 w-3.5" /> : <Eye className="h-3.5 w-3.5" />}
@@ -86,8 +86,8 @@ const AddDoctorForm = ({ onClose, onSubmit }: AddFormProps): ReactElement => {
       </div>
 
       <SectionLabel>Doctor Profile</SectionLabel>
-      <FormField label="Full Name" error={errors.full_name?.message} required>
-        <Input placeholder="e.g. Dr. Antonio Garcia" className={cn(errors.full_name && 'border-red-400')} {...register('full_name')} />
+      <FormField label="Full Name" error={errors.fullName?.message} required>
+        <Input placeholder="e.g. Dr. Antonio Garcia" className={cn(errors.fullName && 'border-red-400')} {...register('fullName')} />
       </FormField>
       <div className="grid grid-cols-2 gap-3">
         <FormField label="Specialization" error={errors.specialization?.message} required>
@@ -95,21 +95,21 @@ const AddDoctorForm = ({ onClose, onSubmit }: AddFormProps): ReactElement => {
             <SelectTrigger className={cn('h-10 text-sm', errors.specialization && 'border-red-400')}>
               <SelectValue placeholder="Select..." />
             </SelectTrigger>
-            <SelectContent>
+            <SelectContent position='item-aligned'>
               {SPECIALIZATIONS.map((s) => <SelectItem key={s} value={s}>{s}</SelectItem>)}
             </SelectContent>
           </Select>
         </FormField>
-        <FormField label="License Number" error={errors.license_number?.message} required>
-          <Input placeholder="LIC-YYYY-XXXX" className={cn(errors.license_number && 'border-red-400')} {...register('license_number')} />
+        <FormField label="License Number" error={errors.licenseNumber?.message} required>
+          <Input placeholder="LIC-YYYY-XXXX" className={cn(errors.licenseNumber && 'border-red-400')} {...register('licenseNumber')} />
         </FormField>
       </div>
       <div className="grid grid-cols-2 gap-3">
         <FormField label="Email Address" error={errors.email?.message} required>
           <Input type="email" placeholder="dr@hospital.com" className={cn(errors.email && 'border-red-400')} {...register('email')} />
         </FormField>
-        <FormField label="Contact Number" error={errors.contact_number?.message} required>
-          <Input placeholder="09XXXXXXXXX" className={cn(errors.contact_number && 'border-red-400')} {...register('contact_number')} />
+        <FormField label="Contact Number" error={errors.contactNumber?.message} required>
+          <Input placeholder="09XXXXXXXXX" className={cn(errors.contactNumber && 'border-red-400')} {...register('contactNumber')} />
         </FormField>
       </div>
 
@@ -129,7 +129,7 @@ const AddDoctorForm = ({ onClose, onSubmit }: AddFormProps): ReactElement => {
             {isActive ? 'Physician can log in and access clinical modules.' : 'Clinical access is currently disabled.'}
           </p>
         </div>
-        <Switch checked={isActive} onCheckedChange={(v) => setValue('is_active', v)} />
+        <Switch checked={isActive} onCheckedChange={(v) => setValue('isActive', v)} />
       </div>
 
       <div className="flex items-center justify-end gap-3 pt-2">
@@ -157,28 +157,28 @@ const EditDoctorForm = ({ doctor, onClose, onSubmit }: EditFormProps): ReactElem
     resolver: zodResolver(editDoctorSchema),
     defaultValues: {
       username: doctor.username,
-      full_name: doctor.full_name,
+      fullName: doctor.fullName,
       specialization: doctor.specialization,
-      license_number: doctor.license_number,
-      email: doctor.email,
-      contact_number: doctor.contact_number,
-      is_active: doctor.is_active,
+      licenseNumber: doctor.licenseNumber,
+      email: doctor.email || undefined,
+      contactNumber: doctor.contactNumber || undefined,
+      isActive: doctor.isActive,
     },
   });
 
   useEffect(() => {
     reset({
       username: doctor.username,
-      full_name: doctor.full_name,
+      fullName: doctor.fullName,
       specialization: doctor.specialization,
-      license_number: doctor.license_number,
-      email: doctor.email,
-      contact_number: doctor.contact_number,
-      is_active: doctor.is_active,
+      licenseNumber: doctor.licenseNumber,
+      email: doctor.email ?? undefined,
+      contactNumber: doctor.contactNumber ?? undefined,
+      isActive: doctor.isActive,
     });
   }, [doctor, reset]);
 
-  const isActive = watch('is_active');
+  const isActive = watch('isActive');
   const specialization = watch('specialization');
 
   const submit = async (values: editDoctorFormValues): Promise<void> => {
@@ -195,8 +195,8 @@ const EditDoctorForm = ({ doctor, onClose, onSubmit }: EditFormProps): ReactElem
       <FormField label="Username" error={errors.username?.message} required>
         <Input placeholder="e.g. drgarcia" className={cn(errors.username && 'border-red-400')} {...register('username')} />
       </FormField>
-      <FormField label="Full Name" error={errors.full_name?.message} required>
-        <Input placeholder="e.g. Dr. Antonio Garcia" className={cn(errors.full_name && 'border-red-400')} {...register('full_name')} />
+      <FormField label="Full Name" error={errors.fullName?.message} required>
+        <Input placeholder="e.g. Dr. Antonio Garcia" className={cn(errors.fullName && 'border-red-400')} {...register('fullName')} />
       </FormField>
       <div className="grid grid-cols-2 gap-3">
         <FormField label="Specialization" error={errors.specialization?.message} required>
@@ -209,16 +209,16 @@ const EditDoctorForm = ({ doctor, onClose, onSubmit }: EditFormProps): ReactElem
             </SelectContent>
           </Select>
         </FormField>
-        <FormField label="License Number" error={errors.license_number?.message} required>
-          <Input placeholder="LIC-YYYY-XXXX" className={cn(errors.license_number && 'border-red-400')} {...register('license_number')} />
+        <FormField label="License Number" error={errors.licenseNumber?.message} required>
+          <Input placeholder="LIC-YYYY-XXXX" className={cn(errors.licenseNumber && 'border-red-400')} {...register('licenseNumber')} />
         </FormField>
       </div>
       <div className="grid grid-cols-2 gap-3">
         <FormField label="Email Address" error={errors.email?.message} required>
           <Input type="email" placeholder="dr@hospital.com" className={cn(errors.email && 'border-red-400')} {...register('email')} />
         </FormField>
-        <FormField label="Contact Number" error={errors.contact_number?.message} required>
-          <Input placeholder="09XXXXXXXXX" className={cn(errors.contact_number && 'border-red-400')} {...register('contact_number')} />
+        <FormField label="Contact Number" error={errors.contactNumber?.message} required>
+          <Input placeholder="09XXXXXXXXX" className={cn(errors.contactNumber && 'border-red-400')} {...register('contactNumber')} />
         </FormField>
       </div>
 
@@ -238,7 +238,7 @@ const EditDoctorForm = ({ doctor, onClose, onSubmit }: EditFormProps): ReactElem
             {isActive ? 'Physician can log in and access clinical modules.' : 'Clinical access is currently disabled.'}
           </p>
         </div>
-        <Switch checked={isActive} onCheckedChange={(v) => setValue('is_active', v)} />
+        <Switch checked={isActive} onCheckedChange={(v) => setValue('isActive', v)} />
       </div>
 
       <div className="flex items-center justify-end gap-3 pt-2">
@@ -273,7 +273,7 @@ const DoctorFormModal = ({ mode, doctor, open, onClose, onSubmitAdd, onSubmitEdi
           <div>
             <DialogTitle>{mode === 'add' ? 'Create Doctor Account' : 'Edit Doctor Account'}</DialogTitle>
             <DialogDescription>
-              {mode === 'add' ? 'Register a new physician and clinical profile.' : `Editing credentials for ${doctor?.full_name ?? ''}`}
+              {mode === 'add' ? 'Register a new physician and clinical profile.' : `Editing credentials for ${doctor?.fullName ?? ''}`}
             </DialogDescription>
           </div>
         </div>

@@ -64,11 +64,11 @@ const DoctorTable = ({
               </tr>
             ) : (
               doctors.map((doc) => (
-                <tr key={doc.doctor_id} className="hover:bg-slate-50/50 transition-colors group">
+                <tr key={doc.doctorId} className="hover:bg-slate-50/50 transition-colors group">
                   {/* ID */}
                   <td className="px-5 py-4">
                     <span className="font-mono text-xs text-slate-400 bg-slate-100 px-2 py-0.5 rounded">
-                      DOC-{String(doc.doctor_id).padStart(4, '0')}
+                      {doc.doctorId.slice(-4).toUpperCase()}
                     </span>
                   </td>
                   {/* Physician */}
@@ -76,11 +76,11 @@ const DoctorTable = ({
                     <div className="flex items-center gap-2.5">
                       <div className="h-8 w-8 rounded-full bg-emerald-100 flex items-center justify-center shrink-0">
                         <span className="text-emerald-700 text-[10px] font-bold">
-                          {doc.full_name.replace('Dr. ', '').split(' ').map((n) => n[0]).join('').slice(0, 2)}
+                          {doc.fullName.replace('Dr. ', '').split(' ').map((n) => n[0]).join('').slice(0, 2)}
                         </span>
                       </div>
                       <div className="min-w-0">
-                        <p className="font-medium text-slate-800 leading-none truncate">{doc.full_name}</p>
+                        <p className="font-medium text-slate-800 leading-none truncate">{doc.fullName}</p>
                         <p className="text-xs text-slate-400 mt-0.5">@{doc.username}</p>
                       </div>
                     </div>
@@ -92,24 +92,24 @@ const DoctorTable = ({
                   {/* License */}
                   <td className="px-5 py-4 hidden lg:table-cell">
                     <span className="font-mono text-xs text-slate-600 bg-slate-50 border border-slate-200 px-2 py-0.5 rounded">
-                      {doc.license_number}
+                      {doc.licenseNumber}
                     </span>
                   </td>
                   {/* Email */}
-                  <td className="px-5 py-4 text-slate-500 text-xs hidden xl:table-cell truncate max-w-[160px]">
+                  <td className="px-5 py-4 text-slate-500 text-xs hidden xl:table-cell truncate max-w-40">
                     {doc.email}
                   </td>
                   {/* Contact */}
                   <td className="px-5 py-4 text-slate-500 hidden xl:table-cell font-mono text-xs">
-                    {doc.contact_number}
+                    {doc.contactNumber}
                   </td>
                   {/* Status */}
                   <td className="px-5 py-4">
-                    <StatusBadge isActive={doc.is_active} />
+                    <StatusBadge isActive={doc.isActive} />
                   </td>
                   {/* Created */}
                   <td className="px-5 py-4 text-slate-400 text-xs hidden lg:table-cell whitespace-nowrap">
-                    {formatDate(doc.created_at)}
+                    {formatDate(doc.createdAt)}
                   </td>
                   {/* Actions */}
                   <td className="px-5 py-4 text-right sticky right-0 bg-white group-hover:bg-slate-50/50 transition-colors">
@@ -133,7 +133,7 @@ const DoctorTable = ({
                         </DropdownMenuItem>
                         <DropdownMenuSeparator />
                         <DropdownMenuItem onClick={() => onToggleStatus(doc)}>
-                          {doc.is_active
+                          {doc.isActive
                             ? <><PowerOff className="h-3.5 w-3.5 text-amber-500" /> Deactivate</>
                             : <><Power className="h-3.5 w-3.5 text-emerald-500" /> Activate</>
                           }

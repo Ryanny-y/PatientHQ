@@ -5,7 +5,7 @@ import AdminDashboard from "@/features/dashboard/AdminDashboard";
 import { type ReactNode, type ReactElement } from "react";
 import DashboardHome from "./features/dashboard/components/DashboardHome";
 import AdminAccountsPage from "./features/adminAccounts/AdminAccountsPage";
-import DoctorAccountsPage from "./features/doctorAccounts/components/DoctorAccountsPage";
+import DoctorAccountsPage from "./features/doctorAccounts/DoctorAccountsPage";
 import NurseAccountsPage from "./features/nurseAccounts/NurseAccountsPage";
 import PatientListPage from "./features/patients/pages/PatientListPage";
 import RegisterPatientPage from "./features/patients/pages/RegisterPatientPage";

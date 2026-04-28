@@ -1,5 +1,5 @@
 import { type ReactElement } from 'react';
-import { Stethoscope, User, Phone, Mail, Calendar, Clock, FileText, Users, CalendarDays } from 'lucide-react';
+import { Stethoscope, User, Phone, Mail, Calendar, FileText } from 'lucide-react';
 import {
   Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter,
 } from '@/components/ui/dialog';
@@ -39,11 +39,11 @@ const ViewDoctorModal = ({ doctor, open, onClose, onEdit }: ViewDoctorModalProps
           <div className="flex items-center gap-3">
             <div className="h-11 w-11 rounded-full bg-emerald-100 flex items-center justify-center shrink-0">
               <span className="text-emerald-700 font-bold text-sm">
-                {doctor.full_name.replace('Dr. ', '').split(' ').map((n) => n[0]).join('').slice(0, 2)}
+                {doctor.fullName.replace('Dr. ', '').split(' ').map((n) => n[0]).join('').slice(0, 2)}
               </span>
             </div>
             <div>
-              <DialogTitle>{doctor.full_name}</DialogTitle>
+              <DialogTitle>{doctor.fullName}</DialogTitle>
               <DialogDescription className="flex items-center gap-2 mt-0.5">
                 <span>@{doctor.username}</span>
                 <span>·</span>
@@ -62,16 +62,16 @@ const ViewDoctorModal = ({ doctor, open, onClose, onEdit }: ViewDoctorModalProps
             </div>
             <div className="space-y-3.5">
               <div className="grid grid-cols-2 gap-3">
-                <Field label="Doctor ID" value={`DOC-${String(doctor.doctor_id).padStart(4, '0')}`} />
-                <Field label="User ID" value={`USR-${String(doctor.user_id).padStart(4, '0')}`} />
+                <Field label="Doctor ID" value={doctor.doctorId} />
+                <Field label="User ID" value={doctor.userId} />
               </div>
               <Field label="Username" value={doctor.username} icon={User} />
-              <Field label="Full Name" value={doctor.full_name} icon={User} />
-              <Field label="Email Address" value={doctor.email} icon={Mail} />
-              <Field label="Contact Number" value={doctor.contact_number} icon={Phone} />
+              <Field label="Full Name" value={doctor.fullName} icon={User} />
+              <Field label="Email Address" value={doctor.email ?? "N/A"} icon={Mail} />
+              <Field label="Contact Number" value={doctor.contactNumber ?? "N/A"} icon={Phone} />
               <div className="grid grid-cols-2 gap-3">
                 <Field label="Specialization" value={doctor.specialization} icon={Stethoscope} />
-                <Field label="License Number" value={doctor.license_number} icon={FileText} />
+                <Field label="License Number" value={doctor.licenseNumber} icon={FileText} />
               </div>
               <div className="grid grid-cols-2 gap-3">
                 <div>
@@ -82,12 +82,12 @@ const ViewDoctorModal = ({ doctor, open, onClose, onEdit }: ViewDoctorModalProps
                 </div>
                 <div>
                   <p className="text-xs text-slate-400 mb-1">Status</p>
-                  <StatusBadge isActive={doctor.is_active} />
+                  <StatusBadge isActive={doctor.isActive} />
                 </div>
               </div>
               <Field
                 label="Created Date"
-                value={new Date(doctor.created_at).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}
+                value={new Date(doctor.createdAt).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}
                 icon={Calendar}
               />
             </div>
@@ -96,7 +96,8 @@ const ViewDoctorModal = ({ doctor, open, onClose, onEdit }: ViewDoctorModalProps
           <div className="border-t border-slate-100" />
 
           {/* Activity Info */}
-          <div>
+          {/* TODO: Add return type for this */}
+          {/* <div>
             <div className="flex items-center gap-2 mb-4">
               <Users className="h-3.5 w-3.5 text-emerald-600" />
               <h4 className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Clinical Activity</h4>
@@ -106,25 +107,25 @@ const ViewDoctorModal = ({ doctor, open, onClose, onEdit }: ViewDoctorModalProps
                 <div className="h-8 w-8 rounded-lg bg-blue-100 flex items-center justify-center mx-auto mb-2">
                   <Users className="h-4 w-4 text-blue-600" />
                 </div>
-                <p className="text-lg font-bold text-slate-800">{doctor.assigned_patients}</p>
+                <p className="text-lg font-bold text-slate-800">{doctor.assigned_patients ?? "N/A"}</p>
                 <p className="text-[10px] text-slate-400 leading-tight">Assigned Patients</p>
               </div>
               <div className="bg-slate-50 rounded-xl p-3 text-center border border-slate-100">
                 <div className="h-8 w-8 rounded-lg bg-violet-100 flex items-center justify-center mx-auto mb-2">
                   <CalendarDays className="h-4 w-4 text-violet-600" />
                 </div>
-                <p className="text-lg font-bold text-slate-800">{doctor.upcoming_appointments}</p>
+                <p className="text-lg font-bold text-slate-800">{doctor.upcoming_appointments ?? "N/A"}</p>
                 <p className="text-[10px] text-slate-400 leading-tight">Upcoming Appts.</p>
               </div>
               <div className="bg-slate-50 rounded-xl p-3 text-center border border-slate-100">
                 <div className="h-8 w-8 rounded-lg bg-emerald-100 flex items-center justify-center mx-auto mb-2">
                   <Clock className="h-4 w-4 text-emerald-600" />
                 </div>
-                <p className="text-xs font-semibold text-slate-700 mt-1">{doctor.last_login}</p>
+                <p className="text-xs font-semibold text-slate-700 mt-1">{doctor.last_login ?? "N/A"}</p>
                 <p className="text-[10px] text-slate-400 leading-tight mt-0.5">Last Login</p>
               </div>
             </div>
-          </div>
+          </div> */}
         </div>
 
         <DialogFooter>
