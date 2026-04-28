@@ -40,9 +40,11 @@ public class AdminController {
 
     @GetMapping
     public ResponseEntity<ApiResponse<PageResponse<AdminDto>>> getAllAdmins(
+            @RequestParam(required = false) Boolean isActive,
+            @RequestParam(required = false) String search,
             Pageable pageable
     ) {
-        Page<Admin> admins = adminService.getAllAdmins(pageable);
+        Page<Admin> admins = adminService.getAllAdmins(isActive, search, pageable);
         List<AdminDto> adminDtos = admins.map(adminMapper::toDto).stream().toList();
 
         PageResponse<AdminDto> pageResponse = PageResponse.<AdminDto>builder()

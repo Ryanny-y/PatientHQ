@@ -65,8 +65,10 @@ public class AdminServiceImpl implements AdminService {
     }
 
     @Override
-    public Page<Admin> getAllAdmins(Pageable pageable) {
-        return adminRepository.findAll(pageable);
+    @Transactional(readOnly = true)
+    public Page<Admin> getAllAdmins(Boolean isActive, String search, Pageable pageable) {
+        String formattedSearch = (search == null) ? null : "%" + search.toLowerCase() + "%";
+        return adminRepository.findAllAdmins(isActive, formattedSearch, pageable);
     }
 
     @Override

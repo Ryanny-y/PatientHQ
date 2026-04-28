@@ -11,7 +11,7 @@ import java.util.UUID;
 public interface AdminService {
     Admin createAdmin(CreateAdminRequest request);
     Admin getAdminById(UUID adminId);
-    Page<Admin> getAllAdmins(Pageable pageable);
+    Page<Admin> getAllAdmins(Boolean isActive, String search, Pageable pageable);
     Admin updateAdmin(UUID adminId, UpdateAdminRequest request);
     void deleteAdmin(UUID adminId);
 }
