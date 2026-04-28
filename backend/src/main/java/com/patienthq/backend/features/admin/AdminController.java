@@ -6,15 +6,17 @@ import com.patienthq.backend.features.admin.dto.AdminDto;
 import com.patienthq.backend.features.admin.model.Admin;
 import com.patienthq.backend.features.admin.service.AdminService;
 import com.patienthq.backend.shared.response.ApiResponse;
+import com.patienthq.backend.shared.response.PageResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/v1/admins")
@@ -37,16 +39,27 @@ public class AdminController {
     }
 
     @GetMapping
-    public ResponseEntity<ApiResponse<List<AdminDto>>> getAllAdmins() {
-        List<AdminDto> admins = adminService.getAllAdmins().stream()
-                .map(adminMapper::toDto)
-                .collect(Collectors.toList());
+    public ResponseEntity<ApiResponse<PageResponse<AdminDto>>> getAllAdmins(
+            Pageable pageable
+    ) {
+        Page<Admin> admins = adminService.getAllAdmins(pageable);
+        List<AdminDto> adminDtos = admins.map(adminMapper::toDto).stream().toList();
+
+        PageResponse<AdminDto> pageResponse = PageResponse.<AdminDto>builder()
+                .content(adminDtos)
+                .page(admins.getNumber())
+                .size(admins.getSize())
+                .totalElements(admins.getTotalElements())
+                .totalPages(admins.getTotalPages())
+                .first(admins.isFirst())
+                .last(admins.isLast())
+                .build();
 
         return ResponseEntity.ok(
-                ApiResponse.<List<AdminDto>>builder()
+                ApiResponse.<PageResponse<AdminDto>>builder()
                         .success(true)
                         .message("Admins retrieved successfully")
-                        .data(admins)
+                        .data(pageResponse)
                         .build()
         );
     }

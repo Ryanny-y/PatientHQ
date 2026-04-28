@@ -1,17 +1,15 @@
 import { z } from 'zod';
 
 export interface AdminAccount {
-  adminId: number;
-  userId: number;
+  adminId: string;
+  userId: string;
   username: string;
   fullName: string;
-  email: string;
-  contactNumber: string;
+  email: string | null;
+  contactNumber: string | null;
+  roleName: string;
   isActive: boolean;
   createdAt: string;
-  // mock security fields
-  last_login: string;
-  // password_last_reset: string;
 }
 
 export type modalMode = 'add' | 'edit' | 'view' | 'reset-password' | 'delete' | null;

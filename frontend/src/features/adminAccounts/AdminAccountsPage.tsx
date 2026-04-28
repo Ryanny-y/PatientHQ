@@ -92,7 +92,7 @@ const AdminAccountsPage = (): ReactElement => {
   };
 
   const handleToggleStatus = async (
-    adminId: number,
+    adminId: string,
     isCurrentlyActive: boolean,
   ): Promise<void> => {
     try {

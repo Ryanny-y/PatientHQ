@@ -61,7 +61,7 @@ export const useAdminAccounts = () => {
         (a) =>
           a.username.toLowerCase().includes(q) ||
           a.fullName.toLowerCase().includes(q) ||
-          a.email.toLowerCase().includes(q),
+          (a.email?.toLowerCase().includes(q) ?? false),
       );
     }
 
