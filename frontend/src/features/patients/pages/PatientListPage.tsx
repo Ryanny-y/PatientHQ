@@ -11,27 +11,16 @@ import PatientCardList from "@/features/patients/components/PatientCardList";
 import ViewPatientDrawer from "@/features/patients/components/ViewPatientDrawer";
 import EditPatientModal from "@/features/patients/components/EditPatientModal";
 import PatientHistoryModal from "@/features/patients/components/PatientHistoryModal";
-import ArchiveConfirmDialog from "@/features/patients/components/ArchiveConfirmDialog";
 
 import type { Patient } from "@/features/patients/types/patient";
-// import { archivePatient } from "@/features/patients/services/patientService";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 
 const PatientListPage = (): ReactElement => {
   const navigate = useNavigate();
 
-  // ✅ hook replaces patient list + most state logic
   const {
     filtered,
-    allFilteredCount,
-    totalCount,
-    activeCount,
-    inactiveCount,
-    page,
-    pageSize,
-    totalPages,
-    setPage,
     refetch,
 
     search,
@@ -49,16 +38,13 @@ const PatientListPage = (): ReactElement => {
     closeModal,
 
     updatePatient,
-    deletePatient,
   } = usePatients();
 
-  // 🔥 extra filters NOT in hook (keep local for now)
+  // extra filters NOT in hook (keep local for now)
   const [genderFilter, setGenderFilter] = useState<string>("all");
   const [bloodTypeFilter, setBloodTypeFilter] = useState<string>("all");
 
-  const [archiveDialogOpen, setArchiveDialogOpen] = useState(false);
-
-  // 🔥 apply additional filters on top of hook result
+  // apply additional filters on top of hook result
   const finalPatients = useMemo(() => {
     let result = filtered;
 
@@ -86,20 +72,6 @@ const PatientListPage = (): ReactElement => {
       toast.success("Patient updated successfully");
     }
   };
-
-  // const handleConfirmArchive = async () => {
-  //   if (!selectedPatient) return;
-
-  //   const res = await archivePatient(selectedPatient.patientId);
-
-  //   if (res.success) {
-  //     toast("Patient archived successfully");
-  //   } else {
-  //     toast(res.message, "error");
-  //   }
-
-  //   setArchiveDialogOpen(false);
-  // };
 
   return (
     <div className="space-y-6">
@@ -149,10 +121,6 @@ const PatientListPage = (): ReactElement => {
           onViewProfile={(p) => openModal("view", p)}
           onEditPatient={(p) => openModal("edit", p)}
           onViewHistory={(p) => openModal("history", p)}
-          onArchivePatient={(p) => {
-            openModal("view", p);
-            setArchiveDialogOpen(true);
-          }}
         />
       </div>
 
@@ -163,10 +131,6 @@ const PatientListPage = (): ReactElement => {
           onViewProfile={(p) => openModal("view", p)}
           onEditPatient={(p) => openModal("edit", p)}
           onViewHistory={(p) => openModal("history", p)}
-          onArchivePatient={(p) => {
-            openModal("view", p);
-            setArchiveDialogOpen(true);
-          }}
         />
       </div>
 
@@ -191,14 +155,6 @@ const PatientListPage = (): ReactElement => {
         open={modalMode === "history"}
         onClose={closeModal}
       />
-
-      {/* Archive */}
-      {/* <ArchiveConfirmDialog
-        patient={selectedPatient}
-        open={archiveDialogOpen}
-        onClose={() => setArchiveDialogOpen(false)}
-        onConfirm={handleConfirmArchive}
-      /> */}
     </div>
   );
 };

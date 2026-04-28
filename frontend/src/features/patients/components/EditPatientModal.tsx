@@ -1,7 +1,6 @@
 import { type ReactElement, useEffect } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
 import {
   Dialog,
   DialogContent,
@@ -20,29 +19,8 @@ import {
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { FormField } from "@/features/adminAccounts/components/FormField";
-import type { Patient } from "@/features/patients/types/patient";
-
-const editPatientSchema = z.object({
-  fullName: z.string().min(2, "Full name must be at least 2 characters"),
-  dateOfBirth: z.string().min(1, "Date of birth is required"),
-  gender: z.enum(["Male", "Female", "Other"]),
-  contactNumber: z
-    .string()
-    .min(10, "Contact number must be at least 10 digits"),
-  email: z.string().email("Please enter a valid email"),
-  address: z.string().min(5, "Address must be at least 5 characters"),
-  bloodType: z.enum(["A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-"]),
-  allergies: z.string(),
-  emergencyContactName: z
-    .string()
-    .min(2, "Emergency contact name is required"),
-  emergencyContactNumber: z
-    .string()
-    .min(10, "Emergency contact number must be at least 10 digits"),
-  status: z.enum(["ACTIVE", "ADMITTED", "DISCHARGED", "INACTIVE"]),
-});
-
-type editPatientFormValues = z.infer<typeof editPatientSchema>;
+import { editPatientSchema, type editPatientFormValues, type Patient } from "@/features/patients/types/patient";
+import { EditIcon } from "lucide-react";
 
 interface EditPatientModalProps {
   patient: Patient | null;
@@ -113,8 +91,9 @@ const EditPatientModal = ({
 
   return (
     <Dialog open={open} onOpenChange={onClose}>
-      <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
-        <DialogHeader>
+      <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto px-6">
+        <DialogHeader className="flex items-center gap-2 pl-0">
+          <EditIcon />
           <DialogTitle>Edit Patient Information</DialogTitle>
         </DialogHeader>
 
@@ -150,8 +129,8 @@ const EditPatientModal = ({
                       <SelectValue placeholder="Select gender" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="Male">Male</SelectItem>
-                      <SelectItem value="Female">Female</SelectItem>
+                      <SelectItem value="MALE">Male</SelectItem>
+                      <SelectItem value="FEMALE">Female</SelectItem>
                     </SelectContent>
                   </Select>
                 )}

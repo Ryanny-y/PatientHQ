@@ -1,20 +1,29 @@
-import { type ReactElement } from 'react';
-import { MoreVertical, Eye, Edit, History, Archive } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
-import type { Patient } from '@/features/patients/types/patient';
-import StatusBadge from '@/features/patients/components/StatusBadge';
-import { calculateAge } from '@/features/patients/utils/patientUtils';
+import { type ReactElement } from "react";
+import { MoreVertical, Eye, Edit, History } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import type { Patient } from "@/features/patients/types/patient";
+import StatusBadge from "@/features/patients/components/StatusBadge";
+import { calculateAge } from "@/features/patients/utils/patientUtils";
 
 interface PatientCardListProps {
   patients: Patient[];
   onViewProfile: (patient: Patient) => void;
   onEditPatient: (patient: Patient) => void;
   onViewHistory: (patient: Patient) => void;
-  onArchivePatient: (patient: Patient) => void;
 }
 
-const PatientCardList = ({ patients, onViewProfile, onEditPatient, onViewHistory, onArchivePatient }: PatientCardListProps): ReactElement => {
+const PatientCardList = ({
+  patients,
+  onViewProfile,
+  onEditPatient,
+  onViewHistory,
+}: PatientCardListProps): ReactElement => {
   if (patients.length === 0) {
     return (
       <div className="bg-white rounded-xl border border-slate-100 p-8 text-center text-slate-500">
@@ -26,10 +35,15 @@ const PatientCardList = ({ patients, onViewProfile, onEditPatient, onViewHistory
   return (
     <div className="space-y-3">
       {patients.map((patient) => (
-        <div key={patient.patientId} className="bg-white rounded-xl border border-slate-100 p-4 shadow-sm">
+        <div
+          key={patient.patientId}
+          className="bg-white rounded-xl border border-slate-100 p-4 shadow-sm"
+        >
           <div className="flex items-start justify-between mb-3">
             <div>
-              <h3 className="font-semibold text-slate-900">{patient.fullName}</h3>
+              <h3 className="font-semibold text-slate-900">
+                {patient.fullName}
+              </h3>
               <p className="text-sm text-blue-600">#{patient.patientId}</p>
             </div>
             <DropdownMenu>
@@ -51,11 +65,6 @@ const PatientCardList = ({ patients, onViewProfile, onEditPatient, onViewHistory
                   <History className="mr-2 h-4 w-4" />
                   View History
                 </DropdownMenuItem>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem onClick={() => onArchivePatient(patient)} className="text-red-600">
-                  <Archive className="mr-2 h-4 w-4" />
-                  Archive Patient
-                </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
           </div>
@@ -67,7 +76,9 @@ const PatientCardList = ({ patients, onViewProfile, onEditPatient, onViewHistory
             </div>
             <div className="flex items-center justify-between text-sm">
               <span className="text-slate-500">Age / Gender:</span>
-              <span className="font-medium">{calculateAge(patient.dateOfBirth)} / {patient.gender}</span>
+              <span className="font-medium">
+                {calculateAge(patient.dateOfBirth)} / {patient.gender}
+              </span>
             </div>
             <div className="flex items-center justify-between text-sm">
               <span className="text-slate-500">Blood Type:</span>
@@ -77,7 +88,9 @@ const PatientCardList = ({ patients, onViewProfile, onEditPatient, onViewHistory
             </div>
             <div className="flex items-center justify-between text-sm">
               <span className="text-slate-500">Assigned Doctor:</span>
-              <span className="font-medium text-right">{patient.assignedDoctor || 'Unassigned'}</span>
+              <span className="font-medium text-right">
+                {patient.assignedDoctor || "Unassigned"}
+              </span>
             </div>
           </div>
         </div>

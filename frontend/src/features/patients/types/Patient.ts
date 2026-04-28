@@ -10,7 +10,8 @@ export interface PatientHistoryEvent {
 import { z } from "zod";
 
 export type patientStatus = "ACTIVE" | "ADMITTED" | "DISCHARGED" | "INACTIVE";
-export type patientGender = "Male" | "Female" | "Other";
+export const patientGenders = ["MALE", "FEMALE"] as const;
+export type patientGender = (typeof patientGenders)[number];
 export type bloodType = "A+" | "A-" | "B+" | "B-" | "AB+" | "AB-" | "O+" | "O-";
 
 export interface Patient {
@@ -44,7 +45,7 @@ export interface PatientHistoryEvent {
     | "discharge";
 }
 
-export type patientModalMode = "view" | "edit" | "history" | "archive" | null;
+export type patientModalMode = "view" | "edit" | "history" | null;
 
 export const bloodtypeS: bloodType[] = [
   "A+",
@@ -56,7 +57,6 @@ export const bloodtypeS: bloodType[] = [
   "O+",
   "O-",
 ];
-export const GENDERS: patientGender[] = ["Male", "Female", "Other"];
 
 export type patientStatusFilter =
   | "all"
@@ -84,7 +84,7 @@ export const addPatientSchema = z.object({
     },
     { message: "Enter a valid date of birth" },
   ),
-  gender: z.enum(["MALE", "FEMALE"] as const),
+  gender: z.enum(patientGenders),
   contactNumber: z
     .string()
     .transform((value) => value.replace(/\D/g, ""))
@@ -116,7 +116,7 @@ export type addPatientFormValues = z.infer<typeof addPatientSchema>;
 export const editPatientSchema = z.object({
   fullName: z.string().min(2, "Full name is required"),
   dateOfBirth: z.string().min(1, "Date of birth is required"),
-  gender: z.enum(["Male", "Female", "Other"]),
+  gender: z.enum(patientGenders),
   contactNumber: z
     .string()
     .min(7, "Enter a valid contact number")
@@ -136,4 +136,9 @@ export const editPatientSchema = z.object({
 export type editPatientFormValues = z.infer<typeof editPatientSchema>;
 
 // ── Shared ─────────────────────────────────────────────────────────────────
-export type statusFilter = 'all' | 'active' | 'inactive' | 'admitted' | 'discharged';
+export type statusFilter =
+  | "all"
+  | "active"
+  | "inactive"
+  | "admitted"
+  | "discharged";
