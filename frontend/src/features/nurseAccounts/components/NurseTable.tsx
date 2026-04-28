@@ -64,44 +64,44 @@ const NurseTable = ({
               </tr>
             ) : (
               nurses.map((nurse) => (
-                <tr key={nurse.nurse_id} className="hover:bg-slate-50/50 transition-colors group">
+                <tr key={nurse.nurseId} className="hover:bg-slate-50/50 transition-colors group">
                   <td className="px-5 py-4">
                     <span className="font-mono text-xs text-slate-400 bg-slate-100 px-2 py-0.5 rounded">
-                      NRS-{String(nurse.nurse_id).padStart(4, '0')}
+                      NRS-{String(nurse.nurseId).padStart(4, '0')}
                     </span>
                   </td>
                   <td className="px-5 py-4">
                     <div className="flex items-center gap-2.5">
                       <div className="h-8 w-8 rounded-full bg-violet-100 flex items-center justify-center shrink-0">
                         <span className="text-violet-700 text-[10px] font-bold">
-                          {nurse.full_name.split(' ').filter((p) => !p.includes(',')).map((n) => n[0]).join('').slice(0, 2).toUpperCase()}
+                          {nurse.fullName.split(' ').filter((p) => !p.includes(',')).map((n) => n[0]).join('').slice(0, 2).toUpperCase()}
                         </span>
                       </div>
                       <div className="min-w-0">
-                        <p className="font-medium text-slate-800 leading-none truncate">{nurse.full_name}</p>
+                        <p className="font-medium text-slate-800 leading-none truncate">{nurse.fullName}</p>
                         <p className="text-xs text-slate-400 mt-0.5">@{nurse.username}</p>
                       </div>
                     </div>
                   </td>
                   <td className="px-5 py-4">
-                    <WardBadge ward={nurse.assigned_ward} />
+                    <WardBadge ward={nurse.assignedWard} />
                   </td>
                   <td className="px-5 py-4 hidden lg:table-cell">
                     <span className="font-mono text-xs text-slate-600 bg-slate-50 border border-slate-200 px-2 py-0.5 rounded">
-                      {nurse.license_number}
+                      {nurse.licenseNumber}
                     </span>
                   </td>
-                  <td className="px-5 py-4 text-slate-500 text-xs hidden xl:table-cell truncate max-w-[160px]">
+                  <td className="px-5 py-4 text-slate-500 text-xs hidden xl:table-cell truncate max-w-40">
                     {nurse.email}
                   </td>
                   <td className="px-5 py-4 text-slate-500 hidden xl:table-cell font-mono text-xs">
-                    {nurse.contact_number}
+                    {nurse.contactNumber}
                   </td>
                   <td className="px-5 py-4">
-                    <StatusBadge isActive={nurse.is_active} />
+                    <StatusBadge isActive={nurse.isActive} />
                   </td>
                   <td className="px-5 py-4 text-slate-400 text-xs hidden lg:table-cell whitespace-nowrap">
-                    {formatDate(nurse.created_at)}
+                    {formatDate(nurse.createdAt)}
                   </td>
                   <td className="px-5 py-4 text-right sticky right-0 bg-white group-hover:bg-slate-50/50 transition-colors">
                     <DropdownMenu>
@@ -124,18 +124,18 @@ const NurseTable = ({
                         </DropdownMenuItem>
                         <DropdownMenuSeparator />
                         <DropdownMenuItem onClick={() => onToggleStatus(nurse)}>
-                          {nurse.is_active
+                          {nurse.isActive
                             ? <><PowerOff className="h-3.5 w-3.5 text-amber-500" /> Deactivate</>
                             : <><Power className="h-3.5 w-3.5 text-emerald-500" /> Activate</>
                           }
                         </DropdownMenuItem>
                         <DropdownMenuItem
                           onClick={() => onDelete(nurse)}
-                          disabled={nurse.is_active && nurse.patients_monitored_today > 0}
+                          disabled={nurse.isActive && nurse.patients_monitored_today > 0}
                           className="text-red-600 focus:text-red-700 focus:bg-red-50 disabled:opacity-40"
                         >
                           <Trash2 className="h-3.5 w-3.5" />
-                          {nurse.is_active && nurse.patients_monitored_today > 0
+                          {nurse.isActive && nurse.patients_monitored_today > 0
                             ? 'Has active patients'
                             : 'Delete Account'}
                         </DropdownMenuItem>

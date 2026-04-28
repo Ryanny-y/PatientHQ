@@ -39,14 +39,14 @@ const AddNurseForm = ({ onClose, onSubmit }: AddFormProps): ReactElement => {
   const { register, handleSubmit, setValue, watch, formState: { errors } } = useForm<addNurseFormValues>({
     resolver: zodResolver(addNurseSchema),
     defaultValues: {
-      username: '', password: '', confirm_password: '',
-      full_name: '', assigned_ward: '', license_number: '',
-      email: '', contact_number: '', is_active: true,
+      username: '', password: '', confirmPassword: '',
+      fullName: '', assignedWard: '', licenseNumber: '',
+      email: '', contactNumber: '', isActive: true,
     },
   });
 
-  const isActive = watch('is_active');
-  const assignedWard = watch('assigned_ward');
+  const isActive = watch('isActive');
+  const assignedWard = watch('assignedWard');
 
   const submit = async (values: addNurseFormValues): Promise<void> => {
     setIsSubmitting(true);
@@ -73,10 +73,10 @@ const AddNurseForm = ({ onClose, onSubmit }: AddFormProps): ReactElement => {
             </button>
           </div>
         </FormField>
-        <FormField label="Confirm Password" error={errors.confirm_password?.message} required>
+        <FormField label="Confirm Password" error={errors.confirmPassword?.message} required>
           <div className="relative">
             <Input type={showConfirm ? 'text' : 'password'} placeholder="Re-enter"
-              className={cn('pr-9', errors.confirm_password && 'border-red-400')} {...register('confirm_password')} />
+              className={cn('pr-9', errors.confirmPassword && 'border-red-400')} {...register('confirmPassword')} />
             <button type="button" tabIndex={-1} onClick={() => setShowConfirm((v) => !v)}
               className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600">
               {showConfirm ? <EyeOff className="h-3.5 w-3.5" /> : <Eye className="h-3.5 w-3.5" />}
@@ -86,30 +86,30 @@ const AddNurseForm = ({ onClose, onSubmit }: AddFormProps): ReactElement => {
       </div>
 
       <SectionLabel>Nurse Profile</SectionLabel>
-      <FormField label="Full Name" error={errors.full_name?.message} required>
-        <Input placeholder="e.g. Angela Cruz, RN" className={cn(errors.full_name && 'border-red-400')} {...register('full_name')} />
+      <FormField label="Full Name" error={errors.fullName?.message} required>
+        <Input placeholder="e.g. Angela Cruz, RN" className={cn(errors.fullName && 'border-red-400')} {...register('fullName')} />
       </FormField>
       <div className="grid grid-cols-2 gap-3">
-        <FormField label="Assigned Ward" error={errors.assigned_ward?.message} required>
-          <Select value={assignedWard} onValueChange={(v) => setValue('assigned_ward', v)}>
-            <SelectTrigger className={cn('h-10 text-sm', errors.assigned_ward && 'border-red-400')}>
+        <FormField label="Assigned Ward" error={errors.assignedWard?.message} required>
+          <Select value={assignedWard} onValueChange={(v) => setValue('assignedWard', v)}>
+            <SelectTrigger className={cn('h-10 text-sm', errors.assignedWard && 'border-red-400')}>
               <SelectValue placeholder="Select ward..." />
             </SelectTrigger>
-            <SelectContent>
+            <SelectContent position='item-aligned'>
               {WARDS.map((w) => <SelectItem key={w} value={w}>{w}</SelectItem>)}
             </SelectContent>
           </Select>
         </FormField>
-        <FormField label="License Number" error={errors.license_number?.message} required>
-          <Input placeholder="RN-YYYY-XXXX" className={cn(errors.license_number && 'border-red-400')} {...register('license_number')} />
+        <FormField label="License Number" error={errors.licenseNumber?.message} required>
+          <Input placeholder="RN-YYYY-XXXX" className={cn(errors.licenseNumber && 'border-red-400')} {...register('licenseNumber')} />
         </FormField>
       </div>
       <div className="grid grid-cols-2 gap-3">
         <FormField label="Email Address" error={errors.email?.message} required>
           <Input type="email" placeholder="nurse@hospital.com" className={cn(errors.email && 'border-red-400')} {...register('email')} />
         </FormField>
-        <FormField label="Contact Number" error={errors.contact_number?.message} required>
-          <Input placeholder="09XXXXXXXXX" className={cn(errors.contact_number && 'border-red-400')} {...register('contact_number')} />
+        <FormField label="Contact Number" error={errors.contactNumber?.message} required>
+          <Input placeholder="09XXXXXXXXX" className={cn(errors.contactNumber && 'border-red-400')} {...register('contactNumber')} />
         </FormField>
       </div>
 
@@ -129,7 +129,7 @@ const AddNurseForm = ({ onClose, onSubmit }: AddFormProps): ReactElement => {
             {isActive ? 'Nurse can log in and access ward modules.' : 'Operational access is currently disabled.'}
           </p>
         </div>
-        <Switch checked={isActive} onCheckedChange={(v) => setValue('is_active', v)} />
+        <Switch checked={isActive} onCheckedChange={(v) => setValue('isActive', v)} />
       </div>
 
       <div className="flex items-center justify-end gap-3 pt-2">
@@ -156,22 +156,22 @@ const EditNurseForm = ({ nurse, onClose, onSubmit }: EditFormProps): ReactElemen
   const { register, handleSubmit, setValue, watch, reset, formState: { errors } } = useForm<editNurseFormValues>({
     resolver: zodResolver(editNurseSchema),
     defaultValues: {
-      username: nurse.username, full_name: nurse.full_name,
-      assigned_ward: nurse.assigned_ward, license_number: nurse.license_number,
-      email: nurse.email, contact_number: nurse.contact_number, is_active: nurse.is_active,
+      username: nurse.username, fullName: nurse.fullName,
+      assignedWard: nurse.assignedWard, licenseNumber: nurse.licenseNumber,
+      email: nurse.email, contactNumber: nurse.contactNumber, isActive: nurse.isActive,
     },
   });
 
   useEffect(() => {
     reset({
-      username: nurse.username, full_name: nurse.full_name,
-      assigned_ward: nurse.assigned_ward, license_number: nurse.license_number,
-      email: nurse.email, contact_number: nurse.contact_number, is_active: nurse.is_active,
+      username: nurse.username, fullName: nurse.fullName,
+      assignedWard: nurse.assignedWard, licenseNumber: nurse.licenseNumber,
+      email: nurse.email, contactNumber: nurse.contactNumber, isActive: nurse.isActive,
     });
   }, [nurse, reset]);
 
-  const isActive = watch('is_active');
-  const assignedWard = watch('assigned_ward');
+  const isActive = watch('isActive');
+  const assignedWard = watch('assignedWard');
 
   const submit = async (values: editNurseFormValues): Promise<void> => {
     setIsSubmitting(true);
@@ -187,13 +187,13 @@ const EditNurseForm = ({ nurse, onClose, onSubmit }: EditFormProps): ReactElemen
       <FormField label="Username" error={errors.username?.message} required>
         <Input placeholder="e.g. nursecruz" className={cn(errors.username && 'border-red-400')} {...register('username')} />
       </FormField>
-      <FormField label="Full Name" error={errors.full_name?.message} required>
-        <Input placeholder="e.g. Angela Cruz, RN" className={cn(errors.full_name && 'border-red-400')} {...register('full_name')} />
+      <FormField label="Full Name" error={errors.fullName?.message} required>
+        <Input placeholder="e.g. Angela Cruz, RN" className={cn(errors.fullName && 'border-red-400')} {...register('fullName')} />
       </FormField>
       <div className="grid grid-cols-2 gap-3">
-        <FormField label="Assigned Ward" error={errors.assigned_ward?.message} required>
-          <Select value={assignedWard} onValueChange={(v) => setValue('assigned_ward', v)}>
-            <SelectTrigger className={cn('h-10 text-sm', errors.assigned_ward && 'border-red-400')}>
+        <FormField label="Assigned Ward" error={errors.assignedWard?.message} required>
+          <Select value={assignedWard} onValueChange={(v) => setValue('assignedWard', v)}>
+            <SelectTrigger className={cn('h-10 text-sm', errors.assignedWard && 'border-red-400')}>
               <SelectValue placeholder="Select ward..." />
             </SelectTrigger>
             <SelectContent>
@@ -201,16 +201,16 @@ const EditNurseForm = ({ nurse, onClose, onSubmit }: EditFormProps): ReactElemen
             </SelectContent>
           </Select>
         </FormField>
-        <FormField label="License Number" error={errors.license_number?.message} required>
-          <Input placeholder="RN-YYYY-XXXX" className={cn(errors.license_number && 'border-red-400')} {...register('license_number')} />
+        <FormField label="License Number" error={errors.licenseNumber?.message} required>
+          <Input placeholder="RN-YYYY-XXXX" className={cn(errors.licenseNumber && 'border-red-400')} {...register('licenseNumber')} />
         </FormField>
       </div>
       <div className="grid grid-cols-2 gap-3">
         <FormField label="Email Address" error={errors.email?.message} required>
           <Input type="email" placeholder="nurse@hospital.com" className={cn(errors.email && 'border-red-400')} {...register('email')} />
         </FormField>
-        <FormField label="Contact Number" error={errors.contact_number?.message} required>
-          <Input placeholder="09XXXXXXXXX" className={cn(errors.contact_number && 'border-red-400')} {...register('contact_number')} />
+        <FormField label="Contact Number" error={errors.contactNumber?.message} required>
+          <Input placeholder="09XXXXXXXXX" className={cn(errors.contactNumber && 'border-red-400')} {...register('contactNumber')} />
         </FormField>
       </div>
 
@@ -230,7 +230,7 @@ const EditNurseForm = ({ nurse, onClose, onSubmit }: EditFormProps): ReactElemen
             {isActive ? 'Nurse can log in and access ward modules.' : 'Operational access is currently disabled.'}
           </p>
         </div>
-        <Switch checked={isActive} onCheckedChange={(v) => setValue('is_active', v)} />
+        <Switch checked={isActive} onCheckedChange={(v) => setValue('isActive', v)} />
       </div>
 
       <div className="flex items-center justify-end gap-3 pt-2">
@@ -265,7 +265,7 @@ const NurseFormModal = ({ mode, nurse, open, onClose, onSubmitAdd, onSubmitEdit 
           <div>
             <DialogTitle>{mode === 'add' ? 'Create Nurse Account' : 'Edit Nurse Account'}</DialogTitle>
             <DialogDescription>
-              {mode === 'add' ? 'Register a new nurse and ward assignment.' : `Editing credentials for ${nurse?.full_name ?? ''}`}
+              {mode === 'add' ? 'Register a new nurse and ward assignment.' : `Editing credentials for ${nurse?.fullName ?? ''}`}
             </DialogDescription>
           </div>
         </div>

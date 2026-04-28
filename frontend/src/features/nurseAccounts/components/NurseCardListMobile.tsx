@@ -28,16 +28,16 @@ const NurseCardListMobile = ({
       </div>
     )}
     {nurses.map((nurse) => (
-      <div key={nurse.nurse_id} className="bg-white rounded-xl border border-slate-100 shadow-sm p-4">
+      <div key={nurse.nurseId} className="bg-white rounded-xl border border-slate-100 shadow-sm p-4">
         <div className="flex items-start justify-between gap-3">
           <div className="flex items-center gap-3">
             <div className="h-10 w-10 rounded-full bg-violet-100 flex items-center justify-center shrink-0">
               <span className="text-violet-700 text-sm font-bold">
-                {nurse.full_name.split(' ').filter((p) => !p.includes(',')).map((n) => n[0]).join('').slice(0, 2).toUpperCase()}
+                {nurse.fullName.split(' ').filter((p) => !p.includes(',')).map((n) => n[0]).join('').slice(0, 2).toUpperCase()}
               </span>
             </div>
             <div>
-              <p className="text-sm font-semibold text-slate-800 mb-0.5">{nurse.full_name}</p>
+              <p className="text-sm font-semibold text-slate-800 mb-0.5">{nurse.fullName}</p>
               <p className="text-xs text-slate-400">@{nurse.username}</p>
             </div>
           </div>
@@ -59,18 +59,18 @@ const NurseCardListMobile = ({
               </DropdownMenuItem>
               <DropdownMenuSeparator />
               <DropdownMenuItem onClick={() => onToggleStatus(nurse)}>
-                {nurse.is_active
+                {nurse.isActive
                   ? <><PowerOff className="h-3.5 w-3.5 text-amber-500" /> Deactivate</>
                   : <><Power className="h-3.5 w-3.5 text-emerald-500" /> Activate</>
                 }
               </DropdownMenuItem>
               <DropdownMenuItem
                 onClick={() => onDelete(nurse)}
-                disabled={nurse.is_active && nurse.patients_monitored_today > 0}
+                disabled={nurse.isActive && nurse.patients_monitored_today > 0}
                 className="text-red-600 focus:text-red-700 focus:bg-red-50"
               >
                 <Trash2 className="h-3.5 w-3.5" />
-                {nurse.is_active && nurse.patients_monitored_today > 0 ? 'Has active patients' : 'Delete'}
+                {nurse.isActive && nurse.patients_monitored_today > 0 ? 'Has active patients' : 'Delete'}
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
@@ -78,8 +78,8 @@ const NurseCardListMobile = ({
 
         <div className="mt-3 pt-3 border-t border-slate-50 space-y-2">
           <div className="flex items-center justify-between">
-            <WardBadge ward={nurse.assigned_ward} />
-            <StatusBadge isActive={nurse.is_active} />
+            <WardBadge ward={nurse.assignedWard} />
+            <StatusBadge isActive={nurse.isActive} />
           </div>
           <div className="grid grid-cols-2 gap-2 text-xs">
             <div>
@@ -88,7 +88,7 @@ const NurseCardListMobile = ({
             </div>
             <div>
               <p className="text-slate-400 mb-0.5">License</p>
-              <p className="text-slate-600 font-mono">{nurse.license_number}</p>
+              <p className="text-slate-600 font-mono">{nurse.licenseNumber}</p>
             </div>
           </div>
         </div>

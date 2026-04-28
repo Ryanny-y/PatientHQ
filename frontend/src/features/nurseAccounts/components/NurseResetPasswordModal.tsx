@@ -68,10 +68,10 @@ const NurseResetPasswordModal = ({ nurse, open, onClose, onSubmit }: NurseResetP
             </div>
           </FormField>
 
-          <FormField label="Confirm Password" error={errors.confirm_password?.message} required>
+          <FormField label="Confirm Password" error={errors.confirmPassword?.message} required>
             <div className="relative">
               <Input type={showConfirm ? 'text' : 'password'} placeholder="Re-enter new password"
-                className={cn('pr-9', errors.confirm_password && 'border-red-400')} {...register('confirm_password')} />
+                className={cn('pr-9', errors.confirmPassword && 'border-red-400')} {...register('confirmPassword')} />
               <button type="button" tabIndex={-1} onClick={() => setShowConfirm((v) => !v)}
                 className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600">
                 {showConfirm ? <EyeOff className="h-3.5 w-3.5" /> : <Eye className="h-3.5 w-3.5" />}

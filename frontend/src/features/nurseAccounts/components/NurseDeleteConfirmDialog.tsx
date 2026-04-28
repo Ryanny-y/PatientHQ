@@ -17,7 +17,7 @@ const NurseDeleteConfirmDialog = ({ nurse, open, onClose, onConfirm }: NurseDele
   const [isDeleting, setIsDeleting] = useState(false);
 
   // Block deletion if nurse has active patients today
-  const hasActivePatients = (nurse?.is_active ?? false) && (nurse?.patients_monitored_today ?? 0) > 0;
+  const hasActivePatients = (nurse?.isActive ?? false) && (nurse?.patients_monitored_today ?? 0) > 0;
 
   const handleConfirm = async (): Promise<void> => {
     if (hasActivePatients) return;
@@ -46,12 +46,12 @@ const NurseDeleteConfirmDialog = ({ nurse, open, onClose, onConfirm }: NurseDele
               <p className="text-sm text-slate-500 mt-1">
                 {hasActivePatients
                   ? <>
-                      <span className="font-semibold text-slate-700">{nurse?.full_name}</span> currently has{' '}
+                      <span className="font-semibold text-slate-700">{nurse?.fullName}</span> currently has{' '}
                       <span className="font-semibold text-amber-700">{nurse?.patients_monitored_today} active patient(s)</span> assigned today.
                     </>
                   : <>
                       You are about to permanently delete{' '}
-                      <span className="font-semibold text-slate-700">{nurse?.full_name}</span>
+                      <span className="font-semibold text-slate-700">{nurse?.fullName}</span>
                       {' '}(@{nurse?.username}).
                     </>
                 }
