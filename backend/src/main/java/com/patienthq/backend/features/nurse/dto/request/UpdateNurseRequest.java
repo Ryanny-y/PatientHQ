@@ -12,15 +12,19 @@ import lombok.NoArgsConstructor;
 @Builder
 public class UpdateNurseRequest {
 
+    @NotBlank(message = "Username must not be empty.")
     @Size(max = 100, message = "Username must not exceed 100 characters.")
     private String username;
 
+    @NotBlank(message = "Full Name must not be empty.")
     @Size(max = 100, message = "Full name must not exceed 100 characters")
     private String fullName;
 
+    @NotBlank(message = "Assigned ward must not be empty.")
     @Size(max = 100, message = "Assigned ward must not exceed 100 characters")
     private String assignedWard;
 
+    @NotBlank(message = "License number must not be empty.")
     @Size(max = 100, message = "License number must not exceed 100 characters")
     private String licenseNumber;
 

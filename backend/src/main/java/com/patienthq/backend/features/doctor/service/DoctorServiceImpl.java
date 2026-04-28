@@ -78,14 +78,17 @@ public class DoctorServiceImpl implements DoctorService {
 
     @Transactional(readOnly = true)
     public Doctor getDoctorById(UUID id) {
-        Doctor doctor = doctorRepository.findById(id)
+        return doctorRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Doctor not found with id: " + id));
-        return doctor;
     }
 
     @Transactional
     public Doctor updateDoctor(UUID id, UpdateDoctorRequest request) {
         Doctor doctor = findDoctorById(id);
+
+        if(request.getUsername() != null) {
+            doctor.getUser().setUsername(request.getUsername());
+        }
 
         // Update Fields
         if (request.getFullName() != null) {
