@@ -11,6 +11,8 @@ import com.patienthq.backend.features.user.repository.RoleRepository;
 import com.patienthq.backend.features.user.repository.UserRepository;
 import com.patienthq.backend.shared.exceptions.AppException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -70,8 +72,8 @@ public class DoctorServiceImpl implements DoctorService {
     }
 
     @Transactional(readOnly = true)
-    public List<Doctor> getAllDoctors() {
-        return doctorRepository.findAll();
+    public Page<Doctor> getAllDoctors(Pageable pageable) {
+        return doctorRepository.findAll(pageable);
     }
 
     @Transactional(readOnly = true)

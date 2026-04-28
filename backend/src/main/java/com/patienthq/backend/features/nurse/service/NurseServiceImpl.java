@@ -10,12 +10,13 @@ import com.patienthq.backend.features.user.repository.RoleRepository;
 import com.patienthq.backend.features.user.repository.UserRepository;
 import com.patienthq.backend.shared.exceptions.AppException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -70,8 +71,8 @@ public class NurseServiceImpl implements NurseService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<Nurse> getAllNurses() {
-        return nurseRepository.findAll();
+    public Page<Nurse> getAllNurses(Pageable pageable) {
+        return nurseRepository.findAll(pageable);
     }
 
     @Override

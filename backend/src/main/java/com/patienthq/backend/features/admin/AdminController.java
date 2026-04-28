@@ -32,7 +32,7 @@ public class AdminController {
         return ResponseEntity.status(HttpStatus.CREATED).body(
                 ApiResponse.<AdminDto>builder()
                         .success(true)
-                        .message("Admin created successfully")
+                        .message("Admin account created successfully.")
                         .data(adminMapper.toDto(admin))
                         .build()
         );
@@ -58,7 +58,7 @@ public class AdminController {
         return ResponseEntity.ok(
                 ApiResponse.<PageResponse<AdminDto>>builder()
                         .success(true)
-                        .message("Admins retrieved successfully")
+                        .message("Admins accounts retrieved successfully.")
                         .data(pageResponse)
                         .build()
         );
@@ -70,7 +70,7 @@ public class AdminController {
         return ResponseEntity.ok(
                 ApiResponse.<AdminDto>builder()
                         .success(true)
-                        .message("Admin retrieved successfully")
+                        .message("Admin account retrieved successfully.")
                         .data(adminMapper.toDto(admin))
                         .build()
         );
@@ -84,7 +84,7 @@ public class AdminController {
         return ResponseEntity.ok(
                 ApiResponse.<AdminDto>builder()
                         .success(true)
-                        .message("Admin updated successfully")
+                        .message("Admin account updated successfully.")
                         .data(adminMapper.toDto(admin))
                         .build()
         );
@@ -96,7 +96,7 @@ public class AdminController {
         return ResponseEntity.ok(
                 ApiResponse.<Void>builder()
                         .success(true)
-                        .message("Admin deleted successfully")
+                        .message("Admin account deleted successfully.")
                         .data(null)
                         .build()
         );

@@ -1,13 +1,18 @@
 package com.patienthq.backend.features.patient;
 
+import com.patienthq.backend.features.nurse.dto.NurseDto;
+import com.patienthq.backend.features.nurse.model.Nurse;
 import com.patienthq.backend.features.patient.dto.PatientDto;
 import com.patienthq.backend.features.patient.dto.request.CreatePatientRequest;
 import com.patienthq.backend.features.patient.dto.request.UpdatePatientRequest;
 import com.patienthq.backend.features.patient.model.Patient;
 import com.patienthq.backend.features.patient.service.PatientService;
 import com.patienthq.backend.shared.response.ApiResponse;
+import com.patienthq.backend.shared.response.PageResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -40,17 +45,27 @@ public class PatientController {
     }
 
     @GetMapping
-    public ResponseEntity<ApiResponse<List<PatientDto>>> getAllPatients() {
-        List<PatientDto> patients = patientService.getAllPatients()
-                .stream()
-                .map(patientMapper::toDto)
-                .collect(Collectors.toList());
+    public ResponseEntity<ApiResponse<PageResponse<PatientDto>>> getAllPatients(
+            Pageable pageable
+    ) {
+        Page<Patient> patients = patientService.getAllPatients(pageable);
+
+        List<PatientDto> patientsDto = patients.map(patientMapper::toDto).stream().toList();
+        PageResponse<PatientDto> pageResponse = PageResponse.<PatientDto>builder()
+                .content(patientsDto)
+                .page(patients.getNumber())
+                .size(patients.getSize())
+                .totalElements(patients.getTotalElements())
+                .totalPages(patients.getTotalPages())
+                .first(patients.isFirst())
+                .last(patients.isLast())
+                .build();
 
         return ResponseEntity.ok(
-                ApiResponse.<List<PatientDto>>builder()
+                ApiResponse.<PageResponse<PatientDto>>builder()
                         .success(true)
                         .message("Patients retrieved successfully")
-                        .data(patients)
+                        .data(pageResponse)
                         .build()
         );
     }

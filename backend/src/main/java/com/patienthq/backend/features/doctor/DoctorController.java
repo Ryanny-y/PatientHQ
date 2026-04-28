@@ -1,13 +1,17 @@
 package com.patienthq.backend.features.doctor;
 
+import com.patienthq.backend.features.admin.dto.AdminDto;
 import com.patienthq.backend.features.doctor.dto.DoctorDto;
 import com.patienthq.backend.features.doctor.dto.request.CreateDoctorRequest;
 import com.patienthq.backend.features.doctor.dto.request.UpdateDoctorRequest;
 import com.patienthq.backend.features.doctor.model.Doctor;
 import com.patienthq.backend.features.doctor.service.DoctorService;
 import com.patienthq.backend.shared.response.ApiResponse;
+import com.patienthq.backend.shared.response.PageResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -39,16 +43,27 @@ public class DoctorController {
     }
 
     @GetMapping
-    public ResponseEntity<ApiResponse<List<DoctorDto>>> getAllDoctors() {
-        List<DoctorDto> doctors = doctorService.getAllDoctors().stream()
-                .map(doctorMapper::toDto)
-                .collect(Collectors.toList());
+    public ResponseEntity<ApiResponse<PageResponse<DoctorDto>>> getAllDoctors(
+            Pageable pageable
+    ) {
+        Page<Doctor> doctors = doctorService.getAllDoctors(pageable);
+
+        List<DoctorDto> doctorDto = doctors.map(doctorMapper::toDto).stream().toList();
+        PageResponse<DoctorDto> pageResponse = PageResponse.<DoctorDto>builder()
+                .content(doctorDto)
+                .page(doctors.getNumber())
+                .size(doctors.getSize())
+                .totalElements(doctors.getTotalElements())
+                .totalPages(doctors.getTotalPages())
+                .first(doctors.isFirst())
+                .last(doctors.isLast())
+                .build();
 
         return ResponseEntity.ok(
-                ApiResponse.<List<DoctorDto>>builder()
+                ApiResponse.<PageResponse<DoctorDto>>builder()
                         .success(true)
                         .message("Doctors retrieved successfully")
-                        .data(doctors)
+                        .data(pageResponse)
                         .build()
         );
     }

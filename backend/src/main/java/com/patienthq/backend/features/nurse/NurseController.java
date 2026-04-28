@@ -6,15 +6,17 @@ import com.patienthq.backend.features.nurse.dto.request.UpdateNurseRequest;
 import com.patienthq.backend.features.nurse.model.Nurse;
 import com.patienthq.backend.features.nurse.service.NurseService;
 import com.patienthq.backend.shared.response.ApiResponse;
+import com.patienthq.backend.shared.response.PageResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/v1/nurses")
@@ -40,18 +42,27 @@ public class NurseController {
     }
 
     @GetMapping
-    public ResponseEntity<ApiResponse<List<NurseDto>>> getAllNurses() {
+    public ResponseEntity<ApiResponse<PageResponse<NurseDto>>> getAllNurses(
+            Pageable pageable
+    ) {
+        Page<Nurse> nurses = nurseService.getAllNurses(pageable);
 
-        List<NurseDto> nurses = nurseService.getAllNurses()
-                .stream()
-                .map(nurseMapper::toDto)
-                .collect(Collectors.toList());
+        List<NurseDto> nursesDto = nurses.map(nurseMapper::toDto).stream().toList();
+        PageResponse<NurseDto> pageResponse = PageResponse.<NurseDto>builder()
+                .content(nursesDto)
+                .page(nurses.getNumber())
+                .size(nurses.getSize())
+                .totalElements(nurses.getTotalElements())
+                .totalPages(nurses.getTotalPages())
+                .first(nurses.isFirst())
+                .last(nurses.isLast())
+                .build();
 
         return ResponseEntity.ok(
-                ApiResponse.<List<NurseDto>>builder()
+                ApiResponse.<PageResponse<NurseDto>>builder()
                         .success(true)
                         .message("Nurses retrieved successfully")
-                        .data(nurses)
+                        .data(pageResponse)
                         .build()
         );
     }
