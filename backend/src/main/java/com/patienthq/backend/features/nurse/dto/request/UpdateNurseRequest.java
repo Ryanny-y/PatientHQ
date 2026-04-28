@@ -12,6 +12,9 @@ import lombok.NoArgsConstructor;
 @Builder
 public class UpdateNurseRequest {
 
+    @Size(max = 100, message = "Username must not exceed 100 characters.")
+    private String username;
+
     @Size(max = 100, message = "Full name must not exceed 100 characters")
     private String fullName;
 

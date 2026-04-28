@@ -87,6 +87,10 @@ public class NurseServiceImpl implements NurseService {
     public Nurse updateNurse(UUID id, UpdateNurseRequest request) {
         Nurse nurse = findNurseById(id);
 
+        if(request.getUsername() != null) {
+            nurse.getUser().setUsername(request.getUsername());
+        }
+
         if (request.getFullName() != null) {
             nurse.setFullName(request.getFullName());
         }

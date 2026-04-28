@@ -5,6 +5,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Data
@@ -12,9 +13,15 @@ import java.util.UUID;
 @NoArgsConstructor
 @Builder
 public class NurseDto {
-    private UUID nurseId;
+    //    user Field
+    private UUID userId;
     private String username;
+    private String roleName;
     private Boolean isActive;
+    private LocalDateTime createdAt;
+
+    //    Nurse Field
+    private UUID nurseId;
     private String fullName;
     private String assignedWard;
     private String licenseNumber;
