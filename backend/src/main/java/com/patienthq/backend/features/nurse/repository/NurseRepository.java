@@ -1,8 +1,12 @@
 package com.patienthq.backend.features.nurse.repository;
 
 import com.patienthq.backend.features.nurse.model.Nurse;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.PagingAndSortingRepository;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.UUID;
@@ -12,5 +16,22 @@ public interface NurseRepository extends JpaRepository<Nurse, UUID>, PagingAndSo
     boolean existsByLicenseNumber(String licenseNumber);
 
     boolean existsByLicenseNumberAndNurseIdNot(String licenseNumber, UUID id);
+
+    @Query("""
+        SELECT n FROM Nurse n
+        LEFT JOIN n.user u
+        WHERE (:isActive IS NULL OR u.isActive = :isActive)
+        AND (
+            :search IS NULL OR
+            LOWER(n.fullName) LIKE :search OR
+            LOWER(u.username) LIKE :search OR
+            LOWER(n.email) LIKE :search
+        )
+    """)
+    Page<Nurse> findAllNurses(
+            @Param("isActive") Boolean isActive,
+            @Param("search") String search,
+            Pageable pageable
+    );
 }
 

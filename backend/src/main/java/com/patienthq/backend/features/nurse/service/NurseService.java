@@ -10,7 +10,7 @@ import java.util.UUID;
 
 public interface NurseService {
     Nurse createNurse(CreateNurseRequest request);
-    Page<Nurse> getAllNurses(Pageable pageable);
+    Page<Nurse> getAllNurses(Boolean isActive, String search, Pageable pageable);
     Nurse getNurseById(UUID id);
     Nurse updateNurse(UUID id, UpdateNurseRequest request);
     void deleteNurse(UUID id);
