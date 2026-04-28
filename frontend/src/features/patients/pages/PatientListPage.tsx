@@ -13,9 +13,11 @@ import ArchiveConfirmDialog from '@/features/patients/components/ArchiveConfirmD
 import type { Patient } from '@/features/patients/types/Patient';
 import { updatePatient, archivePatient } from '@/features/patients/services/patientService';
 import { useToast } from '@/shared/hooks/useToast';
+import { useNavigate } from 'react-router-dom';
 
 const PatientListPage = (): ReactElement => {
   const { patients, isLoading, refetch } = usePatientList();
+  const navigate = useNavigate();
   const { toast } = useToast();
 
   const [searchQuery, setSearchQuery] = useState<string>('');
@@ -137,7 +139,7 @@ const PatientListPage = (): ReactElement => {
             <Download className="h-4 w-4 mr-2" />
             Export
           </Button>
-          <Button>
+          <Button onClick={() => navigate('/patients/register')}>
             <UserPlus className="h-4 w-4 mr-2" />
             Register Patient
           </Button>

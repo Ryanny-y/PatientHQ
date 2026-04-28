@@ -28,7 +28,6 @@ const AppRoutes = (): ReactElement => (
   <Routes>
     <Route path="/login" element={<LoginPage />} />
     <Route
-      path="/admin"
       element={
         <ProtectedRoute>
           <AdminDashboard />

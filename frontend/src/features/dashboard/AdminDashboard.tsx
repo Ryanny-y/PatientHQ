@@ -4,20 +4,20 @@ import Sidebar from "@/features/dashboard/components/Sidebar";
 import Navbar from "@/features/dashboard/components/Navbar";
 
 const pageTitles: Record<string, string> = {
-  "/admin/dashboard": "Dashboard",
-  "/admin/users/admins": "Admin Accounts",
-  "/admin/users/doctors": "Doctor Accounts",
-  "/admin/users/nurses": "Nurse Accounts",
-  "/admin/patients": "Patient List",
-  "/admin/patients/register": "Register Patient",
-  "/admin/patients/assign": "Assign Doctor",
-  "/admin/records": "Medical Records",
-  "/admin/monitoring": "Monitoring",
-  "/admin/appointments": "Appointments",
-  "/admin/reports": "Reports & History",
-  "/admin/audit": "Audit Logs",
-  "/admin/integrity": "Data Integrity",
-  "/admin/settings": "System Settings",
+  "/dashboard": "Dashboard",
+  "/users/admins": "Admin Accounts",
+  "/users/doctors": "Doctor Accounts",
+  "/users/nurses": "Nurse Accounts",
+  "/patients": "Patient List",
+  "/patients/register": "Register Patient",
+  "/patients/assign": "Assign Doctor",
+  "/records": "Medical Records",
+  "/monitoring": "Monitoring",
+  "/appointments": "Appointments",
+  "/reports": "Reports & History",
+  "/audit": "Audit Logs",
+  "/integrity": "Data Integrity",
+  "/settings": "System Settings",
 };
 
 const AdminDashboard = (): ReactElement => {

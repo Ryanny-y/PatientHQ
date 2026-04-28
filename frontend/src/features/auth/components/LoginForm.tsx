@@ -40,7 +40,7 @@ const LoginForm = (): ReactElement => {
     try {
       const success = await login(values.username, values.password);
       if (success) {
-        navigate("/admin/dashboard");
+        navigate("/dashboard");
       } else {
         setAuthError("Invalid credentials. Please try again.");
       }

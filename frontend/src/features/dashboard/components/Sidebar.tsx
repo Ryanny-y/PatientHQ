@@ -28,28 +28,28 @@ interface NavLink {
 type NavItem = NavLink | NavGroup;
 
 const navItems: NavItem[] = [
-  { type: 'link', label: 'Dashboard', icon: LayoutDashboard, path: '/admin/dashboard' },
+  { type: 'link', label: 'Dashboard', icon: LayoutDashboard, path: '/dashboard' },
   {
     type: 'group', label: 'User Management', children: [
-      { label: 'Admin Accounts', icon: UserCog, path: '/admin/users/admins' },
-      { label: 'Doctor Accounts', icon: Stethoscope, path: '/admin/users/doctors' },
-      { label: 'Nurse Accounts', icon: HeartPulse, path: '/admin/users/nurses' },
+      { label: 'Admin Accounts', icon: UserCog, path: '/users/admins' },
+      { label: 'Doctor Accounts', icon: Stethoscope, path: '/users/doctors' },
+      { label: 'Nurse Accounts', icon: HeartPulse, path: '/users/nurses' },
     ],
   },
   {
     type: 'group', label: 'Patients', children: [
-      { label: 'Patient List', icon: ClipboardList, path: '/admin/patients' },
-      { label: 'Register Patient', icon: UserPlus, path: '/admin/patients/register' },
-      { label: 'Assign Doctor', icon: UserCheck, path: '/admin/patients/assign' },
+      { label: 'Patient List', icon: ClipboardList, path: '/patients' },
+      { label: 'Register Patient', icon: UserPlus, path: '/patients/register' },
+      { label: 'Assign Doctor', icon: UserCheck, path: '/patients/assign' },
     ],
   },
-  { type: 'link', label: 'Medical Records', icon: FileText, path: '/admin/records' },
-  { type: 'link', label: 'Monitoring', icon: Activity, path: '/admin/monitoring' },
-  { type: 'link', label: 'Appointments', icon: CalendarDays, path: '/admin/appointments' },
-  { type: 'link', label: 'Reports & History', icon: BarChart3, path: '/admin/reports' },
-  { type: 'link', label: 'Audit Logs', icon: ScrollText, path: '/admin/audit' },
-  { type: 'link', label: 'Data Integrity', icon: ShieldCheck, path: '/admin/integrity' },
-  { type: 'link', label: 'System Settings', icon: Settings, path: '/admin/settings' },
+  { type: 'link', label: 'Medical Records', icon: FileText, path: '/records' },
+  { type: 'link', label: 'Monitoring', icon: Activity, path: '/monitoring' },
+  { type: 'link', label: 'Appointments', icon: CalendarDays, path: '/appointments' },
+  { type: 'link', label: 'Reports & History', icon: BarChart3, path: '/reports' },
+  { type: 'link', label: 'Audit Logs', icon: ScrollText, path: '/audit' },
+  { type: 'link', label: 'Data Integrity', icon: ShieldCheck, path: '/integrity' },
+  { type: 'link', label: 'System Settings', icon: Settings, path: '/settings' },
 ];
 
 interface SidebarContentProps {

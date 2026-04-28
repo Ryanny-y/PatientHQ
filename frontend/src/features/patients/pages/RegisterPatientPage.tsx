@@ -234,7 +234,7 @@ const RegisterPatientPage = (): ReactElement => {
     if (isDirty && !window.confirm('You have unsaved changes. Discard and return to the patient list?')) {
       return;
     }
-    navigate('/admin/patients');
+    navigate('patients');
   };
 
   const onSubmit = async (formValues: RegisterPatientFormValues): Promise<void> => {
@@ -259,7 +259,7 @@ const RegisterPatientPage = (): ReactElement => {
     window.localStorage.removeItem(patientDraftKey);
     toast('Patient registered successfully.');
     setTimeout(() => {
-      navigate('/admin/patients');
+      navigate('patients');
     }, 900);
     setIsSubmitting(false);
     console.log('Registered patient:', savedPatient);

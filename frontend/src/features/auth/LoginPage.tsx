@@ -12,7 +12,7 @@ const featureItems = [
 const LoginPage = (): ReactElement => (
   <div className="min-h-screen flex">
     {/* Left branding panel */}
-    <div className="hidden lg:flex lg:w-[55%] bg-gradient-to-br from-blue-700 via-blue-600 to-blue-800 relative overflow-hidden flex-col justify-between p-12">
+    <div className="hidden lg:flex lg:w-[55%] bg-linear-to-br from-blue-700 via-blue-600 to-blue-800 relative overflow-hidden flex-col justify-between p-12">
       {/* Background decoration */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         <div className="absolute -top-32 -left-32 h-96 w-96 rounded-full bg-white/5"></div>
