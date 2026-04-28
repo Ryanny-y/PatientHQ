@@ -1,4 +1,3 @@
-import { type ReactElement } from 'react';
 import { Search, RefreshCw, SlidersHorizontal } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
@@ -10,22 +9,18 @@ interface DoctorSearchToolbarProps {
   onSearchChange: (v: string) => void;
   statusFilter: statusFilter;
   onStatusChange: (v: statusFilter) => void;
-  specializationFilter: string;
-  onSpecializationChange: (v: string) => void;
   sortOption: sortOption;
   onSortChange: (v: sortOption) => void;
   onRefresh: () => void;
   totalFiltered: number;
-  specializations: string[];
 }
 
 const DoctorSearchToolbar = ({
   search, onSearchChange,
   statusFilter, onStatusChange,
-  specializationFilter, onSpecializationChange,
   sortOption, onSortChange,
-  onRefresh, totalFiltered, specializations,
-}: DoctorSearchToolbarProps): ReactElement => (
+  onRefresh, totalFiltered,
+}: DoctorSearchToolbarProps) => (
   <div className="bg-white rounded-xl border border-slate-100 shadow-sm p-4">
     <div className="flex flex-col sm:flex-row gap-3">
       {/* Search */}
@@ -54,19 +49,6 @@ const DoctorSearchToolbar = ({
             </SelectContent>
           </Select>
         </div>
-
-        {/* Specialization filter */}
-        <Select value={specializationFilter} onValueChange={onSpecializationChange}>
-          <SelectTrigger className="h-9 w-44 text-xs">
-            <SelectValue placeholder="All Specializations" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="all">All Specializations</SelectItem>
-            {specializations.map((s) => (
-              <SelectItem key={s} value={s}>{s}</SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
 
         {/* Sort */}
         <Select value={sortOption} onValueChange={(v) => onSortChange(v as sortOption)}>

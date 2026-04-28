@@ -18,12 +18,11 @@ import { toast } from "sonner";
 
 const DoctorAccountsPage = (): ReactElement => {
   const {
-    filtered,
+    data: accounts,
     totalCount,
     activeCount,
     inactiveCount,
     specializationCount,
-    allFilteredCount,
     page,
     pageSize,
     totalPages,
@@ -32,11 +31,8 @@ const DoctorAccountsPage = (): ReactElement => {
     setSearch,
     statusFilter,
     setStatusFilter,
-    specializationFilter,
-    setSpecializationFilter,
     sortOption,
     setSortOption,
-    allSpecializations,
     modalMode,
     selectedDoctor,
     openModal,
@@ -46,6 +42,7 @@ const DoctorAccountsPage = (): ReactElement => {
     resetPassword,
     toggleStatus,
     deleteDoctor,
+    refetch,
   } = useDoctorAccounts();
 
   const handleCreate = async (values: addDoctorFormValues): Promise<void> => {
@@ -137,8 +134,9 @@ const DoctorAccountsPage = (): ReactElement => {
 
   const handleRefresh = (): void => {
     setSearch("");
-    setSpecializationFilter("all");
     setStatusFilter("all");
+    setSortOption("newest");
+    refetch();
   };
 
   return (
@@ -190,19 +188,16 @@ const DoctorAccountsPage = (): ReactElement => {
         onSearchChange={setSearch}
         statusFilter={statusFilter}
         onStatusChange={setStatusFilter}
-        specializationFilter={specializationFilter}
-        onSpecializationChange={setSpecializationFilter}
         sortOption={sortOption}
         onSortChange={setSortOption}
         onRefresh={handleRefresh}
-        totalFiltered={allFilteredCount}
-        specializations={allSpecializations}
+        totalFiltered={totalCount}
       />
 
       {/* Desktop Table */}
       <div className="hidden md:block">
         <DoctorTable
-          doctors={filtered}
+          doctors={accounts}
           onView={(d) => openModal("view", d)}
           onEdit={(d) => openModal("edit", d)}
           onResetPassword={(d) => openModal("reset-password", d)}
@@ -211,7 +206,7 @@ const DoctorAccountsPage = (): ReactElement => {
           page={page}
           totalPages={totalPages}
           onPageChange={setPage}
-          totalFiltered={allFilteredCount}
+          totalFiltered={totalCount}
           pageSize={pageSize}
         />
       </div>
@@ -219,7 +214,7 @@ const DoctorAccountsPage = (): ReactElement => {
       {/* Mobile Card List */}
       <div className="md:hidden">
         <DoctorCardListMobile
-          doctors={filtered}
+          doctors={accounts}
           onView={(d) => openModal("view", d)}
           onEdit={(d) => openModal("edit", d)}
           onResetPassword={(d) => openModal("reset-password", d)}

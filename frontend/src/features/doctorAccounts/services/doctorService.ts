@@ -7,8 +7,29 @@ import type {
 import type { ApiResponse, PageResponse } from "@/shared/types/api";
 
 export const doctorService = {
-  getDoctors: () =>
-    fetchWithAuth<ApiResponse<PageResponse<DoctorAccount>>>("doctors").then((r) => r.data.content),
+  getDoctors: (params: {
+    page?: number;
+    size?: number;
+    search?: string;
+    isActive?: boolean;
+    specialization?: string;
+    sort?: string;
+  }) => {
+    const query = new URLSearchParams();
+
+    if (params.page !== undefined) query.append("page", String(params.page));
+    if (params.size !== undefined) query.append("size", String(params.size));
+    if (params.search) query.append("search", params.search);
+    if (params.isActive !== undefined)
+      query.append("isActive", String(params.isActive));
+    if (params.specialization)
+      query.append("specialization", params.specialization);
+    if (params.sort) query.append("sort", params.sort);
+
+    return fetchWithAuth<ApiResponse<PageResponse<DoctorAccount>>>(
+      `doctors?${query.toString()}`,
+    );
+  },
 
   createDoctor: (values: addDoctorFormValues) =>
     fetchWithAuth<ApiResponse<DoctorAccount>>("doctors", {
@@ -28,11 +49,12 @@ export const doctorService = {
     }),
 
   toggleStatus: (id: string) =>
-    fetchWithAuth<ApiResponse<DoctorAccount>>(
-      `doctors/${id}/toggle-status`,
-      { method: "PATCH" },
-    ),
+    fetchWithAuth<ApiResponse<DoctorAccount>>(`doctors/${id}/toggle-status`, {
+      method: "PATCH",
+    }),
 
   resetPassword: (id: string) =>
-    fetchWithAuth<ApiResponse<void>>(`doctors/${id}/reset-password`, { method: "POST" }),
+    fetchWithAuth<ApiResponse<void>>(`doctors/${id}/reset-password`, {
+      method: "POST",
+    }),
 };
