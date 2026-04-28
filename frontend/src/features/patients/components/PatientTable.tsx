@@ -3,7 +3,7 @@ import { MoreVertical, Eye, Edit, History, UserPlus, FileText, Archive } from 'l
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Button } from '@/components/ui/button';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
-import type { Patient } from '@/features/patients/types/Patient';
+import type { Patient } from '@/features/patients/types/patient';
 import StatusBadge from '@/features/patients/components/StatusBadge';
 import { calculateAge, formatDate } from '@/features/patients/utils/patientUtils';
 
@@ -43,22 +43,22 @@ const PatientTable = ({ patients, onViewProfile, onEditPatient, onViewHistory, o
               </TableRow>
             ) : (
               patients.map((patient) => (
-                <TableRow key={patient.patient_id} className="hover:bg-slate-50">
-                  <TableCell className="font-medium text-blue-600">#{patient.patient_id}</TableCell>
-                  <TableCell className="font-medium">{patient.full_name}</TableCell>
-                  <TableCell>{calculateAge(patient.date_of_birth)}</TableCell>
+                <TableRow key={patient.patientId} className="hover:bg-slate-50">
+                  <TableCell className="font-medium text-blue-600">#{patient.patientId}</TableCell>
+                  <TableCell className="font-medium">{patient.fullName}</TableCell>
+                  <TableCell>{calculateAge(patient.dateOfBirth)}</TableCell>
                   <TableCell>{patient.gender}</TableCell>
-                  <TableCell className="font-mono text-sm">{patient.contact_number}</TableCell>
+                  <TableCell className="font-mono text-sm">{patient.contactNumber}</TableCell>
                   <TableCell>
                     <span className="inline-flex items-center justify-center px-2 py-1 text-xs font-semibold rounded bg-red-100 text-red-700">
-                      {patient.blood_type}
+                      {patient.bloodType}
                     </span>
                   </TableCell>
                   <TableCell>
                     <StatusBadge status={patient.status} />
                   </TableCell>
-                  <TableCell className="text-sm text-slate-600">{formatDate(patient.created_at)}</TableCell>
-                  <TableCell className="text-sm">{patient.assigned_doctor || 'Unassigned'}</TableCell>
+                  <TableCell className="text-sm text-slate-600">{formatDate(patient.createdAt)}</TableCell>
+                  <TableCell className="text-sm">{patient.assignedDoctor || 'Unassigned'}</TableCell>
                   <TableCell className="text-right sticky right-0 bg-white">
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>

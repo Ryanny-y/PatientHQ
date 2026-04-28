@@ -1,6 +1,6 @@
 import { type ReactElement } from 'react';
 import { Users, UserCheck, UserMinus, UserPlus } from 'lucide-react';
-import type { Patient } from '@/features/patients/types/Patient';
+import type { Patient } from '../types/patient';
 
 interface PatientStatsCardsProps {
   patients: Patient[];
@@ -14,7 +14,7 @@ const PatientStatsCards = ({ patients }: PatientStatsCardsProps): ReactElement =
   const currentMonth = new Date().getMonth();
   const currentYear = new Date().getFullYear();
   const newThisMonth = patients.filter((p) => {
-    const createdDate = new Date(p.created_at);
+    const createdDate = new Date(p.createdAt);
     return createdDate.getMonth() === currentMonth && createdDate.getFullYear() === currentYear;
   }).length;
 

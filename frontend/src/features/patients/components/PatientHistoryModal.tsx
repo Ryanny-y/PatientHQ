@@ -1,8 +1,8 @@
 import { type ReactElement, useState, useEffect } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Clock } from 'lucide-react';
-import type { Patient, PatientHistoryEvent } from '@/features/patients/types/Patient';
-import { getPatientHistory } from '@/features/patients/services/patientService';
+import type { Patient, PatientHistoryEvent } from '@/features/patients/types/patient';
+// import { getPatientHistory } from '@/features/patients/services/patientService';
 
 interface PatientHistoryModalProps {
   patient: Patient | null;
@@ -14,19 +14,19 @@ const PatientHistoryModal = ({ patient, open, onClose }: PatientHistoryModalProp
   const [history, setHistory] = useState<PatientHistoryEvent[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
-  useEffect(() => {
-    if (patient && open) {
-      const fetchHistory = async (): Promise<void> => {
-        setIsLoading(true);
-        const response = await getPatientHistory(patient.patient_id);
-        if (response.success) {
-          setHistory(response.data);
-        }
-        setIsLoading(false);
-      };
-      fetchHistory();
-    }
-  }, [patient, open]);
+  // useEffect(() => {
+  //   if (patient && open) {
+  //     const fetchHistory = async (): Promise<void> => {
+  //       setIsLoading(true);
+  //       const response = await getPatientHistory(patient.patientId);
+  //       if (response.success) {
+  //         setHistory(response.data);
+  //       }
+  //       setIsLoading(false);
+  //     };
+  //     fetchHistory();
+  //   }
+  // }, [patient, open]);
 
   return (
     <Dialog open={open} onOpenChange={onClose}>
@@ -35,7 +35,7 @@ const PatientHistoryModal = ({ patient, open, onClose }: PatientHistoryModalProp
           <DialogTitle>Patient Activity History</DialogTitle>
           {patient && (
             <p className="text-sm text-slate-500">
-              {patient.full_name} (#{patient.patient_id})
+              {patient.fullName} (#{patient.patientId})
             </p>
           )}
         </DialogHeader>

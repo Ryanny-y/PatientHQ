@@ -1,132 +1,109 @@
-import { type ReactElement, useState, useMemo } from 'react';
-import { UserPlus, Download } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { usePatientList } from '@/features/patients/hooks/usePatientList';
-import PatientStatsCards from '@/features/patients/components/PatientStatsCards';
-import PatientFilterToolbar from '@/features/patients/components/PatientFilterToolbar';
-import PatientTable from '@/features/patients/components/PatientTable';
-import PatientCardList from '@/features/patients/components/PatientCardList';
-import ViewPatientDrawer from '@/features/patients/components/ViewPatientDrawer';
-import EditPatientModal from '@/features/patients/components/EditPatientModal';
-import PatientHistoryModal from '@/features/patients/components/PatientHistoryModal';
-import ArchiveConfirmDialog from '@/features/patients/components/ArchiveConfirmDialog';
-import type { Patient } from '@/features/patients/types/Patient';
-import { updatePatient, archivePatient } from '@/features/patients/services/patientService';
-import { useToast } from '@/shared/hooks/useToast';
-import { useNavigate } from 'react-router-dom';
+import { type ReactElement, useMemo, useState } from "react";
+import { UserPlus, Download } from "lucide-react";
+import { Button } from "@/components/ui/button";
+
+import { usePatients } from "@/features/patients/hooks/usePatients";
+
+import PatientStatsCards from "@/features/patients/components/PatientStatsCards";
+import PatientFilterToolbar from "@/features/patients/components/PatientFilterToolbar";
+import PatientTable from "@/features/patients/components/PatientTable";
+import PatientCardList from "@/features/patients/components/PatientCardList";
+import ViewPatientDrawer from "@/features/patients/components/ViewPatientDrawer";
+import EditPatientModal from "@/features/patients/components/EditPatientModal";
+import PatientHistoryModal from "@/features/patients/components/PatientHistoryModal";
+import ArchiveConfirmDialog from "@/features/patients/components/ArchiveConfirmDialog";
+
+import type { Patient } from "@/features/patients/types/patient";
+// import { archivePatient } from "@/features/patients/services/patientService";
+import { useNavigate } from "react-router-dom";
+import { toast } from "sonner";
 
 const PatientListPage = (): ReactElement => {
-  const { patients, isLoading, refetch } = usePatientList();
   const navigate = useNavigate();
-  const { toast } = useToast();
 
-  const [searchQuery, setSearchQuery] = useState<string>('');
-  const [statusFilter, setStatusFilter] = useState<string>('all');
-  const [genderFilter, setGenderFilter] = useState<string>('all');
-  const [bloodTypeFilter, setBloodTypeFilter] = useState<string>('all');
-  const [sortBy, setSortBy] = useState<string>('newest');
+  // ✅ hook replaces patient list + most state logic
+  const {
+    filtered,
+    allFilteredCount,
+    totalCount,
+    activeCount,
+    inactiveCount,
+    page,
+    pageSize,
+    totalPages,
+    setPage,
+    refetch,
 
-  const [selectedPatient, setSelectedPatient] = useState<Patient | null>(null);
-  const [viewDrawerOpen, setViewDrawerOpen] = useState<boolean>(false);
-  const [editModalOpen, setEditModalOpen] = useState<boolean>(false);
-  const [historyModalOpen, setHistoryModalOpen] = useState<boolean>(false);
-  const [archiveDialogOpen, setArchiveDialogOpen] = useState<boolean>(false);
+    search,
+    setSearch,
 
-  const filteredAndSortedPatients = useMemo(() => {
-    let filtered = patients;
+    statusFilter,
+    setStatusFilter,
 
-    if (searchQuery) {
-      const query = searchQuery.toLowerCase();
-      filtered = filtered.filter(
-        (p) =>
-          p.patient_id.toString().includes(query) ||
-          p.full_name.toLowerCase().includes(query) ||
-          p.contact_number.includes(query) ||
-          p.email.toLowerCase().includes(query)
-      );
+    sortOption,
+    setSortOption,
+
+    modalMode,
+    selectedPatient,
+    openModal,
+    closeModal,
+
+    updatePatient,
+    deletePatient,
+  } = usePatients();
+
+  // 🔥 extra filters NOT in hook (keep local for now)
+  const [genderFilter, setGenderFilter] = useState<string>("all");
+  const [bloodTypeFilter, setBloodTypeFilter] = useState<string>("all");
+
+  const [archiveDialogOpen, setArchiveDialogOpen] = useState(false);
+
+  // 🔥 apply additional filters on top of hook result
+  const finalPatients = useMemo(() => {
+    let result = filtered;
+
+    if (genderFilter !== "all") {
+      result = result.filter((p) => p.gender === genderFilter);
     }
 
-    if (statusFilter !== 'all') {
-      filtered = filtered.filter((p) => p.status === statusFilter);
+    if (bloodTypeFilter !== "all") {
+      result = result.filter((p) => p.bloodType === bloodTypeFilter);
     }
 
-    if (genderFilter !== 'all') {
-      filtered = filtered.filter((p) => p.gender === genderFilter);
-    }
+    return result;
+  }, [filtered, genderFilter, bloodTypeFilter]);
 
-    if (bloodTypeFilter !== 'all') {
-      filtered = filtered.filter((p) => p.blood_type === bloodTypeFilter);
-    }
-
-    const sorted = [...filtered];
-    if (sortBy === 'newest') {
-      sorted.sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
-    } else if (sortBy === 'oldest') {
-      sorted.sort((a, b) => new Date(a.created_at).getTime() - new Date(b.created_at).getTime());
-    } else if (sortBy === 'name-asc') {
-      sorted.sort((a, b) => a.full_name.localeCompare(b.full_name));
-    } else if (sortBy === 'name-desc') {
-      sorted.sort((a, b) => b.full_name.localeCompare(a.full_name));
-    }
-
-    return sorted;
-  }, [patients, searchQuery, statusFilter, genderFilter, bloodTypeFilter, sortBy]);
-
-  const handleViewProfile = (patient: Patient): void => {
-    setSelectedPatient(patient);
-    setViewDrawerOpen(true);
-  };
-
-  const handleEditPatient = (patient: Patient): void => {
-    setSelectedPatient(patient);
-    setEditModalOpen(true);
-  };
-
-  const handleViewHistory = (patient: Patient): void => {
-    setSelectedPatient(patient);
-    setHistoryModalOpen(true);
-  };
-
-  const handleArchivePatient = (patient: Patient): void => {
-    setSelectedPatient(patient);
-    setArchiveDialogOpen(true);
-  };
-
-  const handleSaveEdit = async (data: Partial<Patient>): Promise<void> => {
+  // ---------- actions ----------
+  const handleSaveEdit = async (data: Partial<Patient>) => {
     if (!selectedPatient) return;
 
-    const response = await updatePatient(selectedPatient.patient_id, data);
-    if (response.success) {
-      toast('Patient updated successfully');
-      refetch();
-    } else {
-      toast(response.message, 'error');
+    const res = await updatePatient({
+      id: selectedPatient.patientId,
+      ...data,
+    });
+
+    if (res?.success) {
+      toast.success("Patient updated successfully");
     }
   };
 
-  const handleConfirmArchive = async (): Promise<void> => {
-    if (!selectedPatient) return;
+  // const handleConfirmArchive = async () => {
+  //   if (!selectedPatient) return;
 
-    const response = await archivePatient(selectedPatient.patient_id);
-    if (response.success) {
-      toast('Patient archived successfully');
-      refetch();
-    } else {
-      toast(response.message, 'error');
-    }
-    setArchiveDialogOpen(false);
-  };
+  //   const res = await archivePatient(selectedPatient.patientId);
 
-  if (isLoading) {
-    return (
-      <div className="flex items-center justify-center h-96">
-        <div className="text-slate-500">Loading patients...</div>
-      </div>
-    );
-  }
+  //   if (res.success) {
+  //     toast("Patient archived successfully");
+  //   } else {
+  //     toast(res.message, "error");
+  //   }
+
+  //   setArchiveDialogOpen(false);
+  // };
 
   return (
     <div className="space-y-6">
+      {/* Header */}
       <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
         <div>
           <h1 className="text-2xl font-bold text-slate-900">Patient List</h1>
@@ -134,79 +111,94 @@ const PatientListPage = (): ReactElement => {
             View and manage registered patients across the hospital system.
           </p>
         </div>
+
         <div className="flex gap-2">
           <Button variant="outline">
             <Download className="h-4 w-4 mr-2" />
             Export
           </Button>
-          <Button onClick={() => navigate('/patients/register')}>
+          <Button onClick={() => navigate("/patients/register")}>
             <UserPlus className="h-4 w-4 mr-2" />
             Register Patient
           </Button>
         </div>
       </div>
 
-      <PatientStatsCards patients={patients} />
+      {/* Stats */}
+      <PatientStatsCards patients={finalPatients} />
 
+      {/* Filters */}
       <PatientFilterToolbar
-        searchQuery={searchQuery}
-        onSearchChange={setSearchQuery}
+        searchQuery={search}
+        onSearchChange={setSearch}
         statusFilter={statusFilter}
         onStatusFilterChange={setStatusFilter}
         genderFilter={genderFilter}
         onGenderFilterChange={setGenderFilter}
         bloodTypeFilter={bloodTypeFilter}
         onBloodTypeFilterChange={setBloodTypeFilter}
-        sortBy={sortBy}
-        onSortByChange={setSortBy}
+        sortBy={sortOption}
+        onSortByChange={setSortOption}
         onRefresh={refetch}
       />
 
+      {/* Table */}
       <div className="hidden lg:block">
         <PatientTable
-          patients={filteredAndSortedPatients}
-          onViewProfile={handleViewProfile}
-          onEditPatient={handleEditPatient}
-          onViewHistory={handleViewHistory}
-          onArchivePatient={handleArchivePatient}
+          patients={finalPatients}
+          onViewProfile={(p) => openModal("view", p)}
+          onEditPatient={(p) => openModal("edit", p)}
+          onViewHistory={(p) => openModal("history", p)}
+          onArchivePatient={(p) => {
+            openModal("view", p);
+            setArchiveDialogOpen(true);
+          }}
         />
       </div>
 
+      {/* Mobile */}
       <div className="lg:hidden">
         <PatientCardList
-          patients={filteredAndSortedPatients}
-          onViewProfile={handleViewProfile}
-          onEditPatient={handleEditPatient}
-          onViewHistory={handleViewHistory}
-          onArchivePatient={handleArchivePatient}
+          patients={finalPatients}
+          onViewProfile={(p) => openModal("view", p)}
+          onEditPatient={(p) => openModal("edit", p)}
+          onViewHistory={(p) => openModal("history", p)}
+          onArchivePatient={(p) => {
+            openModal("view", p);
+            setArchiveDialogOpen(true);
+          }}
         />
       </div>
 
+      {/* Drawer */}
       <ViewPatientDrawer
         patient={selectedPatient}
-        open={viewDrawerOpen}
-        onClose={() => setViewDrawerOpen(false)}
+        open={modalMode === "view"}
+        onClose={closeModal}
       />
 
+      {/* Edit */}
       <EditPatientModal
         patient={selectedPatient}
-        open={editModalOpen}
-        onClose={() => setEditModalOpen(false)}
+        open={modalMode === "edit"}
+        onClose={closeModal}
         onSave={handleSaveEdit}
       />
 
+      {/* History */}
       <PatientHistoryModal
         patient={selectedPatient}
-        open={historyModalOpen}
-        onClose={() => setHistoryModalOpen(false)}
+        open={modalMode === "history"}
+        onClose={closeModal}
       />
 
-      <ArchiveConfirmDialog
+      {/* Archive */}
+      {/* <ArchiveConfirmDialog
         patient={selectedPatient}
         open={archiveDialogOpen}
         onClose={() => setArchiveDialogOpen(false)}
         onConfirm={handleConfirmArchive}
-      />
+      /> */}
     </div>
   );
 };

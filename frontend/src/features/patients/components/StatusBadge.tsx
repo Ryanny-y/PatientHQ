@@ -1,6 +1,6 @@
 import { type ReactElement } from 'react';
 import { Badge } from '@/components/ui/badge';
-import type { PatientStatus } from '../types/Patient';
+import type { PatientStatus } from '../types/patient';
 
 interface StatusBadgeProps {
   status: PatientStatus;

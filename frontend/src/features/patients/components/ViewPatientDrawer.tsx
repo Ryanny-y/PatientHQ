@@ -1,7 +1,7 @@
 import { type ReactElement } from 'react';
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sheet';
 import { Separator } from '@/components/ui/separator';
-import type { Patient } from '@/features/patients/types/Patient';
+import type { Patient } from '@/features/patients/types/patient';
 import StatusBadge from '@/features/patients/components/StatusBadge';
 import { calculateAge, formatDate } from '@/features/patients/utils/patientUtils';
 
@@ -27,19 +27,19 @@ const ViewPatientDrawer = ({ patient, open, onClose }: ViewPatientDrawerProps): 
             <div className="space-y-3">
               <div className="flex justify-between">
                 <span className="text-sm text-slate-500">Patient ID</span>
-                <span className="text-sm font-medium text-blue-600">#{patient.patient_id}</span>
+                <span className="text-sm font-medium text-blue-600">#{patient.patientId}</span>
               </div>
               <div className="flex justify-between">
                 <span className="text-sm text-slate-500">Full Name</span>
-                <span className="text-sm font-medium">{patient.full_name}</span>
+                <span className="text-sm font-medium">{patient.fullName}</span>
               </div>
               <div className="flex justify-between">
                 <span className="text-sm text-slate-500">Date of Birth</span>
-                <span className="text-sm font-medium">{formatDate(patient.date_of_birth)}</span>
+                <span className="text-sm font-medium">{formatDate(patient.dateOfBirth)}</span>
               </div>
               <div className="flex justify-between">
                 <span className="text-sm text-slate-500">Age</span>
-                <span className="text-sm font-medium">{calculateAge(patient.date_of_birth)} years</span>
+                <span className="text-sm font-medium">{calculateAge(patient.dateOfBirth)} years</span>
               </div>
               <div className="flex justify-between">
                 <span className="text-sm text-slate-500">Gender</span>
@@ -47,7 +47,7 @@ const ViewPatientDrawer = ({ patient, open, onClose }: ViewPatientDrawerProps): 
               </div>
               <div className="flex justify-between">
                 <span className="text-sm text-slate-500">Contact Number</span>
-                <span className="text-sm font-medium font-mono">{patient.contact_number}</span>
+                <span className="text-sm font-medium font-mono">{patient.contactNumber}</span>
               </div>
               <div className="flex justify-between">
                 <span className="text-sm text-slate-500">Email</span>
@@ -68,7 +68,7 @@ const ViewPatientDrawer = ({ patient, open, onClose }: ViewPatientDrawerProps): 
               <div className="flex justify-between">
                 <span className="text-sm text-slate-500">Blood Type</span>
                 <span className="inline-flex items-center justify-center px-2 py-1 text-xs font-semibold rounded bg-red-100 text-red-700">
-                  {patient.blood_type}
+                  {patient.bloodType}
                 </span>
               </div>
               <div className="flex justify-between items-start">
@@ -85,11 +85,11 @@ const ViewPatientDrawer = ({ patient, open, onClose }: ViewPatientDrawerProps): 
             <div className="space-y-3">
               <div className="flex justify-between">
                 <span className="text-sm text-slate-500">Name</span>
-                <span className="text-sm font-medium">{patient.emergency_contact_name}</span>
+                <span className="text-sm font-medium">{patient.emergencyContactName}</span>
               </div>
               <div className="flex justify-between">
                 <span className="text-sm text-slate-500">Contact Number</span>
-                <span className="text-sm font-medium font-mono">{patient.emergency_contact_number}</span>
+                <span className="text-sm font-medium font-mono">{patient.emergencyContactNumber}</span>
               </div>
             </div>
           </div>
@@ -105,11 +105,11 @@ const ViewPatientDrawer = ({ patient, open, onClose }: ViewPatientDrawerProps): 
               </div>
               <div className="flex justify-between">
                 <span className="text-sm text-slate-500">Registered Date</span>
-                <span className="text-sm font-medium">{formatDate(patient.created_at)}</span>
+                <span className="text-sm font-medium">{formatDate(patient.createdAt)}</span>
               </div>
               <div className="flex justify-between">
                 <span className="text-sm text-slate-500">Assigned Doctor</span>
-                <span className="text-sm font-medium">{patient.assigned_doctor || 'Unassigned'}</span>
+                <span className="text-sm font-medium">{patient.assignedDoctor || 'Unassigned'}</span>
               </div>
             </div>
           </div>

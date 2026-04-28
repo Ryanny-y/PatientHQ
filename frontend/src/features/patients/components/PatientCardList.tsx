@@ -2,7 +2,7 @@ import { type ReactElement } from 'react';
 import { MoreVertical, Eye, Edit, History, Archive } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
-import type { Patient } from '@/features/patients/types/Patient';
+import type { Patient } from '@/features/patients/types/patient';
 import StatusBadge from '@/features/patients/components/StatusBadge';
 import { calculateAge } from '@/features/patients/utils/patientUtils';
 
@@ -26,11 +26,11 @@ const PatientCardList = ({ patients, onViewProfile, onEditPatient, onViewHistory
   return (
     <div className="space-y-3">
       {patients.map((patient) => (
-        <div key={patient.patient_id} className="bg-white rounded-xl border border-slate-100 p-4 shadow-sm">
+        <div key={patient.patientId} className="bg-white rounded-xl border border-slate-100 p-4 shadow-sm">
           <div className="flex items-start justify-between mb-3">
             <div>
-              <h3 className="font-semibold text-slate-900">{patient.full_name}</h3>
-              <p className="text-sm text-blue-600">#{patient.patient_id}</p>
+              <h3 className="font-semibold text-slate-900">{patient.fullName}</h3>
+              <p className="text-sm text-blue-600">#{patient.patientId}</p>
             </div>
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
@@ -67,17 +67,17 @@ const PatientCardList = ({ patients, onViewProfile, onEditPatient, onViewHistory
             </div>
             <div className="flex items-center justify-between text-sm">
               <span className="text-slate-500">Age / Gender:</span>
-              <span className="font-medium">{calculateAge(patient.date_of_birth)} / {patient.gender}</span>
+              <span className="font-medium">{calculateAge(patient.dateOfBirth)} / {patient.gender}</span>
             </div>
             <div className="flex items-center justify-between text-sm">
               <span className="text-slate-500">Blood Type:</span>
               <span className="inline-flex items-center justify-center px-2 py-1 text-xs font-semibold rounded bg-red-100 text-red-700">
-                {patient.blood_type}
+                {patient.bloodType}
               </span>
             </div>
             <div className="flex items-center justify-between text-sm">
               <span className="text-slate-500">Assigned Doctor:</span>
-              <span className="font-medium text-right">{patient.assigned_doctor || 'Unassigned'}</span>
+              <span className="font-medium text-right">{patient.assignedDoctor || 'Unassigned'}</span>
             </div>
           </div>
         </div>

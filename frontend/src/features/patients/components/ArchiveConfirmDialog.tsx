@@ -1,7 +1,7 @@
 import { type ReactElement } from 'react';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '@/components/ui/alert-dialog';
 import { AlertTriangle } from 'lucide-react';
-import type { Patient } from '@/features/patients/types/Patient';
+import type { Patient } from '@/features/patients/types/patient';
 
 interface ArchiveConfirmDialogProps {
   patient: Patient | null;
@@ -23,7 +23,7 @@ const ArchiveConfirmDialog = ({ patient, open, onClose, onConfirm }: ArchiveConf
           </div>
           <AlertDialogDescription className="space-y-2">
             <p>
-              You are about to archive <span className="font-semibold">{patient?.full_name}</span> (#{patient?.patient_id}).
+              You are about to archive <span className="font-semibold">{patient?.fullName}</span> (#{patient?.patientId}).
             </p>
             <p className="text-amber-600 font-medium">
               Warning: This hides the patient from active lists but preserves medical history.

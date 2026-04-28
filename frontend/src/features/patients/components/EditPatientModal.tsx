@@ -20,23 +20,23 @@ import {
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { FormField } from "@/features/adminAccounts/components/FormField";
-import type { Patient } from "@/features/patients/types/Patient";
+import type { Patient } from "@/features/patients/types/patient";
 
 const editPatientSchema = z.object({
-  full_name: z.string().min(2, "Full name must be at least 2 characters"),
-  date_of_birth: z.string().min(1, "Date of birth is required"),
+  fullName: z.string().min(2, "Full name must be at least 2 characters"),
+  dateOfBirth: z.string().min(1, "Date of birth is required"),
   gender: z.enum(["Male", "Female", "Other"]),
-  contact_number: z
+  contactNumber: z
     .string()
     .min(10, "Contact number must be at least 10 digits"),
   email: z.string().email("Please enter a valid email"),
   address: z.string().min(5, "Address must be at least 5 characters"),
-  blood_type: z.enum(["A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-"]),
+  bloodType: z.enum(["A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-"]),
   allergies: z.string(),
-  emergency_contact_name: z
+  emergencyContactName: z
     .string()
     .min(2, "Emergency contact name is required"),
-  emergency_contact_number: z
+  emergencyContactNumber: z
     .string()
     .min(10, "Emergency contact number must be at least 10 digits"),
   status: z.enum(["ACTIVE", "ADMITTED", "DISCHARGED", "INACTIVE"]),
@@ -61,29 +61,29 @@ const EditPatientModal = ({
     resolver: zodResolver(editPatientSchema),
     defaultValues: patient
       ? {
-          full_name: patient.full_name,
-          date_of_birth: patient.date_of_birth,
+          fullName: patient.fullName,
+          dateOfBirth: patient.dateOfBirth,
           gender: patient.gender,
-          contact_number: patient.contact_number,
+          contactNumber: patient.contactNumber,
           email: patient.email,
           address: patient.address,
-          blood_type: patient.blood_type,
+          bloodType: patient.bloodType,
           allergies: patient.allergies,
-          emergency_contact_name: patient.emergency_contact_name,
-          emergency_contact_number: patient.emergency_contact_number,
+          emergencyContactName: patient.emergencyContactName,
+          emergencyContactNumber: patient.emergencyContactNumber,
           status: patient.status,
         }
       : {
-          full_name: "",
-          date_of_birth: "",
+          fullName: "",
+          dateOfBirth: "",
           gender: undefined,
-          contact_number: "",
+          contactNumber: "",
           email: "",
           address: "",
-          blood_type: undefined,
+          bloodType: undefined,
           allergies: "",
-          emergency_contact_name: "",
-          emergency_contact_number: "",
+          emergencyContactName: "",
+          emergencyContactNumber: "",
           status: "ACTIVE",
         },
   });
@@ -91,16 +91,16 @@ const EditPatientModal = ({
   useEffect(() => {
     if (patient) {
       form.reset({
-        full_name: patient.full_name,
-        date_of_birth: patient.date_of_birth,
+        fullName: patient.fullName,
+        dateOfBirth: patient.dateOfBirth,
         gender: patient.gender,
-        contact_number: patient.contact_number,
+        contactNumber: patient.contactNumber,
         email: patient.email,
         address: patient.address,
-        blood_type: patient.blood_type,
+        bloodType: patient.bloodType,
         allergies: patient.allergies,
-        emergency_contact_name: patient.emergency_contact_name,
-        emergency_contact_number: patient.emergency_contact_number,
+        emergencyContactName: patient.emergencyContactName,
+        emergencyContactNumber: patient.emergencyContactNumber,
         status: patient.status,
       });
     }
@@ -122,18 +122,18 @@ const EditPatientModal = ({
           <div className="grid grid-cols-2 gap-4">
             <FormField
               label="Full Name"
-              error={form.formState.errors.full_name?.message}
+              error={form.formState.errors.fullName?.message}
               required
             >
-              <Input {...form.register("full_name")} />
+              <Input {...form.register("fullName")} />
             </FormField>
 
             <FormField
               label="Date of Birth"
-              error={form.formState.errors.date_of_birth?.message}
+              error={form.formState.errors.dateOfBirth?.message}
               required
             >
-              <Input type="date" {...form.register("date_of_birth")} />
+              <Input type="date" {...form.register("dateOfBirth")} />
             </FormField>
 
             <FormField
@@ -160,11 +160,11 @@ const EditPatientModal = ({
 
             <FormField
               label="Blood Type"
-              error={form.formState.errors.blood_type?.message}
+              error={form.formState.errors.bloodType?.message}
             >
               <Controller
                 control={form.control}
-                name="blood_type"
+                name="bloodType"
                 render={({ field }) => (
                   <Select onValueChange={field.onChange} value={field.value}>
                     <SelectTrigger>
@@ -187,10 +187,10 @@ const EditPatientModal = ({
 
             <FormField
               label="Contact Number"
-              error={form.formState.errors.contact_number?.message}
+              error={form.formState.errors.contactNumber?.message}
               required
             >
-              <Input {...form.register("contact_number")} />
+              <Input {...form.register("contactNumber")} />
             </FormField>
 
             <FormField
@@ -219,18 +219,18 @@ const EditPatientModal = ({
           <div className="grid grid-cols-2 gap-4">
             <FormField
               label="Emergency Contact Name"
-              error={form.formState.errors.emergency_contact_name?.message}
+              error={form.formState.errors.emergencyContactName?.message}
               required
             >
-              <Input {...form.register("emergency_contact_name")} />
+              <Input {...form.register("emergencyContactName")} />
             </FormField>
 
             <FormField
               label="Emergency Contact Number"
-              error={form.formState.errors.emergency_contact_number?.message}
+              error={form.formState.errors.emergencyContactNumber?.message}
               required
             >
-              <Input {...form.register("emergency_contact_number")} />
+              <Input {...form.register("emergencyContactNumber")} />
             </FormField>
           </div>
 

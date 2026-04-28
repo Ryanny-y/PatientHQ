@@ -1,4 +1,4 @@
-export type PatientStatus = 'ACTIVE' | 'ADMITTED' | 'DISCHARGED' | 'INACTIVE';
+export type PatientStatus = "ACTIVE" | "ADMITTED" | "DISCHARGED" | "INACTIVE";
 
 export interface PatientHistoryEvent {
   id: number;
@@ -7,28 +7,27 @@ export interface PatientHistoryEvent {
   timestamp: string;
   actor?: string;
 }
+import { z } from "zod";
 
-import { z } from 'zod';
-
-export type patientStatus = 'ACTIVE' | 'ADMITTED' | 'DISCHARGED' | 'INACTIVE';
-export type patientGender = 'Male' | 'Female' | 'Other';
-export type bloodType = 'A+' | 'A-' | 'B+' | 'B-' | 'AB+' | 'AB-' | 'O+' | 'O-';
+export type patientStatus = "ACTIVE" | "ADMITTED" | "DISCHARGED" | "INACTIVE";
+export type patientGender = "Male" | "Female" | "Other";
+export type bloodType = "A+" | "A-" | "B+" | "B-" | "AB+" | "AB-" | "O+" | "O-";
 
 export interface Patient {
-  patient_id: number;
-  full_name: string;
-  date_of_birth: string;
+  patientId: number;
+  fullName: string;
+  dateOfBirth: string;
   gender: patientGender;
-  contact_number: string;
+  contactNumber: string;
   email: string;
   address: string;
-  blood_type: bloodType;
+  bloodType: bloodType;
   allergies: string;
-  emergency_contact_name: string;
-  emergency_contact_number: string;
+  emergencyContactName: string;
+  emergencyContactNumber: string;
   status: patientStatus;
-  created_at: string;
-  assigned_doctor: string;
+  createdAt: string;
+  assignedDoctor: string;
 }
 
 export interface PatientHistoryEvent {
@@ -36,38 +35,105 @@ export interface PatientHistoryEvent {
   event: string;
   description: string;
   date: string;
-  type: 'registration' | 'assignment' | 'record' | 'vitals' | 'appointment' | 'discharge';
+  type:
+    | "registration"
+    | "assignment"
+    | "record"
+    | "vitals"
+    | "appointment"
+    | "discharge";
 }
 
-export type patientModalMode = 'view' | 'edit' | 'history' | 'archive' | null;
+export type patientModalMode = "view" | "edit" | "history" | "archive" | null;
 
-export const BLOOD_TYPES: bloodType[] = ['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-'];
-export const GENDERS: patientGender[] = ['Male', 'Female', 'Other'];
+export const bloodtypeS: bloodType[] = [
+  "A+",
+  "A-",
+  "B+",
+  "B-",
+  "AB+",
+  "AB-",
+  "O+",
+  "O-",
+];
+export const GENDERS: patientGender[] = ["Male", "Female", "Other"];
 
-export type patientStatusFilter = 'all' | 'ACTIVE' | 'ADMITTED' | 'DISCHARGED' | 'INACTIVE';
-export type genderFilter = 'all' | patientGender;
-export type bloodTypeFilter = 'all' | bloodType;
-export type sortOption = 'newest' | 'oldest' | 'name-az';
+export type patientStatusFilter =
+  | "all"
+  | "ACTIVE"
+  | "ADMITTED"
+  | "DISCHARGED"
+  | "INACTIVE";
+export type genderFilter = "all" | patientGender;
+export type bloodTypeFilter = "all" | bloodType;
+export type sortOption = "newest" | "oldest" | "name-az";
+
+// ── Add Patient Schema ────────────────────────────────────────────────────
+export const addPatientSchema = z.object({
+  fullName: z.string().min(3, "Full name must be at least 3 characters"),
+  dateOfBirth: z.string().refine(
+    (value) => {
+      const date = new Date(value);
+      const now = new Date();
+      const earliest = new Date(
+        now.getFullYear() - 120,
+        now.getMonth(),
+        now.getDate(),
+      );
+      return value !== "" && date <= now && date >= earliest;
+    },
+    { message: "Enter a valid date of birth" },
+  ),
+  gender: z.enum(["Male", "Female", "Prefer not to say"] as const),
+  contactNumber: z
+    .string()
+    .transform((value) => value.replace(/\D/g, ""))
+    .refine((value) => value.length === 11, {
+      message: "Enter an 11-digit contact number",
+    }),
+  email: z.email("Enter a valid email address").or(z.literal("")),
+  address: z.string().min(5, "Address is required"),
+  bloodtype: z
+    .enum(["A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-", ""] as const)
+    .optional(),
+  allergies: z.string().optional(),
+  existingConditions: z.string().optional(),
+  notes: z.string().optional(),
+  emergencyContactName: z.string().min(3, "Emergency contact name is required"),
+  relationship: z.string().optional(),
+  emergencyContactNumber: z
+    .string()
+    .transform((value) => value.replace(/\D/g, ""))
+    .refine((value) => value.length === 11, {
+      message: "Enter an 11-digit emergency number",
+    }),
+  status: z.enum(["ACTIVE", "ADMITTED", "INACTIVE"]),
+});
+
+export type addPatientFormValues = z.infer<typeof addPatientSchema>;
 
 // ── Edit Patient Schema ────────────────────────────────────────────────────
 export const editPatientSchema = z.object({
-  full_name: z.string().min(2, 'Full name is required'),
-  date_of_birth: z.string().min(1, 'Date of birth is required'),
-  gender: z.enum(['Male', 'Female', 'Other']),
-  contact_number: z
+  fullName: z.string().min(2, "Full name is required"),
+  dateOfBirth: z.string().min(1, "Date of birth is required"),
+  gender: z.enum(["Male", "Female", "Other"]),
+  contactNumber: z
     .string()
-    .min(7, 'Enter a valid contact number')
-    .regex(/^[0-9+\-\s()]+$/, 'Invalid phone number format'),
-  email: z.string().email('Enter a valid email address'),
-  address: z.string().min(3, 'Address is required'),
-  blood_type: z.enum(['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-']),
+    .min(7, "Enter a valid contact number")
+    .regex(/^[0-9+\-\s()]+$/, "Invalid phone number format"),
+  email: z.email("Enter a valid email address"),
+  address: z.string().min(3, "Address is required"),
+  bloodtype: z.enum(["A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-"]),
   allergies: z.string(),
-  emergency_contact_name: z.string().min(2, 'Emergency contact name is required'),
-  emergency_contact_number: z
+  emergencyContactName: z.string().min(2, "Emergency contact name is required"),
+  emergencyContactNumber: z
     .string()
-    .min(7, 'Enter a valid contact number')
-    .regex(/^[0-9+\-\s()]+$/, 'Invalid phone number format'),
-  status: z.enum(['ACTIVE', 'ADMITTED', 'DISCHARGED', 'INACTIVE']),
+    .min(7, "Enter a valid contact number")
+    .regex(/^[0-9+\-\s()]+$/, "Invalid phone number format"),
+  status: z.enum(["ACTIVE", "ADMITTED", "DISCHARGED", "INACTIVE"]),
 });
 
 export type editPatientFormValues = z.infer<typeof editPatientSchema>;
+
+// ── Shared ─────────────────────────────────────────────────────────────────
+export type statusFilter = 'all' | 'active' | 'inactive' | 'admitted' | 'discharged';

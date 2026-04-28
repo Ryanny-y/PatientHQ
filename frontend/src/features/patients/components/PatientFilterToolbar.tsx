@@ -3,18 +3,19 @@ import { Search, RefreshCw } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import type { sortOption, statusFilter } from '../types/patient';
 
 interface PatientFilterToolbarProps {
   searchQuery: string;
   onSearchChange: (value: string) => void;
-  statusFilter: string;
-  onStatusFilterChange: (value: string) => void;
+  statusFilter: statusFilter;
+  onStatusFilterChange: (value: statusFilter) => void;
   genderFilter: string;
   onGenderFilterChange: (value: string) => void;
   bloodTypeFilter: string;
   onBloodTypeFilterChange: (value: string) => void;
-  sortBy: string;
-  onSortByChange: (value: string) => void;
+  sortBy: sortOption;
+  onSortByChange: (value: sortOption) => void;
   onRefresh: () => void;
 }
 
