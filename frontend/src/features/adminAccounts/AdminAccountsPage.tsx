@@ -20,12 +20,11 @@ import { toast } from "sonner";
 const AdminAccountsPage = (): ReactElement => {
   const { user } = useAuth();
   const {
-    filtered,
+    data: accounts,
     totalCount,
     activeCount,
     inactiveCount,
     recentCount,
-    allFilteredCount,
     page,
     pageSize,
     totalPages,
@@ -45,6 +44,7 @@ const AdminAccountsPage = (): ReactElement => {
     resetPassword,
     toggleStatus,
     deleteAdmin,
+    refetch,
   } = useAdminAccounts();
 
   const handleCreate = async (values: addAdminFormValues): Promise<void> => {
@@ -132,6 +132,13 @@ const AdminAccountsPage = (): ReactElement => {
     }
   };
 
+  const handleRefresh = (): void => {
+    setSearch("");
+    setStatusFilter("all");
+    setSortOption("newest");
+    refetch();
+  };
+
   return (
     <div className="space-y-6">
       {/* Page Header */}
@@ -181,14 +188,14 @@ const AdminAccountsPage = (): ReactElement => {
         onStatusChange={setStatusFilter}
         sortOption={sortOption}
         onSortChange={setSortOption}
-        onRefresh={() => setSearch("")}
-        totalFiltered={allFilteredCount}
+        onRefresh={handleRefresh}
+        totalFiltered={totalCount}
       />
 
       {/* Desktop Table */}
       <div className="hidden md:block">
         <AdminTable
-          admins={filtered}
+          admins={accounts}
           currentUsername={user?.username ?? ""}
           onView={(a) => openModal("view", a)}
           onEdit={(a) => openModal("edit", a)}
@@ -198,7 +205,7 @@ const AdminAccountsPage = (): ReactElement => {
           page={page}
           totalPages={totalPages}
           onPageChange={setPage}
-          totalFiltered={allFilteredCount}
+          totalFiltered={totalCount}
           pageSize={pageSize}
         />
       </div>
@@ -206,7 +213,7 @@ const AdminAccountsPage = (): ReactElement => {
       {/* Mobile Card List */}
       <div className="md:hidden">
         <AdminCardListMobile
-          admins={filtered}
+          admins={accounts}
           currentUsername={user?.username ?? ""}
           onView={(a) => openModal("view", a)}
           onEdit={(a) => openModal("edit", a)}

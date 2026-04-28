@@ -7,8 +7,26 @@ import type {
 import type { ApiResponse, PageResponse } from "@/shared/types/api";
 
 export const adminService = {
-  getAdmins: () =>
-    fetchWithAuth<ApiResponse<PageResponse<AdminAccount>>>("admins").then((r) => r.data.content),
+  getAdmins: (params: {
+    page?: number;
+    size?: number;
+    search?: string;
+    isActive?: boolean;
+    sort?: string;
+  }) => {
+    const query = new URLSearchParams();
+
+    if (params.page !== undefined) query.append("page", String(params.page));
+    if (params.size !== undefined) query.append("size", String(params.size));
+    if (params.search) query.append("search", params.search);
+    if (params.isActive !== undefined)
+      query.append("isActive", String(params.isActive));
+    if (params.sort) query.append("sort", params.sort);
+
+    return fetchWithAuth<ApiResponse<PageResponse<AdminAccount>>>(
+      `admins?${query.toString()}`,
+    );
+  },
 
   createAdmin: (values: addAdminFormValues) =>
     fetchWithAuth<ApiResponse<AdminAccount>>("admins", {
