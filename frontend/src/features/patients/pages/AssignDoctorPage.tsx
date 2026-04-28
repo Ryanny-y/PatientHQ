@@ -2,10 +2,10 @@ import { useMemo, useState } from 'react';
 import { Download, Plus, Shuffle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useToast, ToastContainer } from '@/shared/hooks/useToast';
-import AssignmentStatsCards from '@/features/patients/components/AssignmentStatsCards';
-import AssignmentFilterToolbar from '@/features/patients/components/AssignmentFilterToolbar';
-import AssignmentTable from '@/features/patients/components/AssignmentTable';
-import AssignmentCardListMobile from '@/features/patients/components/AssignmentCardListMobile';
+import AssignmentStatsCards from '@/features/patients/components/assignment/AssignmentStatsCards';
+import AssignmentFilterToolbar from '@/features/patients/components/assignment/AssignmentFilterToolbar';
+import AssignmentTable from '@/features/patients/components/assignment/AssignmentTable';
+import AssignmentCardListMobile from '@/features/patients/components/assignment/AssignmentCardListMobile';
 import RoleStateSwitcher from '@/features/patients/components/RoleStateSwitcher';
 import {
   ViewAssignmentDrawer,
@@ -13,8 +13,8 @@ import {
   ReassignDoctorModal,
   RemoveAssignmentDialog,
   AutoMatchModal,
-} from '@/features/patients/components/AssignmentModals';
-import type { NewAssignmentPayload, ReassignPayload, AutoMatchPayload } from '@/features/patients/components/AssignmentModals';
+} from '@/features/patients/components/assignment/AssignmentModals';
+import type { NewAssignmentPayload, ReassignPayload, AutoMatchPayload } from '@/features/patients/components/assignment/AssignmentModals';
 import { allAssignments, doctorProfiles, unassignedPatients } from '@/features/patients/utils/assignmentMocks';
 import type { AssignmentRecord, PatientSummary } from '@/features/patients/types/assignment';
 

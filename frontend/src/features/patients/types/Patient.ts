@@ -84,7 +84,7 @@ export const addPatientSchema = z.object({
     },
     { message: "Enter a valid date of birth" },
   ),
-  gender: z.enum(["Male", "Female", "Prefer not to say"] as const),
+  gender: z.enum(["MALE", "FEMALE"] as const),
   contactNumber: z
     .string()
     .transform((value) => value.replace(/\D/g, ""))
@@ -93,7 +93,7 @@ export const addPatientSchema = z.object({
     }),
   email: z.email("Enter a valid email address").or(z.literal("")),
   address: z.string().min(5, "Address is required"),
-  bloodtype: z
+  bloodType: z
     .enum(["A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-", ""] as const)
     .optional(),
   allergies: z.string().optional(),
@@ -123,7 +123,7 @@ export const editPatientSchema = z.object({
     .regex(/^[0-9+\-\s()]+$/, "Invalid phone number format"),
   email: z.email("Enter a valid email address"),
   address: z.string().min(3, "Address is required"),
-  bloodtype: z.enum(["A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-"]),
+  bloodType: z.enum(["A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-"]),
   allergies: z.string(),
   emergencyContactName: z.string().min(2, "Emergency contact name is required"),
   emergencyContactNumber: z
