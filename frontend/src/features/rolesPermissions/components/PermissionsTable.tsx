@@ -5,7 +5,7 @@ import { Badge } from '@/components/ui/badge';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useRolePermissions } from '../hooks/useRolePermissions';
-import { useUpdateRolePermissions } from '../hooks/usePermissionMutations';
+import { usePermissionMutation } from '../hooks/usePermissionMutations';
 import { AssignPermissionsModal } from './AssignPermissionsModal';
 
 interface PermissionsTableProps {
@@ -13,23 +13,24 @@ interface PermissionsTableProps {
 }
 
 const PermissionsTable = ({ roleId }: PermissionsTableProps) => {
-  const { data: permissions, isLoading } = useRolePermissions(roleId);
-  const updateMutation = useUpdateRolePermissions();
+  const { data: permissionsResponse, isLoading } = useRolePermissions(roleId);
+  const permissions = permissionsResponse?.data ?? [];
+  const { updateRolePermissions: updateMutation } = usePermissionMutation();
   const [search, setSearch] = useState('');
   const [filter, setFilter] = useState<'all' | 'assigned' | 'unassigned'>('all');
   const [showAssignModal, setShowAssignModal] = useState(false);
 
-  const filteredPermissions = permissions?.filter(p => {
-    const matchesSearch = p.name.toLowerCase().includes(search.toLowerCase()) ||
+  const filteredPermissions = permissions.filter(p => {
+    const matchesSearch = p.permissionName.toLowerCase().includes(search.toLowerCase()) ||
                          p.description.toLowerCase().includes(search.toLowerCase());
     const matchesFilter = filter === 'all' ||
                          (filter === 'assigned' && p.assigned) ||
                          (filter === 'unassigned' && !p.assigned);
     return matchesSearch && matchesFilter;
-  }) || [];
+  });
 
   const handleTogglePermission = (permissionId: string, assigned: boolean) => {
-    const currentAssigned = permissions?.filter(p => p.assigned).map(p => p.id) || [];
+    const currentAssigned = permissions.filter(p => p.assigned).map(p => p.id);
     let newAssigned;
     if (assigned) {
       newAssigned = currentAssigned.filter(id => id !== permissionId);
@@ -81,7 +82,7 @@ const PermissionsTable = ({ roleId }: PermissionsTableProps) => {
           <TableBody>
             {filteredPermissions.map((permission) => (
               <TableRow key={permission.id}>
-                <TableCell className="font-medium">{permission.name}</TableCell>
+                 <TableCell className="font-medium">{permission.permissionName}</TableCell>
                 <TableCell>{permission.description}</TableCell>
                 <TableCell>
                   <Badge variant={permission.assigned ? 'default' : 'secondary'}>

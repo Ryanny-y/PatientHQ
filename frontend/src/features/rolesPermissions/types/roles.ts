@@ -1,6 +1,6 @@
 export interface Role {
   id: string;
-  name: string;
+  roleName: string;
   createdAt: string;
   userCount: number;
   permissionCount: number;
@@ -8,7 +8,7 @@ export interface Role {
 
 export interface Permission {
   id: string;
-  name: string;
+  permissionName: string;
   description: string;
 }
 

@@ -3,7 +3,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
-import { useUpdateRole } from '../hooks/useRoleMutations';
+import { useRolesMutation } from '../hooks/useRolesMutations.ts';
 import type { Role } from '../types/roles.ts';
 
 interface EditRoleModalProps {
@@ -12,9 +12,9 @@ interface EditRoleModalProps {
 }
 
 const EditRoleModal = ({ role, onClose }: EditRoleModalProps) => {
-  const [name, setName] = useState(role.name);
+  const [name, setName] = useState(role.roleName);
   const [error, setError] = useState('');
-  const updateMutation = useUpdateRole();
+  const { updateRole } = useRolesMutation();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -23,7 +23,7 @@ const EditRoleModal = ({ role, onClose }: EditRoleModalProps) => {
       return;
     }
     try {
-      await updateMutation.mutateAsync({ id: role.id, updates: { name: name.toUpperCase() } });
+      await updateRole.mutateAsync({ id: role.id, updates: { roleName: name.toUpperCase() } });
       onClose();
     } catch (err) {
       setError('Failed to update role');
@@ -53,8 +53,8 @@ const EditRoleModal = ({ role, onClose }: EditRoleModalProps) => {
             <Button type="button" variant="outline" onClick={onClose}>
               Cancel
             </Button>
-            <Button type="submit" disabled={updateMutation.isPending}>
-              {updateMutation.isPending ? 'Saving...' : 'Save Changes'}
+            <Button type="submit" disabled={updateRole.isPending}>
+              {updateRole.isPending ? 'Saving...' : 'Save Changes'}
             </Button>
           </DialogFooter>
         </form>

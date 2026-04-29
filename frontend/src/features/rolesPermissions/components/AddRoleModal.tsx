@@ -1,10 +1,16 @@
-import { useState } from 'react';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
-import { useCreateRole } from '../hooks/useRoleMutations';
-import type { Role } from '../types/roles';
-import { Label } from '@/components/ui/label.tsx';
-import { Input } from '@/components/ui/input.tsx';
-import { Button } from '@/components/ui/button.tsx';
+import { useState } from "react";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from "@/components/ui/dialog";
+import type { Role } from "../types/roles";
+import { Label } from "@/components/ui/label.tsx";
+import { Input } from "@/components/ui/input.tsx";
+import { Button } from "@/components/ui/button.tsx";
+import { useRoles } from "../hooks/useRoles";
 
 interface AddRoleModalProps {
   onClose: () => void;
@@ -12,25 +18,24 @@ interface AddRoleModalProps {
 }
 
 const AddRoleModal = ({ onClose, onRoleCreated }: AddRoleModalProps) => {
-  const [name, setName] = useState('');
-  const [error, setError] = useState('');
-  const createMutation = useCreateRole();
+  const [name, setName] = useState("");
+  const [error, setError] = useState("");
+  const { createRole, createRoleMutation } = useRoles();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!name.trim()) {
-      setError('Role name is required');
+      setError("Role name is required");
       return;
     }
     try {
-      const newRole = await createMutation.mutateAsync({
-        name: name.toUpperCase(),
-        createdAt: new Date().toISOString(),
+      const newRole = await createRole({
+        roleName: name.toUpperCase(),
       });
-      onRoleCreated(newRole);
+      onRoleCreated(newRole.data);
       onClose();
     } catch (err) {
-      setError('Failed to create role');
+      setError("Failed to create role");
     }
   };
 
@@ -58,8 +63,8 @@ const AddRoleModal = ({ onClose, onRoleCreated }: AddRoleModalProps) => {
             <Button type="button" variant="outline" onClick={onClose}>
               Cancel
             </Button>
-            <Button type="submit" disabled={createMutation.isPending}>
-              {createMutation.isPending ? 'Creating...' : 'Create Role'}
+            <Button type="submit" disabled={createRoleMutation.isPending}>
+              {createRoleMutation.isPending ? "Creating..." : "Create Role"}
             </Button>
           </DialogFooter>
         </form>

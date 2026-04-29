@@ -28,7 +28,7 @@ const RoleDetails = ({ role }: RoleDetailsProps) => {
       <CardHeader>
         <div className="flex justify-between items-start">
           <div>
-            <CardTitle>{role.name}</CardTitle>
+            <CardTitle>{role.roleName}</CardTitle>
             <p className="text-sm text-gray-600">ID: {role.id}</p>
             <p className="text-sm text-gray-600">Created: {new Date(role.createdAt).toLocaleDateString()}</p>
             <p className="text-sm text-gray-600">Users Assigned: {role.userCount}</p>

@@ -1,10 +1,11 @@
 import { Card, CardContent } from '@/components/ui/card';
 import { useRoles } from '../hooks/useRoles';
-import { usePermissions } from '../hooks/usePermissions';
+import { usePermissionsQuery } from '../hooks/usePermissionsQuery';
 
 const SummaryCards = () => {
-  const { data: roles } = useRoles();
-  const { data: permissions } = usePermissions();
+  const { roles } = useRoles();
+  const { data: permissionsResponse } = usePermissionsQuery();
+  const permissions = permissionsResponse?.data ?? [];
 
   const totalRoles = roles?.length || 0;
   const totalPermissions = permissions?.length || 0;

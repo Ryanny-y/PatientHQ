@@ -13,14 +13,14 @@ interface RolesListProps {
 }
 
 const RolesList = ({ onSelectRole }: RolesListProps) => {
-  const { data: roles, isLoading } = useRoles();
+  const { roles, isLoading } = useRoles();
   const [search, setSearch] = useState('');
   const [editingRole, setEditingRole] = useState<Role | null>(null);
   const [deletingRole, setDeletingRole] = useState<Role | null>(null);
 
-  const filteredRoles = roles?.filter(r =>
-    r.name.toLowerCase().includes(search.toLowerCase())
-  ) || [];
+  const filteredRoles = roles.filter(r =>
+    r.roleName.toLowerCase().includes(search.toLowerCase())
+  );
 
   if (isLoading) {
     return (
@@ -58,8 +58,8 @@ const RolesList = ({ onSelectRole }: RolesListProps) => {
               className="flex items-center justify-between p-4 border rounded-lg cursor-pointer hover:bg-gray-50"
               onClick={() => onSelectRole(role)}
             >
-              <div>
-                <h3 className="font-semibold">{role.name}</h3>
+               <div>
+                 <h3 className="font-semibold">{role.roleName}</h3>
                 <p className="text-sm text-gray-600">
                   {role.userCount} Users • {role.permissionCount} Permissions
                 </p>

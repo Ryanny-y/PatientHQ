@@ -1,9 +1,19 @@
-import { useQuery } from '@tanstack/react-query';
-import { getRoles } from '../services/rolesService';
+import { useRolesMutation } from "./useRolesMutations";
+import { useRolesQuery } from "./useRolesQuery";
 
 export const useRoles = () => {
-  return useQuery({
-    queryKey: ['roles'],
-    queryFn: getRoles,
-  });
-};
+  const { data, isLoading, refetch } = useRolesQuery();
+  const mutations = useRolesMutation();
+
+  return {
+    roles: data?.data ?? [],
+    isLoading,
+    refetchRoles: refetch,
+
+    createRole: mutations.createRole.mutateAsync,
+    createRoleMutation: mutations.createRole,
+    
+    updateRole: mutations.updateRole.mutateAsync,
+    deleteRole: mutations.deleteRole.mutateAsync,
+  }
+}

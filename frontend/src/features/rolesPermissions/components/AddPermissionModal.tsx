@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useCreatePermission } from '../hooks/usePermissionMutations';
+import { usePermissionMutation } from '../hooks/usePermissionMutations';
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
@@ -14,7 +14,7 @@ const AddPermissionModal = ({ onClose }: AddPermissionModalProps) => {
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
   const [error, setError] = useState('');
-  const createMutation = useCreatePermission();
+  const { createPermission: createMutation } = usePermissionMutation();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -24,7 +24,7 @@ const AddPermissionModal = ({ onClose }: AddPermissionModalProps) => {
     }
     try {
       await createMutation.mutateAsync({
-        name: name.toUpperCase(),
+        permissionName: name.toUpperCase(),
         description,
       });
       onClose();

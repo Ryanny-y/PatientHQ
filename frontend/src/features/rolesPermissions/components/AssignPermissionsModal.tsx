@@ -2,9 +2,9 @@ import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
-import { usePermissions } from '../hooks/usePermissions';
+import { usePermissionsQuery } from '../hooks/usePermissionsQuery';
 import { useRolePermissions } from '../hooks/useRolePermissions';
-import { useUpdateRolePermissions } from '../hooks/usePermissionMutations';
+import { usePermissionMutation } from '../hooks/usePermissionMutations';
 
 interface AssignPermissionsModalProps {
   roleId: string;
@@ -12,9 +12,11 @@ interface AssignPermissionsModalProps {
 }
 
 const AssignPermissionsModal = ({ roleId, onClose }: AssignPermissionsModalProps) => {
-  const { data: allPermissions } = usePermissions();
-  const { data: rolePermissions } = useRolePermissions(roleId);
-  const updateMutation = useUpdateRolePermissions();
+  const { data: allPermissionsResponse } = usePermissionsQuery();
+  const allPermissions = allPermissionsResponse?.data ?? [];
+  const { data: rolePermissionsResponse } = useRolePermissions(roleId);
+  const rolePermissions = rolePermissionsResponse?.data ?? [];
+  const { updateRolePermissions: updateMutation } = usePermissionMutation();
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
 
   useEffect(() => {
@@ -52,10 +54,10 @@ const AssignPermissionsModal = ({ roleId, onClose }: AssignPermissionsModalProps
                 checked={selectedIds.includes(permission.id)}
                 onCheckedChange={() => togglePermission(permission.id)}
               />
-              <label htmlFor={permission.id} className="text-sm">
-                <div className="font-medium">{permission.name}</div>
-                <div className="text-gray-500">{permission.description}</div>
-              </label>
+               <label htmlFor={permission.id} className="text-sm">
+                 <div className="font-medium">{permission.permissionName}</div>
+                 <div className="text-gray-500">{permission.description}</div>
+               </label>
             </div>
           ))}
         </div>

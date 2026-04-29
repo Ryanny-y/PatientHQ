@@ -1,6 +1,6 @@
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
-import { useDeleteRole } from '../hooks/useRoleMutations';
+import { useRolesMutation } from '../hooks/useRolesMutations';
 import type { Role } from '../types/roles';
 
 interface DeleteRoleModalProps {
@@ -9,7 +9,7 @@ interface DeleteRoleModalProps {
 }
 
 const DeleteRoleModal = ({ role, onClose }: DeleteRoleModalProps) => {
-  const deleteMutation = useDeleteRole();
+  const { deleteRole } = useRolesMutation();
 
   const handleDelete = async () => {
     if (role.userCount > 0) {
@@ -17,7 +17,7 @@ const DeleteRoleModal = ({ role, onClose }: DeleteRoleModalProps) => {
       return;
     }
     try {
-      await deleteMutation.mutateAsync(role.id);
+      await deleteRole.mutateAsync(role.id);
       onClose();
     } catch (err) {
       alert('Failed to delete role');
@@ -31,7 +31,7 @@ const DeleteRoleModal = ({ role, onClose }: DeleteRoleModalProps) => {
           <DialogTitle>Delete Role</DialogTitle>
         </DialogHeader>
         <div className="py-4">
-          <p>Are you sure you want to delete the role "{role.name}"?</p>
+          <p>Are you sure you want to delete the role "{role.roleName}"?</p>
           {role.userCount > 0 && (
             <p className="text-red-500 mt-2">
               This role cannot be deleted because {role.userCount} users are assigned to it.
@@ -45,9 +45,9 @@ const DeleteRoleModal = ({ role, onClose }: DeleteRoleModalProps) => {
           <Button
             variant="destructive"
             onClick={handleDelete}
-            disabled={deleteMutation.isPending || role.userCount > 0}
+            disabled={deleteRole.isPending || role.userCount > 0}
           >
-            {deleteMutation.isPending ? 'Deleting...' : 'Delete Role'}
+            {deleteRole.isPending ? 'Deleting...' : 'Delete Role'}
           </Button>
         </DialogFooter>
       </DialogContent>
