@@ -57,10 +57,11 @@ public class NurseController {
     @GetMapping
     public ResponseEntity<ApiResponse<PageResponse<NurseDto>>> getAllNurses(
             @RequestParam(required = false) Boolean isActive,
+            @RequestParam(required = false) String assignedWard,
             @RequestParam(required = false) String search,
             Pageable pageable
     ) {
-        Page<Nurse> nurses = nurseService.getAllNurses(isActive, search, pageable);
+        Page<Nurse> nurses = nurseService.getAllNurses(isActive, assignedWard, search, pageable);
 
         List<NurseDto> nursesDto = nurses.map(nurseMapper::toDto).stream().toList();
         PageResponse<NurseDto> pageResponse = PageResponse.<NurseDto>builder()

@@ -73,9 +73,10 @@ public class NurseServiceImpl implements NurseService {
 
     @Override
     @Transactional(readOnly = true)
-    public Page<Nurse> getAllNurses(Boolean isActive, String search, Pageable pageable) {
+    public Page<Nurse> getAllNurses(Boolean isActive, String assignedWard, String search, Pageable pageable) {
         String formattedSearch = (search == null) ? null : "%" + search.toLowerCase() + "%";
-        return nurseRepository.findAllNurses(isActive, formattedSearch, pageable);
+        String formattedWard = (assignedWard == null) ? null : assignedWard.toLowerCase();
+        return nurseRepository.findAllNurses(isActive, formattedWard, formattedSearch, pageable);
     }
 
     @Override

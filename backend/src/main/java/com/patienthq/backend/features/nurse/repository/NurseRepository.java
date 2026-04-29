@@ -22,6 +22,7 @@ public interface NurseRepository extends JpaRepository<Nurse, UUID>, PagingAndSo
         SELECT n FROM Nurse n
         LEFT JOIN n.user u
         WHERE (:isActive IS NULL OR u.isActive = :isActive)
+        AND (:assignedWard IS NULL OR LOWER(n.assignedWard) LIKE :assignedWard)
         AND (
             :search IS NULL OR
             LOWER(n.fullName) LIKE :search OR
@@ -31,6 +32,7 @@ public interface NurseRepository extends JpaRepository<Nurse, UUID>, PagingAndSo
     """)
     Page<Nurse> findAllNurses(
             @Param("isActive") Boolean isActive,
+            @Param("assignedWard") String assignedWard,
             @Param("search") String search,
             Pageable pageable
     );
