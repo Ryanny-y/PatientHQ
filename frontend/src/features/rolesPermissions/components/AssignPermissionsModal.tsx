@@ -1,10 +1,9 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogDescription } from '@/components/ui/dialog';
-import { usePermissionsQuery } from '../hooks/usePermissionsQuery';
+import { usePermissions } from '../hooks/usePermissions';
 import { useRolePermissions } from '../hooks/useRolePermissions';
-import { usePermissionMutation } from '../hooks/usePermissionMutations';
 
 interface AssignPermissionsModalProps {
   roleId: string;
@@ -12,24 +11,21 @@ interface AssignPermissionsModalProps {
 }
 
 const AssignPermissionsModal = ({ roleId, onClose }: AssignPermissionsModalProps) => {
-  const { data: allPermissionsResponse } = usePermissionsQuery();
-  const allPermissions = allPermissionsResponse?.data ?? [];
-  const { data: rolePermissionsResponse } = useRolePermissions(roleId);
-  const rolePermissions = rolePermissionsResponse?.data ?? [];
-  const { updateRolePermissions: updateMutation } = usePermissionMutation();
-  const [selectedIds, setSelectedIds] = useState<string[]>([]);
-
-  useEffect(() => {
-    if (rolePermissions) {
-      setSelectedIds(rolePermissions.filter(p => p.assigned).map(p => p.id));
-    }
-  }, [rolePermissions]);
+  const { permissions: allPermissions } = usePermissions();
+  const { data: rolePermissionsResponse } = useRolePermissions(roleId); 
+  const { updateRolePermissions, updateRolePermissionsMutation } = usePermissions();
+  
+  // Initialize selectedIds with currently assigned permissions
+  const assignedPermissionIds = new Set(
+    rolePermissionsResponse?.data?.map(p => p.id) ?? []
+  );
+  const [selectedIds, setSelectedIds] = useState<string[]>(Array.from(assignedPermissionIds));
 
   const handleSubmit = async () => {
     try {
-      await updateMutation.mutateAsync({ roleId, permissionIds: selectedIds });
+      await updateRolePermissions({ roleId, permissionIds: selectedIds });
       onClose();
-    } catch (err) {
+    } catch {
       alert('Failed to update permissions');
     }
   };
@@ -66,8 +62,8 @@ const AssignPermissionsModal = ({ roleId, onClose }: AssignPermissionsModalProps
           <Button variant="outline" onClick={onClose}>
             Cancel
           </Button>
-          <Button onClick={handleSubmit} disabled={updateMutation.isPending}>
-            {updateMutation.isPending ? 'Saving...' : 'Save Assignments'}
+          <Button onClick={handleSubmit} disabled={updateRolePermissionsMutation.isPending}>
+            {updateRolePermissionsMutation.isPending ? 'Saving...' : 'Save Assignments'}
           </Button>
         </DialogFooter>
       </DialogContent>
