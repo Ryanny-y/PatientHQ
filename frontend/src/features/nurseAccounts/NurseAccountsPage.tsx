@@ -18,12 +18,11 @@ import { toast } from "sonner";
 
 const NurseAccountsPage = (): ReactElement => {
   const {
-    filtered,
+    data: nurses,
     totalCount,
     activeCount,
     inactiveCount,
     wardCount,
-    allFilteredCount,
     page,
     pageSize,
     totalPages,
@@ -46,7 +45,7 @@ const NurseAccountsPage = (): ReactElement => {
     resetPassword,
     toggleStatus,
     deleteNurse,
-    refetch
+    refetch,
   } = useNurseAccounts();
 
   const handleCreate = async (values: addNurseFormValues): Promise<void> => {
@@ -131,6 +130,13 @@ const NurseAccountsPage = (): ReactElement => {
     }
   };
 
+  const handleRefresh = (): void => {
+    setSearch("");
+    setStatusFilter("all");
+    setSortOption("newest");
+    refetch();
+  };
+
   return (
     <div className="space-y-6">
       {/* Page Header */}
@@ -182,15 +188,15 @@ const NurseAccountsPage = (): ReactElement => {
         onWardChange={setWardFilter}
         sortOption={sortOption}
         onSortChange={setSortOption}
-        onRefresh={refetch}
-        totalFiltered={allFilteredCount}
+        onRefresh={handleRefresh}
+        totalFiltered={totalCount}
         wards={allWards}
       />
 
       {/* Desktop Table */}
       <div className="hidden md:block">
         <NurseTable
-          nurses={filtered}
+          nurses={nurses}
           onView={(n) => openModal("view", n)}
           onEdit={(n) => openModal("edit", n)}
           onResetPassword={(n) => openModal("reset-password", n)}
@@ -199,7 +205,7 @@ const NurseAccountsPage = (): ReactElement => {
           page={page}
           totalPages={totalPages}
           onPageChange={setPage}
-          totalFiltered={allFilteredCount}
+          totalFiltered={totalCount}
           pageSize={pageSize}
         />
       </div>
@@ -207,7 +213,7 @@ const NurseAccountsPage = (): ReactElement => {
       {/* Mobile Card List */}
       <div className="md:hidden">
         <NurseCardListMobile
-          nurses={filtered}
+          nurses={nurses}
           onView={(n) => openModal("view", n)}
           onEdit={(n) => openModal("edit", n)}
           onResetPassword={(n) => openModal("reset-password", n)}

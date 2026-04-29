@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useState } from "react";
 import type {
   NurseAccount,
   nurseModalMode,
@@ -12,24 +12,34 @@ import { useNurseMutation } from "./useNurseMutation";
 const PAGE_SIZE = 7;
 
 export const useNurseAccounts = () => {
+  // UI state only
+  const [search, setSearch] = useState("");
+  const [statusFilter, setStatusFilter] = useState<statusFilter>("all");
+  const [wardFilter, setWardFilter] = useState("all");
+  const [sortOption, setSortOption] = useState<sortOption>("newest");
+  const [page, setPage] = useState(1);
+  const [modalMode, setModalMode] = useState<nurseModalMode>(null);
+  const [selectedNurse, setSelectedNurse] = useState<NurseAccount | null>(null);
+
   // server state
-  const { data: accounts = [], refetch } = useNurseQuery();
+  const { data, refetch } = useNurseQuery({
+    page: page - 1,
+    size: PAGE_SIZE,
+    search,
+    isActive: statusFilter === "all" ? undefined : statusFilter === "active",
+    assignedWard: wardFilter === "all" ? undefined : wardFilter,
+    sort:
+      sortOption === "newest"
+        ? "user.createdAt,desc"
+        : sortOption === "oldest"
+          ? "user.createdAt,asc"
+          : "fullName,asc",
+  });
   const mutations = useNurseMutation();
 
-  // UI state
-  const [search, setSearch] = useState("");
-  const [statusFilter, setStatusFilter] =
-    useState<statusFilter>("all");
-  const [wardFilter, setWardFilter] = useState("all");
-  const [sortOption, setSortOption] =
-    useState<sortOption>("newest");
-  const [page, setPage] = useState(1);
-
-  const [modalMode, setModalMode] =
-    useState<nurseModalMode>(null);
-
-  const [selectedNurse, setSelectedNurse] =
-    useState<NurseAccount | null>(null);
+  const accounts = data?.data?.content ?? [];
+  const totalPages = data?.data?.totalPages ?? 1;
+  const totalCount = data?.data?.totalElements ?? 0;
 
   const resetPage = () => setPage(1);
 
@@ -54,69 +64,6 @@ export const useNurseAccounts = () => {
     resetPage();
   };
 
-  // wards
-  const allWards = useMemo(
-    () =>
-      [...new Set(accounts.map((a) => a.assignedWard))].sort(),
-    [accounts],
-  );
-
-  // filtering
-  const filtered = useMemo(() => {
-    let result = [...accounts];
-
-    if (search.trim()) {
-      const q = search.toLowerCase();
-      result = result.filter(
-        (n) =>
-          n.username.toLowerCase().includes(q) ||
-          n.fullName.toLowerCase().includes(q) ||
-          n.email.toLowerCase().includes(q) ||
-          n.licenseNumber.toLowerCase().includes(q),
-      );
-    }
-
-    if (statusFilter === "active")
-      result = result.filter((n) => n.isActive);
-
-    if (statusFilter === "inactive")
-      result = result.filter((n) => !n.isActive);
-
-    if (wardFilter !== "all") {
-      result = result.filter(
-        (n) => n.assignedWard === wardFilter,
-      );
-    }
-
-    result.sort((a, b) => {
-      if (sortOption === "newest")
-        return (
-          new Date(b.created_at).getTime() -
-          new Date(a.created_at).getTime()
-        );
-
-      if (sortOption === "oldest")
-        return (
-          new Date(a.created_at).getTime() -
-          new Date(b.created_at).getTime()
-        );
-
-      return a.fullName.localeCompare(b.fullName);
-    });
-
-    return result;
-  }, [accounts, search, statusFilter, wardFilter, sortOption]);
-
-  const totalPages = Math.max(
-    1,
-    Math.ceil(filtered.length / PAGE_SIZE),
-  );
-
-  const paginated = filtered.slice(
-    (page - 1) * PAGE_SIZE,
-    page * PAGE_SIZE,
-  );
-
   // modal
   const openModal = (
     mode: NonNullable<nurseModalMode>,
@@ -133,11 +80,12 @@ export const useNurseAccounts = () => {
 
   return {
     // data
-    filtered: paginated,
-    allFilteredCount: filtered.length,
-    totalCount: accounts.length,
-    activeCount: accounts.filter((n) => n.isActive).length,
-    inactiveCount: accounts.filter((n) => !n.isActive).length,
+    data: accounts,
+    totalCount,
+    totalPages,
+
+    activeCount: accounts.filter((n) => n.isActive).length ?? 0,
+    inactiveCount: accounts.filter((n) => !n.isActive).length ?? 0,
     wardCount: new Set(
       accounts.map((n) => n.assignedWard),
     ).size,
@@ -147,7 +95,6 @@ export const useNurseAccounts = () => {
     // pagination
     page,
     pageSize: PAGE_SIZE,
-    totalPages,
     setPage,
 
     // filters
@@ -159,8 +106,8 @@ export const useNurseAccounts = () => {
     setWardFilter: handleSetWard,
     sortOption,
     setSortOption: handleSetSort,
-    
-    allWards,
+
+    allWards: [], // Will be populated from server if needed
 
     // modal
     modalMode,

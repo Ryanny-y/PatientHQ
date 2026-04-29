@@ -71,7 +71,7 @@ const NurseSearchToolbar = ({
           </Select>
         </div>
 
-        <Select value={wardFilter} onValueChange={onWardChange}>
+        {/* <Select value={wardFilter} onValueChange={onWardChange}>
           <SelectTrigger className="h-9 w-44 text-xs">
             <SelectValue placeholder="All Wards" />
           </SelectTrigger>
@@ -83,7 +83,7 @@ const NurseSearchToolbar = ({
               </SelectItem>
             ))}
           </SelectContent>
-        </Select>
+        </Select> */}
 
         <Select
           value={sortOption}

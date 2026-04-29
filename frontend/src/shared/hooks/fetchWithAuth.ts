@@ -1,11 +1,6 @@
 import { API_URL } from "../config/env";
 import { getAccessToken } from "../context/AuthContext";
 
-let accessToken: string | null = null;
-export const setAccessToken = (token: string | null) => {
-  accessToken = token;
-};
-
 const refreshToken = async () => {
   const res = await fetch(`${API_URL}/auth/refresh-token`, {
     method: "POST",
@@ -42,8 +37,6 @@ export const fetchWithAuth = async <T>(
     if (!newToken) {
       throw new Error("Session expired");
     }
-
-    setAccessToken(newToken.data.accessToken);
 
     res = await doFetch(newToken.data.accessToken);
   }
