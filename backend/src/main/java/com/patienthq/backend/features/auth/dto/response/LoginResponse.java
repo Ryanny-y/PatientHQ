@@ -5,6 +5,8 @@
     import lombok.Data;
     import lombok.NoArgsConstructor;
 
+    import java.util.Set;
+
     @Data
     @AllArgsConstructor
     @NoArgsConstructor
@@ -13,4 +15,5 @@
         private String accessToken;
         private String username;
         private String role;
+        private Set<String> permissions;
     }

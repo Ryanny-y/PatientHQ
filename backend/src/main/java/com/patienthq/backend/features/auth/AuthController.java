@@ -4,6 +4,8 @@ import com.patienthq.backend.features.auth.dto.request.LoginRequest;
 import com.patienthq.backend.features.auth.dto.response.LoginResponse;
 import com.patienthq.backend.features.auth.dto.response.RefreshResponse;
 import com.patienthq.backend.features.auth.service.AuthService;
+import com.patienthq.backend.features.user.model.Permission;
+import com.patienthq.backend.features.user.service.PermissionService;
 import com.patienthq.backend.features.user.service.UserService;
 import com.patienthq.backend.features.user.model.User;
 import com.patienthq.backend.shared.response.ApiResponse;
@@ -18,6 +20,10 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 import jakarta.validation.Valid;
 
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
+
 @RestController
 @RequestMapping("/api/v1/auth")
 @RequiredArgsConstructor
@@ -27,6 +33,7 @@ public class AuthController {
     private final AuthService authService;
     private final JwtService jwtService;
     private final UserService userService;
+    private final PermissionService permissionService;
 
     @PostMapping("/login")
     public ResponseEntity<ApiResponse<LoginResponse>> login (
@@ -36,11 +43,13 @@ public class AuthController {
         UserDetails userDetails = authService.authenticate(loginRequest, httpResponse);
         String accessToken = jwtService.generateAccessToken(userDetails);
         User user = userService.getUserByUsername(loginRequest.getUsername());
+        Set<String> permissions = user.getRole().getPermissions().stream().map(Permission::getPermissionName).collect(Collectors.toSet());
 
         LoginResponse loginResponse = new LoginResponse(
                 accessToken,
                 user.getUsername(),
-                user.getRole().getRoleName()
+                user.getRole().getRoleName(),
+                permissions
         );
 
         ApiResponse<LoginResponse> apiResponse = ApiResponse.<LoginResponse>builder()
@@ -59,11 +68,13 @@ public class AuthController {
         String accessToken = authService.refreshToken(token);
         String username = jwtService.extractUsername(token);
         User user = userService.getUserByUsername(username);
+        Set<String> permissions = user.getRole().getPermissions().stream().map(Permission::getPermissionName).collect(Collectors.toSet());
 
         RefreshResponse refreshResponse = new RefreshResponse(
                 accessToken,
                 user.getUsername(),
-                user.getRole()
+                user.getRole(),
+                permissions
         );
 
         ApiResponse<RefreshResponse> apiResponse = ApiResponse.<RefreshResponse>builder()
