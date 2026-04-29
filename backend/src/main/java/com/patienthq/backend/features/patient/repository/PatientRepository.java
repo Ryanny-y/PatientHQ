@@ -21,8 +21,8 @@ public interface PatientRepository extends JpaRepository<Patient, UUID>, PagingA
                LOWER(p.email) LIKE :search OR
                LOWER(p.contactNumber) LIKE :search)
         AND (:status IS NULL OR p.status = :status)
-        AND (:gender IS NULL OR LOWER(p.gender) = LOWER(:gender))
-        AND (:bloodType IS NULL OR LOWER(p.bloodType) = LOWER(:bloodType))
+        AND (:gender IS NULL OR LOWER(p.gender) = :gender)
+        AND (:bloodType IS NULL OR LOWER(p.bloodType) = :bloodType)
     """)
     Page<Patient> findAllPatients(
             @Param("search") String search,

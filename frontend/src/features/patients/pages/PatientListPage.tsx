@@ -1,4 +1,4 @@
-import { type ReactElement, useMemo, useState } from "react";
+import { type ReactElement } from "react";
 import { UserPlus, Download } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
@@ -29,6 +29,12 @@ const PatientListPage = (): ReactElement => {
     statusFilter,
     setStatusFilter,
 
+    genderFilter,
+    setGenderFilter,
+
+    bloodTypeFilter,
+    setBloodTypeFilter,
+
     sortOption,
     setSortOption,
 
@@ -40,24 +46,7 @@ const PatientListPage = (): ReactElement => {
     updatePatient,
   } = usePatients();
 
-  // extra filters NOT in hook (keep local for now)
-  const [genderFilter, setGenderFilter] = useState<string>("all");
-  const [bloodTypeFilter, setBloodTypeFilter] = useState<string>("all");
-
-  // apply additional filters on top of hook result
-  const finalPatients = useMemo(() => {
-    let result = filtered;
-
-    if (genderFilter !== "all") {
-      result = result.filter((p) => p.gender === genderFilter);
-    }
-
-    if (bloodTypeFilter !== "all") {
-      result = result.filter((p) => p.bloodType === bloodTypeFilter);
-    }
-
-    return result;
-  }, [filtered, genderFilter, bloodTypeFilter]);
+  const finalPatients = filtered;
 
   // ---------- actions ----------
   const handleSaveEdit = async (data: Partial<Patient>) => {

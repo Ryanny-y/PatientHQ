@@ -46,7 +46,14 @@ public class PatientServiceImpl implements PatientService {
     @Transactional(readOnly = true)
     public Page<Patient> getAllPatients(String search, PatientStatus status, String gender, String bloodType, Pageable pageable) {
         String formattedSearch = (search == null) ? null : "%" + search.toLowerCase() + "%";
-        return patientRepository.findAllPatients(formattedSearch, status, gender, bloodType, pageable);
+        String formattedGender = (gender == null || gender.isBlank())
+                ? null
+                : gender.trim().toLowerCase();
+
+        String formattedBloodType = (bloodType == null || bloodType.isBlank())
+                ? null
+                : bloodType.trim().toLowerCase();
+        return patientRepository.findAllPatients(formattedSearch, status, formattedGender, formattedBloodType, pageable);
     }
 
     @Override

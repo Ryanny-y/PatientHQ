@@ -189,7 +189,7 @@ const RegisterPatientPage = (): ReactElement => {
         toast.success("Patient registered successfully.");
         window.localStorage.removeItem(patientDraftKey);
         setTimeout(() => {
-          navigate("patients");
+          navigate("/patients");
         }, 900);
       } else {
         toast.error(

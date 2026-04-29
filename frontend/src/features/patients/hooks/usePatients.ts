@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import { usePatientMutation } from "./usePatientMutation";
 import { usePatientQuery } from "./usePatientQuery";
 import type {
@@ -11,15 +11,37 @@ import type {
 const PAGE_SIZE = 7;
 
 export const usePatients = () => {
-  const { data: accounts = [], refetch } = usePatientQuery();
-  const mutations = usePatientMutation();
-
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState<statusFilter>("all");
+  const [genderFilter, setGenderFilter] = useState<string>("all");
+  const [bloodTypeFilter, setBloodTypeFilter] = useState<string>("all");
   const [sortOption, setSortOption] = useState<sortOption>("newest");
   const [page, setPage] = useState(1);
   const [modalMode, setModalMode] = useState<patientModalMode>(null);
   const [selectedPatient, setSelectedPatient] = useState<Patient | null>(null);
+
+  const { data, refetch } = usePatientQuery({
+    page: page - 1,
+    size: PAGE_SIZE,
+    search,
+    status:
+      statusFilter === "all" ? undefined : statusFilter.toLowerCase(),
+    gender: genderFilter === "all" ? undefined : genderFilter,
+    bloodType: bloodTypeFilter === "all" ? undefined : bloodTypeFilter,
+    sort:
+      sortOption === "newest"
+        ? "createdAt,desc"
+        : sortOption === "oldest"
+          ? "createdAt,asc"
+          : sortOption === "name-asc"
+            ? "fullName,asc"
+            : "fullName,desc",
+  });
+  const mutations = usePatientMutation();
+
+  const accounts = data?.data?.content ?? [];
+  const totalPages = data?.data?.totalPages ?? 1;
+  const totalCount = data?.data?.totalElements ?? 0;
 
   // reset page helpers
   const handleSetSearch = (v: string) => {
@@ -32,48 +54,20 @@ export const usePatients = () => {
     setPage(1);
   };
 
+  const handleSetGender = (v: string) => {
+    setGenderFilter(v);
+    setPage(1);
+  };
+
+  const handleSetBloodType = (v: string) => {
+    setBloodTypeFilter(v);
+    setPage(1);
+  };
+
   const handleSetSort = (v: sortOption) => {
     setSortOption(v);
     setPage(1);
   };
-
-  // 🔥 FILTER LOGIC
-  const filtered = useMemo(() => {
-    let result = [...accounts];
-
-    if (search.trim()) {
-      const q = search.toLowerCase();
-      result = result.filter(
-        (d) =>
-          d.fullName.toLowerCase().includes(q) ||
-          (d.email?.toLowerCase().includes(q) ?? false)
-      );
-    }
-
-    if (statusFilter === "active") result = result.filter((d) => d.status === "ACTIVE");
-    if (statusFilter === "inactive") result = result.filter((d) => d.status !== "INACTIVE");
-    if (statusFilter === "admitted") result = result.filter((d) => d.status === "ADMITTED");
-    if (statusFilter === "discharged") result = result.filter((d) => d.status === "DISCHARGED");
-
-    result.sort((a, b) => {
-      if (sortOption === "newest")
-        return (
-          new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
-        );
-
-      if (sortOption === "oldest")
-        return (
-          new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
-        );
-
-      return a.fullName.localeCompare(b.fullName);
-    });
-
-    return result;
-  }, [accounts, search, statusFilter, sortOption]);
-
-  const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
-  const paginated = filtered.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
 
   // modal
   const openModal = (
@@ -91,9 +85,9 @@ export const usePatients = () => {
 
   return {
     // data
-    filtered: paginated,
-    allFilteredCount: filtered.length,
-    totalCount: accounts.length,
+    filtered: accounts,
+    allFilteredCount: totalCount,
+    totalCount,
     activeCount: accounts.filter((d) => d.status === "ACTIVE").length,
     inactiveCount: accounts.filter((d) => d.status === "INACTIVE").length,
 
@@ -110,6 +104,10 @@ export const usePatients = () => {
     setSearch: handleSetSearch,
     statusFilter,
     setStatusFilter: handleSetStatus,
+    genderFilter,
+    setGenderFilter: handleSetGender,
+    bloodTypeFilter,
+    setBloodTypeFilter: handleSetBloodType,
     sortOption,
     setSortOption: handleSetSort,
 
