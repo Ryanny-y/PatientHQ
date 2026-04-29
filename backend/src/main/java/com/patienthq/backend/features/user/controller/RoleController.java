@@ -72,12 +72,12 @@ public class RoleController {
         return ResponseEntity.ok(ApiResponse.success("Roles deleted successfully.", null));
     }
 
-    @PostMapping("/{roleId}/permissions")
-    public ResponseEntity<ApiResponse<Void>> addPermissionsToRole(
+    @PutMapping("/{roleId}/permissions")
+    public ResponseEntity<ApiResponse<Void>> updateRolePermissions(
             @PathVariable Integer roleId,
             @RequestBody AssignPermissionsRequest request
     ) {
-        roleService.addPermissionsToRole(roleId, request.getPermissionIds());
+        roleService.updateRolePermissions(roleId, request.getPermissionIds());
 
         return ResponseEntity.ok(
                 ApiResponse.success("Permissions added to role successfully.", null)

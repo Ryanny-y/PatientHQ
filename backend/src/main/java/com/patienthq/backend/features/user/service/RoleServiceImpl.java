@@ -8,12 +8,14 @@ import com.patienthq.backend.features.user.repository.PermissionRepository;
 import com.patienthq.backend.features.user.repository.RoleRepository;
 import com.patienthq.backend.shared.exceptions.AppException;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class RoleServiceImpl implements RoleService {
@@ -56,10 +58,10 @@ public class RoleServiceImpl implements RoleService {
 
     @Override
     @Transactional
-    public void addPermissionsToRole(Integer roleId, List<Integer> permissionIds) {
+    public void updateRolePermissions(Integer roleId, List<Integer> permissionIds) {
         Role role = getRoleById(roleId);
 
-        if (permissionIds == null || permissionIds.isEmpty()) {
+        if (permissionIds == null) {
             throw new AppException(HttpStatus.BAD_REQUEST, "Permission IDs cannot be empty");
         }
 
@@ -68,7 +70,7 @@ public class RoleServiceImpl implements RoleService {
         if (permissions.size() != permissionIds.size()) {
             throw new AppException(HttpStatus.NOT_FOUND, "One or more permissions not found");
         }
-
+        role.getPermissions().clear();
         role.getPermissions().addAll(permissions);
 
         roleRepository.save(role);
