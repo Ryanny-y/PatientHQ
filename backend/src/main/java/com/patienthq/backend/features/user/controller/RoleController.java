@@ -1,6 +1,7 @@
 package com.patienthq.backend.features.user.controller;
 
 import com.patienthq.backend.features.user.dto.RoleDto;
+import com.patienthq.backend.features.user.dto.request.AssignPermissionsRequest;
 import com.patienthq.backend.features.user.dto.request.CreateRoleRequest;
 import com.patienthq.backend.features.user.dto.request.UpdateRoleRequest;
 import com.patienthq.backend.features.user.mapper.RoleMapper;
@@ -56,5 +57,17 @@ public class RoleController {
     ) {
         roleService.deleteRole(id);
         return ResponseEntity.ok(ApiResponse.success("Roles deleted successfully.", null));
+    }
+
+    @PostMapping("/{roleId}/permissions")
+    public ResponseEntity<ApiResponse<Void>> addPermissionsToRole(
+            @PathVariable Integer roleId,
+            @RequestBody AssignPermissionsRequest request
+    ) {
+        roleService.addPermissionsToRole(roleId, request.getPermissionIds());
+
+        return ResponseEntity.ok(
+                ApiResponse.success("Permissions added to role successfully.", null)
+        );
     }
 }

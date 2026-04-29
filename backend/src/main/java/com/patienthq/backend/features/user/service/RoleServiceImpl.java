@@ -2,7 +2,9 @@ package com.patienthq.backend.features.user.service;
 
 import com.patienthq.backend.features.user.dto.request.CreateRoleRequest;
 import com.patienthq.backend.features.user.dto.request.UpdateRoleRequest;
+import com.patienthq.backend.features.user.model.Permission;
 import com.patienthq.backend.features.user.model.Role;
+import com.patienthq.backend.features.user.repository.PermissionRepository;
 import com.patienthq.backend.features.user.repository.RoleRepository;
 import com.patienthq.backend.shared.exceptions.AppException;
 import lombok.RequiredArgsConstructor;
@@ -17,6 +19,7 @@ import java.util.List;
 public class RoleServiceImpl implements RoleService {
 
     private final RoleRepository roleRepository;
+    private final PermissionRepository permissionRepository;
 
     @Override
     public List<Role> getAllRoles() {
@@ -49,6 +52,26 @@ public class RoleServiceImpl implements RoleService {
     public void deleteRole(Integer id) {
         Role role = getRoleById(id);
         roleRepository.delete(role);
+    }
+
+    @Override
+    @Transactional
+    public void addPermissionsToRole(Integer roleId, List<Integer> permissionIds) {
+        Role role = getRoleById(roleId);
+
+        if (permissionIds == null || permissionIds.isEmpty()) {
+            throw new AppException(HttpStatus.BAD_REQUEST, "Permission IDs cannot be empty");
+        }
+
+        List<Permission> permissions = permissionRepository.findAllById(permissionIds);
+
+        if (permissions.size() != permissionIds.size()) {
+            throw new AppException(HttpStatus.NOT_FOUND, "One or more permissions not found");
+        }
+
+        role.getPermissions().addAll(permissions);
+
+        roleRepository.save(role);
     }
 
     private Role getRoleById(Integer id) {
