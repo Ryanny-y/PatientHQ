@@ -1,6 +1,7 @@
 package com.patienthq.backend.features.patient;
 
 import com.patienthq.backend.features.patient.dto.PatientDto;
+import com.patienthq.backend.features.patient.dto.PatientMetadataDto;
 import com.patienthq.backend.features.patient.dto.request.CreatePatientRequest;
 import com.patienthq.backend.features.patient.dto.request.UpdatePatientRequest;
 import com.patienthq.backend.features.patient.model.Patient;
@@ -37,6 +38,18 @@ public class PatientController {
                         .success(true)
                         .message("Patient created successfully")
                         .data(patientMapper.toDto(patient))
+                        .build()
+        );
+    }
+
+    @GetMapping("/meta")
+    public ResponseEntity<ApiResponse<PatientMetadataDto>> getPatientMetadata() {
+        PatientMetadataDto metadata = patientService.getPatientMetadata();
+        return ResponseEntity.ok(
+                ApiResponse.<PatientMetadataDto>builder()
+                        .success(true)
+                        .message("Patient metadata retrieved successfully")
+                        .data(metadata)
                         .build()
         );
     }

@@ -1,5 +1,6 @@
 package com.patienthq.backend.features.patient.service;
 
+import com.patienthq.backend.features.patient.dto.PatientMetadataDto;
 import com.patienthq.backend.features.patient.dto.request.CreatePatientRequest;
 import com.patienthq.backend.features.patient.dto.request.UpdatePatientRequest;
 import com.patienthq.backend.features.patient.model.Patient;
@@ -13,6 +14,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -54,6 +58,31 @@ public class PatientServiceImpl implements PatientService {
                 ? null
                 : bloodType.trim().toLowerCase();
         return patientRepository.findAllPatients(formattedSearch, status, formattedGender, formattedBloodType, pageable);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public PatientMetadataDto getPatientMetadata() {
+        long totalPatients = patientRepository.count();
+
+        List<PatientStatus> activeStatuses = List.of(PatientStatus.ACTIVE, PatientStatus.ADMITTED);
+        long activePatients = patientRepository.countByStatusIn(activeStatuses);
+
+        List<PatientStatus> inactiveStatuses = List.of(PatientStatus.INACTIVE, PatientStatus.DISCHARGED);
+        long inactivePatients = patientRepository.countByStatusIn(inactiveStatuses);
+
+        LocalDate startOfMonth = LocalDate.now().withDayOfMonth(1);
+        LocalDateTime monthStart = startOfMonth.atStartOfDay();
+        LocalDateTime nextMonthStart = startOfMonth.plusMonths(1).atStartOfDay();
+
+        long newThisMonth = patientRepository.countByCreatedAtBetween(monthStart, nextMonthStart);
+
+        return PatientMetadataDto.builder()
+                .totalPatients(totalPatients)
+                .activePatients(activePatients)
+                .inactivePatients(inactivePatients)
+                .newThisMonth(newThisMonth)
+                .build();
     }
 
     @Override

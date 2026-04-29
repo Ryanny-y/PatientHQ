@@ -10,6 +10,7 @@ import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Repository
@@ -31,4 +32,8 @@ public interface PatientRepository extends JpaRepository<Patient, UUID>, PagingA
             @Param("bloodType") String bloodType,
             Pageable pageable
     );
+
+    long countByStatusIn(Iterable<PatientStatus> statuses);
+
+    long countByCreatedAtBetween(LocalDateTime start, LocalDateTime end);
 }
