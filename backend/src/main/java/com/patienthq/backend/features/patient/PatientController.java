@@ -1,7 +1,5 @@
 package com.patienthq.backend.features.patient;
 
-import com.patienthq.backend.features.nurse.dto.NurseDto;
-import com.patienthq.backend.features.nurse.model.Nurse;
 import com.patienthq.backend.features.patient.dto.PatientDto;
 import com.patienthq.backend.features.patient.dto.request.CreatePatientRequest;
 import com.patienthq.backend.features.patient.dto.request.UpdatePatientRequest;
@@ -19,7 +17,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/v1/patients")
@@ -46,9 +43,16 @@ public class PatientController {
 
     @GetMapping
     public ResponseEntity<ApiResponse<PageResponse<PatientDto>>> getAllPatients(
+            @RequestParam(required = false) String search,
+            @RequestParam(required = false) String status,
+            @RequestParam(required = false) String gender,
+            @RequestParam(required = false) String bloodType,
             Pageable pageable
     ) {
-        Page<Patient> patients = patientService.getAllPatients(pageable);
+        com.patienthq.backend.features.patient.model.PatientStatus patientStatus = 
+            (status == null) ? null : com.patienthq.backend.features.patient.model.PatientStatus.valueOf(status.toUpperCase());
+        
+        Page<Patient> patients = patientService.getAllPatients(search, patientStatus, gender, bloodType, pageable);
 
         List<PatientDto> patientsDto = patients.map(patientMapper::toDto).stream().toList();
         PageResponse<PatientDto> pageResponse = PageResponse.<PatientDto>builder()

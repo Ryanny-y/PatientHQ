@@ -3,6 +3,7 @@ package com.patienthq.backend.features.patient.service;
 import com.patienthq.backend.features.patient.dto.request.CreatePatientRequest;
 import com.patienthq.backend.features.patient.dto.request.UpdatePatientRequest;
 import com.patienthq.backend.features.patient.model.Patient;
+import com.patienthq.backend.features.patient.model.PatientStatus;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -12,7 +13,7 @@ public interface PatientService {
 
     Patient createPatient(CreatePatientRequest request);
 
-    Page<Patient> getAllPatients(Pageable pageable);
+    Page<Patient> getAllPatients(String search, PatientStatus status, String gender, String bloodType, Pageable pageable);
 
     Patient getPatientById(UUID id);
 
