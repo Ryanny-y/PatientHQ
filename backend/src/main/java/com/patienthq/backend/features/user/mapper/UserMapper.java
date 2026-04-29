@@ -1,4 +1,4 @@
-package com.patienthq.backend.features.user;
+package com.patienthq.backend.features.user.mapper;
 
 import com.patienthq.backend.features.user.dto.UserDto;
 import com.patienthq.backend.features.user.model.User;
