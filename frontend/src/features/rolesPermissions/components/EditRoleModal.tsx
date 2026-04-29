@@ -1,8 +1,8 @@
-import { useState } from 'react';
+import { useState, type SubmitEvent } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogDescription } from '@/components/ui/dialog';
 import { useRolesMutation } from '../hooks/useRolesMutations.ts';
 import type { Role } from '../types/roles.ts';
 
@@ -16,7 +16,7 @@ const EditRoleModal = ({ role, onClose }: EditRoleModalProps) => {
   const [error, setError] = useState('');
   const { updateRole } = useRolesMutation();
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: SubmitEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (!name.trim()) {
       setError('Role name is required');
@@ -32,9 +32,10 @@ const EditRoleModal = ({ role, onClose }: EditRoleModalProps) => {
 
   return (
     <Dialog open onOpenChange={onClose}>
-      <DialogContent>
-        <DialogHeader>
+      <DialogContent className="px-6">
+        <DialogHeader className='pl-0'>
           <DialogTitle>Edit Role</DialogTitle>
+          <DialogDescription className='text-sm'>Update the details for this role.</DialogDescription>
         </DialogHeader>
         <form onSubmit={handleSubmit}>
           <div className="space-y-4">

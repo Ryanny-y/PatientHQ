@@ -1,5 +1,5 @@
 import { Button } from '@/components/ui/button';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogDescription } from '@/components/ui/dialog';
 import { useRolesMutation } from '../hooks/useRolesMutations';
 import type { Role } from '../types/roles';
 
@@ -26,9 +26,10 @@ const DeleteRoleModal = ({ role, onClose }: DeleteRoleModalProps) => {
 
   return (
     <Dialog open onOpenChange={onClose}>
-      <DialogContent>
-        <DialogHeader>
+      <DialogContent className="px-6">
+        <DialogHeader className='pl-0'>
           <DialogTitle>Delete Role</DialogTitle>
+          <DialogDescription className='text-sm'>Are you sure you want to delete this role?</DialogDescription>
         </DialogHeader>
         <div className="py-4">
           <p>Are you sure you want to delete the role "{role.roleName}"?</p>

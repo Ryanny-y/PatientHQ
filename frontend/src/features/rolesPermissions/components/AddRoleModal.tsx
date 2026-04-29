@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, type SubmitEvent } from "react";
 import {
   Dialog,
   DialogContent,
@@ -11,6 +11,7 @@ import { Label } from "@/components/ui/label.tsx";
 import { Input } from "@/components/ui/input.tsx";
 import { Button } from "@/components/ui/button.tsx";
 import { useRoles } from "../hooks/useRoles";
+import { DialogDescription } from "@radix-ui/react-dialog";
 
 interface AddRoleModalProps {
   onClose: () => void;
@@ -22,7 +23,7 @@ const AddRoleModal = ({ onClose, onRoleCreated }: AddRoleModalProps) => {
   const [error, setError] = useState("");
   const { createRole, createRoleMutation } = useRoles();
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: SubmitEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (!name.trim()) {
       setError("Role name is required");
@@ -41,9 +42,10 @@ const AddRoleModal = ({ onClose, onRoleCreated }: AddRoleModalProps) => {
 
   return (
     <Dialog open onOpenChange={onClose}>
-      <DialogContent>
-        <DialogHeader>
+       <DialogContent className="px-6">
+        <DialogHeader className="pl-0">
           <DialogTitle>Add New Role</DialogTitle>
+          <DialogDescription className="text-sm">Add a new role to the system.</DialogDescription>
         </DialogHeader>
         <form onSubmit={handleSubmit}>
           <div className="space-y-4">

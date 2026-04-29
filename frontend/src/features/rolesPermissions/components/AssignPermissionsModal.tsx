@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogDescription } from '@/components/ui/dialog';
 import { usePermissionsQuery } from '../hooks/usePermissionsQuery';
 import { useRolePermissions } from '../hooks/useRolePermissions';
 import { usePermissionMutation } from '../hooks/usePermissionMutations';
@@ -45,8 +45,9 @@ const AssignPermissionsModal = ({ roleId, onClose }: AssignPermissionsModalProps
       <DialogContent className="max-w-md">
         <DialogHeader>
           <DialogTitle>Assign Permissions</DialogTitle>
+          <DialogDescription>Select permissions to assign to this role.</DialogDescription>
         </DialogHeader>
-        <div className="space-y-4 max-h-96 overflow-y-auto">
+        <div className="space-y-4 max-h-96 overflow-y-auto px-5">
           {allPermissions?.map(permission => (
             <div key={permission.id} className="flex items-center space-x-2">
               <Checkbox
@@ -56,7 +57,7 @@ const AssignPermissionsModal = ({ roleId, onClose }: AssignPermissionsModalProps
               />
                <label htmlFor={permission.id} className="text-sm">
                  <div className="font-medium">{permission.permissionName}</div>
-                 <div className="text-gray-500">{permission.description}</div>
+                 <div className="text-gray-500 text-sm">{permission.description}</div>
                </label>
             </div>
           ))}
