@@ -1,8 +1,7 @@
 import { type ReactElement } from 'react';
-import { Menu, Search, Bell, ChevronDown, User, Lock, LogOut } from 'lucide-react';
+import { Menu, ChevronDown, User, Lock, LogOut } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import {
   DropdownMenu, DropdownMenuTrigger, DropdownMenuContent,
@@ -37,11 +36,6 @@ const Navbar = ({ pageTitle, onMenuClick }: NavbarProps): ReactElement => {
       <h1 className="text-base font-semibold text-slate-800 hidden sm:block">{pageTitle}</h1>
 
       <div className="flex-1" />
-
-      {/* <button className="relative h-9 w-9 rounded-lg flex items-center justify-center text-slate-500 hover:bg-slate-100 transition-colors">
-        <Bell className="h-[18px] w-[18px]" />
-        <span className="absolute top-1.5 right-1.5 h-2 w-2 rounded-full bg-red-500 border-2 border-white"></span>
-      </button> */}
 
       <DropdownMenu>
         <DropdownMenuTrigger asChild>

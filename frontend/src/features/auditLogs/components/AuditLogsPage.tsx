@@ -2,7 +2,6 @@ import { type ReactElement } from 'react';
 import { FileText, Download, FileBarChart, RotateCcw } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/shared/hooks/useToast';
-import { useAuth } from '@/shared/context/AuthContext';
 import { useAuditLogs } from '@/features/auditLogs/hooks/useAuditLogs';
 import AuditStatsCards from '@/features/auditLogs/components/AuditStatsCards';
 import AuditFilterToolbar from '@/features/auditLogs/components/AuditFilterToolbar';
@@ -12,10 +11,8 @@ import AuditDetailDrawer from '@/features/auditLogs/components/AuditDetailDrawer
 import SecurityAlertsPanel from '@/features/auditLogs/components/SecurityAlertsPanel';
 import AuditChartsSection from '@/features/auditLogs/components/AuditChartsSection';
 import ExportLogsModal from '@/features/auditLogs/components/ExportLogsModal';
-import UnauthorizedState from '@/features/auditLogs/components/UnauthorizedState';
 
 const AuditLogsPage = (): ReactElement => {
-  const { user } = useAuth();
   const { toast } = useToast();
   const {
     filtered, allFilteredCount, totalLogsToday, failedLoginAttempts, criticalActions, activeUsersToday,
@@ -25,11 +22,6 @@ const AuditLogsPage = (): ReactElement => {
     ipSearch, setIpSearch, sortOption, setSortOption, autoRefresh, setAutoRefresh,
     modalMode, selectedLog, openModal, closeModal, refreshLogs, exportLogs, flagEvent,
   } = useAuditLogs();
-
-  // If not admin, show unauthorized
-  if (user?.role !== 'Admin') {
-    return <UnauthorizedState />;
-  }
 
   const handleViewDetails = (log: any) => {
     openModal('view-details', log);

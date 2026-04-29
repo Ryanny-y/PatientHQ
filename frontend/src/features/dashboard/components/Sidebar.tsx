@@ -50,6 +50,7 @@ const navItems: NavItem[] = [
   { type: 'link', label: 'Audit Logs', icon: ScrollText, path: '/audit' },
   { type: 'link', label: 'Data Integrity', icon: ShieldCheck, path: '/integrity' },
   { type: 'link', label: 'System Settings', icon: Settings, path: '/settings' },
+  { type: 'link', label: 'Roles & Permissions', icon: Settings, path: '/roles-permissions' },
 ];
 
 interface SidebarContentProps {

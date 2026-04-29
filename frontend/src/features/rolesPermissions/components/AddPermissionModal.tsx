@@ -1,0 +1,79 @@
+import { useState } from 'react';
+import { useCreatePermission } from '../hooks/usePermissionMutations';
+import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Label } from '@/components/ui/label';
+import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
+import { Button } from '@/components/ui/button';
+
+interface AddPermissionModalProps {
+  onClose: () => void;
+}
+
+const AddPermissionModal = ({ onClose }: AddPermissionModalProps) => {
+  const [name, setName] = useState('');
+  const [description, setDescription] = useState('');
+  const [error, setError] = useState('');
+  const createMutation = useCreatePermission();
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!name.trim()) {
+      setError('Permission name is required');
+      return;
+    }
+    try {
+      await createMutation.mutateAsync({
+        name: name.toUpperCase(),
+        description,
+      });
+      onClose();
+    } catch (err) {
+      setError('Failed to create permission');
+    }
+  };
+
+  return (
+    <Dialog open onOpenChange={onClose}>
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>Add New Permission</DialogTitle>
+        </DialogHeader>
+        <form onSubmit={handleSubmit}>
+          <div className="space-y-4">
+            <div>
+              <Label htmlFor="name">Permission Name *</Label>
+              <Input
+                id="name"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                placeholder="e.g., VIEW_PATIENTS, MANAGE_DOCTORS"
+                required
+              />
+            </div>
+            <div>
+              <Label htmlFor="description">Description</Label>
+              <Textarea
+                id="description"
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
+                placeholder="Describe what this permission allows"
+              />
+            </div>
+            {error && <p className="text-red-500 text-sm">{error}</p>}
+          </div>
+          <DialogFooter className="mt-6">
+            <Button type="button" variant="outline" onClick={onClose}>
+              Cancel
+            </Button>
+            <Button type="submit" disabled={createMutation.isPending}>
+              {createMutation.isPending ? 'Creating...' : 'Create Permission'}
+            </Button>
+          </DialogFooter>
+        </form>
+      </DialogContent>
+    </Dialog>
+  );
+};
+
+export { AddPermissionModal };
