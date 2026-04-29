@@ -17,7 +17,7 @@ export const roleService = {
     updates: Partial<Pick<Role, "roleName">>
   ) =>
     fetchWithAuth<ApiResponse<void>>(`roles/${id}`, {
-      method: "PUT",
+      method: "PATCH",
       body: JSON.stringify(updates),
     }),
 

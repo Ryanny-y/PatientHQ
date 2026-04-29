@@ -8,12 +8,11 @@ export const useRoles = () => {
   return {
     roles: data?.data ?? [],
     isLoading,
-    refetchRoles: refetch,
+    refetch,
 
     createRole: mutations.createRole.mutateAsync,
     createRoleMutation: mutations.createRole,
-    
     updateRole: mutations.updateRole.mutateAsync,
     deleteRole: mutations.deleteRole.mutateAsync,
-  }
+  };
 }

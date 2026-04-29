@@ -55,7 +55,7 @@ const RolesList = ({ onSelectRole }: RolesListProps) => {
           filteredRoles.map((role) => (
             <div
               key={role.id}
-              className="flex items-center justify-between p-4 border rounded-lg cursor-pointer hover:bg-gray-50"
+              className="flex items-center justify-between p-4 border border-gray-400 rounded-lg cursor-pointer hover:bg-gray-50"
               onClick={() => onSelectRole(role)}
             >
                <div>
@@ -72,7 +72,6 @@ const RolesList = ({ onSelectRole }: RolesListProps) => {
                 <DropdownMenuContent>
                   <DropdownMenuItem onClick={() => onSelectRole(role)}>View Details</DropdownMenuItem>
                   <DropdownMenuItem onClick={() => setEditingRole(role)}>Rename Role</DropdownMenuItem>
-                  <DropdownMenuItem>Duplicate Role</DropdownMenuItem>
                   <DropdownMenuItem onClick={() => setDeletingRole(role)} className="text-red-600">Delete Role</DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>

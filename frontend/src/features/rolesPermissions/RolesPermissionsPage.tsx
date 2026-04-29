@@ -6,6 +6,7 @@ import { SummaryCards } from './components/SummaryCards.tsx';
 import { AddRoleModal } from './components/AddRoleModal.tsx';
 import { AddPermissionModal } from './components/AddPermissionModal.tsx';
 import type { Role } from './types/roles.ts';
+import { PermissionsList } from './components/PermissionsList.tsx';
 
 const RolesPermissionsPage = () => {
   const [selectedRole, setSelectedRole] = useState<Role | null>(null);
@@ -28,6 +29,9 @@ const RolesPermissionsPage = () => {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <RolesList onSelectRole={setSelectedRole} />
         <RoleDetails role={selectedRole} />
+      </div>
+      <div className="mt-6">
+        <PermissionsList />
       </div>
       {showAddRole && <AddRoleModal onClose={() => setShowAddRole(false)} onRoleCreated={setSelectedRole} />}
       {showAddPermission && <AddPermissionModal onClose={() => setShowAddPermission(false)} />}

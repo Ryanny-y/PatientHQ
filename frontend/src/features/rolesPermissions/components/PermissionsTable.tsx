@@ -4,23 +4,35 @@ import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { usePermissions } from '../hooks/usePermissions';
 import { useRolePermissions } from '../hooks/useRolePermissions';
-import { usePermissionMutation } from '../hooks/usePermissionMutations';
 import { AssignPermissionsModal } from './AssignPermissionsModal';
+import type { PermissionWithStatus } from '../types/roles';
 
 interface PermissionsTableProps {
   roleId: string;
 }
 
 const PermissionsTable = ({ roleId }: PermissionsTableProps) => {
-  const { data: permissionsResponse, isLoading } = useRolePermissions(roleId);
-  const permissions = permissionsResponse?.data ?? [];
-  const { updateRolePermissions: updateMutation } = usePermissionMutation();
+  const { permissions: allPermissions, isLoading: permissionsLoading } = usePermissions();
+  const { data: rolePermissionsResponse, isLoading: rolePermissionsLoading } = useRolePermissions(roleId);
+  const { updateRolePermissionsMutation } = usePermissions();
   const [search, setSearch] = useState('');
   const [filter, setFilter] = useState<'all' | 'assigned' | 'unassigned'>('all');
   const [showAssignModal, setShowAssignModal] = useState(false);
 
-  const filteredPermissions = permissions.filter(p => {
+  // Create a map of assigned permissions for quick lookup
+  const assignedPermissionIds = new Set(
+    rolePermissionsResponse?.data?.map(p => p.id) ?? []
+  );
+
+  // Merge all permissions with their assigned status
+  const permissionsWithStatus: PermissionWithStatus[] = allPermissions.map(permission => ({
+    ...permission,
+    assigned: assignedPermissionIds.has(permission.id),
+  }));
+
+  const filteredPermissions = permissionsWithStatus.filter(p => {
     const matchesSearch = p.permissionName.toLowerCase().includes(search.toLowerCase()) ||
                          p.description.toLowerCase().includes(search.toLowerCase());
     const matchesFilter = filter === 'all' ||
@@ -30,17 +42,19 @@ const PermissionsTable = ({ roleId }: PermissionsTableProps) => {
   });
 
   const handleTogglePermission = (permissionId: string, assigned: boolean) => {
-    const currentAssigned = permissions.filter(p => p.assigned).map(p => p.id);
+    const currentAssigned = permissionsWithStatus.filter(p => p.assigned).map(p => p.id);
     let newAssigned;
     if (assigned) {
       newAssigned = currentAssigned.filter(id => id !== permissionId);
     } else {
       newAssigned = [...currentAssigned, permissionId];
     }
-    updateMutation.mutate({ roleId, permissionIds: newAssigned });
+    console.log(newAssigned);
+    
+    updateRolePermissionsMutation.mutate({ roleId, permissionIds: newAssigned });
   };
 
-  if (isLoading) {
+  if (permissionsLoading || rolePermissionsLoading) {
     return <div>Loading permissions...</div>;
   }
 
@@ -53,7 +67,7 @@ const PermissionsTable = ({ roleId }: PermissionsTableProps) => {
           onChange={(e) => setSearch(e.target.value)}
           className="flex-1"
         />
-        <Select value={filter} onValueChange={(value: any) => setFilter(value)}>
+        <Select value={filter} onValueChange={(value: 'all' | 'assigned' | 'unassigned') => setFilter(value)}>
           <SelectTrigger className="w-40">
             <SelectValue />
           </SelectTrigger>

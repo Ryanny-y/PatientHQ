@@ -11,4 +11,18 @@ export const permissionService = {
       method: "POST",
       body: JSON.stringify(permission),
     }),
+
+  updatePermission: (
+    id: string,
+    updates: Partial<Pick<Permission, "permissionName" | "description">>,
+  ) =>
+    fetchWithAuth<ApiResponse<Permission>>(`permissions/${id}`, {
+      method: "PATCH",
+      body: JSON.stringify(updates),
+    }),
+
+  deletePermission: (id: string) =>
+    fetchWithAuth<ApiResponse<void>>(`permissions/${id}`, {
+      method: "DELETE",
+    }),
 };

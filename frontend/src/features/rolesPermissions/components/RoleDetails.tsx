@@ -24,7 +24,7 @@ const RoleDetails = ({ role }: RoleDetailsProps) => {
   }
 
   return (
-    <Card>
+    <Card className='max-h-150 overflow-y-auto'>
       <CardHeader>
         <div className="flex justify-between items-start">
           <div>

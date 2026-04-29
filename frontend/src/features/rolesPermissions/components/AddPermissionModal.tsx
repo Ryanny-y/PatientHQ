@@ -1,5 +1,5 @@
 import { useState, type SubmitEvent } from 'react';
-import { usePermissionMutation } from '../hooks/usePermissionMutations';
+import { usePermissions } from '../hooks/usePermissions';
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
@@ -15,7 +15,7 @@ const AddPermissionModal = ({ onClose }: AddPermissionModalProps) => {
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
   const [error, setError] = useState('');
-  const { createPermission: createMutation } = usePermissionMutation();
+  const { createPermission, createPermissionMutation } = usePermissions();
 
   const handleSubmit = async (e: SubmitEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -24,7 +24,7 @@ const AddPermissionModal = ({ onClose }: AddPermissionModalProps) => {
       return;
     }
     try {
-      await createMutation.mutateAsync({
+      await createPermission({
         permissionName: name.toUpperCase(),
         description,
       });
@@ -68,8 +68,8 @@ const AddPermissionModal = ({ onClose }: AddPermissionModalProps) => {
             <Button type="button" variant="outline" onClick={onClose}>
               Cancel
             </Button>
-            <Button type="submit" disabled={createMutation.isPending}>
-              {createMutation.isPending ? 'Creating...' : 'Create Permission'}
+            <Button type="submit" disabled={createPermissionMutation.isPending}>
+              {createPermissionMutation.isPending ? 'Creating...' : 'Create Permission'}
             </Button>
           </DialogFooter>
         </form>
