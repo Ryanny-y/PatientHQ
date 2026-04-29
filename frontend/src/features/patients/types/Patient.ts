@@ -31,6 +31,13 @@ export interface Patient {
   assignedDoctor: string;
 }
 
+export interface PatientMetaData {
+  totalPatients: number;
+  activePatients: number;
+  inactivePatients: number;
+  newThisMonth: number;
+}
+
 export interface PatientHistoryEvent {
   id: number;
   event: string;

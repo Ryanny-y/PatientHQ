@@ -4,6 +4,7 @@ import type {
   addPatientFormValues,
   editPatientFormValues,
   Patient,
+  PatientMetaData,
 } from "../types/patient";
 
 export const patientService = {
@@ -30,6 +31,8 @@ export const patientService = {
       `patients?${query.toString()}`,
     );
   },
+  
+  getPatientMeta: () => fetchWithAuth<ApiResponse<PatientMetaData>>("patients/meta"),
 
   createPatient: (values: addPatientFormValues) =>
     fetchWithAuth<ApiResponse<Patient>>("patients", {

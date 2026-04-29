@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { usePatientMutation } from "./usePatientMutation";
-import { usePatientQuery } from "./usePatientQuery";
+import { usePatientMetaQuery, usePatientQuery } from "./usePatientQuery";
 import type {
   Patient,
   patientModalMode,
@@ -33,15 +33,15 @@ export const usePatients = () => {
         ? "createdAt,desc"
         : sortOption === "oldest"
           ? "createdAt,asc"
-          : sortOption === "name-asc"
+          : sortOption === "name-az"
             ? "fullName,asc"
             : "fullName,desc",
   });
+  const { data: metaData } = usePatientMetaQuery();
   const mutations = usePatientMutation();
 
   const accounts = data?.data?.content ?? [];
   const totalPages = data?.data?.totalPages ?? 1;
-  const totalCount = data?.data?.totalElements ?? 0;
 
   // reset page helpers
   const handleSetSearch = (v: string) => {
@@ -85,11 +85,8 @@ export const usePatients = () => {
 
   return {
     // data
-    filtered: accounts,
-    allFilteredCount: totalCount,
-    totalCount,
-    activeCount: accounts.filter((d) => d.status === "ACTIVE").length,
-    inactiveCount: accounts.filter((d) => d.status === "INACTIVE").length,
+    metaData: metaData?.data,
+    data: accounts,
 
     // pagination
     page,

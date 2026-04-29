@@ -20,7 +20,8 @@ const PatientListPage = (): ReactElement => {
   const navigate = useNavigate();
 
   const {
-    filtered,
+    metaData,
+    data,
     refetch,
 
     search,
@@ -45,8 +46,6 @@ const PatientListPage = (): ReactElement => {
 
     updatePatient,
   } = usePatients();
-
-  const finalPatients = filtered;
 
   // ---------- actions ----------
   const handleSaveEdit = async (data: Partial<Patient>) => {
@@ -86,7 +85,7 @@ const PatientListPage = (): ReactElement => {
       </div>
 
       {/* Stats */}
-      <PatientStatsCards patients={finalPatients} />
+      <PatientStatsCards metaData={metaData} />
 
       {/* Filters */}
       <PatientFilterToolbar
@@ -106,7 +105,7 @@ const PatientListPage = (): ReactElement => {
       {/* Table */}
       <div className="hidden lg:block">
         <PatientTable
-          patients={finalPatients}
+          patients={data}
           onViewProfile={(p) => openModal("view", p)}
           onEditPatient={(p) => openModal("edit", p)}
           onViewHistory={(p) => openModal("history", p)}
@@ -116,7 +115,7 @@ const PatientListPage = (): ReactElement => {
       {/* Mobile */}
       <div className="lg:hidden">
         <PatientCardList
-          patients={finalPatients}
+          patients={data}
           onViewProfile={(p) => openModal("view", p)}
           onEditPatient={(p) => openModal("edit", p)}
           onViewHistory={(p) => openModal("history", p)}
