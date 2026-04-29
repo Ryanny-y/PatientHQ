@@ -15,6 +15,7 @@ interface AuthUser {
   accessToken: string;
   username: string;
   role: UserRole;
+  permissions: string[]
 }
 
 type AuthResponseType = ApiResponse<AuthUser>;

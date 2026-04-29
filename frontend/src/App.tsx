@@ -9,25 +9,35 @@ import DoctorAccountsPage from "./features/doctorAccounts/DoctorAccountsPage";
 import NurseAccountsPage from "./features/nurseAccounts/NurseAccountsPage";
 import PatientListPage from "./features/patients/pages/PatientListPage";
 import RegisterPatientPage from "./features/patients/pages/RegisterPatientPage";
-import AssignDoctorPage from './features/patients/pages/AssignDoctorPage';
-import MedicalRecordsPage from './features/medicalRecords/pages/MedicalRecordsPage';
-import AppointmentsPage from './features/appointments/pages/AppointmentsPage';
-import ReportsHistoryPage from './features/reports/pages/ReportsHistoryPage';
-import AuditLogsPage from './features/auditLogs/components/AuditLogsPage';
-import RolesPermissionsPage from './features/rolesPermissions/RolesPermissionsPage';
+import AssignDoctorPage from "./features/patients/pages/AssignDoctorPage";
+import MedicalRecordsPage from "./features/medicalRecords/pages/MedicalRecordsPage";
+import AppointmentsPage from "./features/appointments/pages/AppointmentsPage";
+import ReportsHistoryPage from "./features/reports/pages/ReportsHistoryPage";
+import AuditLogsPage from "./features/auditLogs/components/AuditLogsPage";
+import RolesPermissionsPage from "./features/rolesPermissions/RolesPermissionsPage";
 import { Toaster } from "sonner";
+import UnauthorizedState from "./features/auditLogs/components/UnauthorizedState";
+import { hasPermission } from "./shared/security/permissions";
 const ProtectedRoute = ({
   children,
+  permission,
 }: {
   children: ReactNode;
+  permission?: string;
 }): ReactElement => {
   const { user } = useAuth();
+
+  if (permission && !hasPermission(user, permission)) {
+    return <UnauthorizedState />;
+  }
+
   return user ? <>{children}</> : <Navigate to="/login" replace />;
 };
 
 const AppRoutes = (): ReactElement => (
   <Routes>
     <Route path="/login" element={<LoginPage />} />
+
     <Route
       element={
         <ProtectedRoute>
@@ -37,9 +47,33 @@ const AppRoutes = (): ReactElement => (
     >
       <Route index element={<Navigate to="dashboard" replace />} />
       <Route path="dashboard" element={<DashboardHome />} />
-      <Route path="users/admins" element={<AdminAccountsPage />} />
-      <Route path="users/doctors" element={<DoctorAccountsPage />} />
-      <Route path="users/nurses" element={<NurseAccountsPage />} />
+      <Route path="users">
+        <Route
+          path="admins"
+          element={
+            <ProtectedRoute permission="USER_VIEW">
+              <AdminAccountsPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="doctors"
+          element={
+            <ProtectedRoute permission="USER_VIEW">
+              <DoctorAccountsPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="nurses"
+          element={
+            <ProtectedRoute permission="USER_VIEW">
+              <NurseAccountsPage />
+            </ProtectedRoute>
+          }
+        />
+      </Route>
+
       <Route path="patients" element={<PatientListPage />} />
       <Route path="patients/register" element={<RegisterPatientPage />} />
       <Route path="patients/assign" element={<AssignDoctorPage />} />
@@ -57,7 +91,7 @@ const App = (): ReactElement => (
   <BrowserRouter>
     <AuthProvider>
       <AppRoutes />
-      <Toaster richColors/>
+      <Toaster richColors />
     </AuthProvider>
   </BrowserRouter>
 );
