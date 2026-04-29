@@ -6,7 +6,7 @@ import type {
   sortOption,
 } from "../types/adminAccount";
 
-import { useAdminsQuery } from "./useAdminsQuery";
+import { useAdminMetaQuery, useAdminsQuery } from "./useAdminsQuery";
 import { useAdminMutations } from "./useAdminMutation";
 
 const PAGE_SIZE = 6;
@@ -30,14 +30,15 @@ export const useAdminAccounts = () => {
       sortOption === "newest"
         ? "user.createdAt,desc"
         : sortOption === "oldest"
-          ? "user.createdAt,asc"
+          ? "user.createdAt,asc"  
           : "fullName,asc",
   });
+  const { data: metaData } = useAdminMetaQuery();
   const mutations = useAdminMutations();
 
   const accounts = data?.data?.content ?? [];
   const totalPages = data?.data?.totalPages ?? 1;
-  const totalCount = data?.data?.totalElements ?? 0;
+  const totalCount = metaData?.data?.totalAdmins ?? 0;
 
   // reset page helpers
   const handleSetSearch = (v: string) => {
@@ -68,15 +69,10 @@ export const useAdminAccounts = () => {
 
   return {
     // data
+    metaData: metaData?.data,
     data: accounts,
     totalCount,
     totalPages,
-
-    activeCount: accounts.filter((a) => a.isActive).length ?? 0,
-    inactiveCount: accounts.filter((a) => !a.isActive).length ?? 0,
-    recentCount: accounts.filter((a) =>
-      new Date().getTime() - new Date(a.createdAt).getTime() < 30 * 24 * 60 * 60 * 1000,
-    ).length ?? 0,
 
     // pagination
     page,

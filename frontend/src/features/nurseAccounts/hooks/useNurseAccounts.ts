@@ -6,7 +6,7 @@ import type {
   sortOption,
 } from "@/features/nurseAccounts/types/nurseAccount";
 
-import { useNurseQuery } from "./useNurseQuery";
+import { useNurseMetaQuery, useNurseQuery } from "./useNurseQuery";
 import { useNurseMutation } from "./useNurseMutation";
 
 const PAGE_SIZE = 7;
@@ -35,11 +35,11 @@ export const useNurseAccounts = () => {
           ? "user.createdAt,asc"
           : "fullName,asc",
   });
+  const { data: metaData } = useNurseMetaQuery();
   const mutations = useNurseMutation();
 
   const accounts = data?.data?.content ?? [];
   const totalPages = data?.data?.totalPages ?? 1;
-  const totalCount = data?.data?.totalElements ?? 0;
 
   const resetPage = () => setPage(1);
 
@@ -80,15 +80,14 @@ export const useNurseAccounts = () => {
 
   return {
     // data
+    metaData,
     data: accounts,
-    totalCount,
+    totalCount: metaData?.data?.totalNurses ?? 0,
     totalPages,
 
-    activeCount: accounts.filter((n) => n.isActive).length ?? 0,
-    inactiveCount: accounts.filter((n) => !n.isActive).length ?? 0,
-    wardCount: new Set(
-      accounts.map((n) => n.assignedWard),
-    ).size,
+    activeCount: metaData?.data.activeNurses ?? 0,
+    inactiveCount: metaData?.data.inactiveNurses ?? 0,
+    wardCount: metaData?.data.wards.length ?? 0,
 
     refetch,
 
@@ -106,8 +105,6 @@ export const useNurseAccounts = () => {
     setWardFilter: handleSetWard,
     sortOption,
     setSortOption: handleSetSort,
-
-    allWards: [], // Will be populated from server if needed
 
     // modal
     modalMode,

@@ -4,8 +4,10 @@ import { nurseService } from "../services/nurseService";
 export const useNurseMutation = () => {
   const queryClient = useQueryClient();
 
-  const invalidate = () =>
+  const invalidate = () => {
     queryClient.invalidateQueries({ queryKey: ["nurses"] });
+    queryClient.invalidateQueries({ queryKey: ["nursesMeta"] });
+  };
 
   const createNurse = useMutation({
     mutationFn: nurseService.createNurse,
@@ -23,19 +25,19 @@ export const useNurseMutation = () => {
   });
 
   const toggleStatus = useMutation({
-      mutationFn: nurseService.toggleStatus,
-      onSuccess: invalidate,
-    });
-  
-    const resetPassword = useMutation({
-      mutationFn: nurseService.resetPassword,
-    });
+    mutationFn: nurseService.toggleStatus,
+    onSuccess: invalidate,
+  });
+
+  const resetPassword = useMutation({
+    mutationFn: nurseService.resetPassword,
+  });
 
   return {
     createNurse,
     updateNurse,
     deleteNurse,
     toggleStatus,
-    resetPassword
-  }
+    resetPassword,
+  };
 };

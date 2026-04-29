@@ -20,11 +20,9 @@ import { toast } from "sonner";
 const AdminAccountsPage = (): ReactElement => {
   const { user } = useAuth();
   const {
+    metaData,
     data: accounts,
     totalCount,
-    activeCount,
-    inactiveCount,
-    recentCount,
     page,
     pageSize,
     totalPages,
@@ -174,10 +172,10 @@ const AdminAccountsPage = (): ReactElement => {
 
       {/* Stats */}
       <AdminStatsCards
-        total={totalCount}
-        active={activeCount}
-        inactive={inactiveCount}
-        recent={recentCount}
+        total={metaData?.totalAdmins ?? 0}
+        active={metaData?.activeAccounts ?? 0}
+        inactive={metaData?.inactiveAccounts ?? 0}
+        recent={metaData?.recentlyAdded ?? 0}
       />
 
       {/* Toolbar */}

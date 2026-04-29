@@ -14,3 +14,10 @@ export const useAdminsQuery = (params: {
     placeholderData: (prev) => prev,
   });
 };
+
+export const useAdminMetaQuery = () => {
+  return useQuery({
+    queryKey: ["adminsMeta"],
+    queryFn: () => adminService.getAdminMeta(),
+  });
+};

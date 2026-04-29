@@ -1,6 +1,7 @@
 import { fetchWithAuth } from "@/shared/hooks/fetchWithAuth";
 import type {
   AdminAccount,
+  AdminMetaData,
   addAdminFormValues,
   editAdminFormValues,
 } from "../types/adminAccount";
@@ -27,6 +28,8 @@ export const adminService = {
       `admins?${query.toString()}`,
     );
   },
+
+  getAdminMeta: () => fetchWithAuth<ApiResponse<AdminMetaData>>("admins/meta"),
 
   createAdmin: (values: addAdminFormValues) =>
     fetchWithAuth<ApiResponse<AdminAccount>>("admins", {

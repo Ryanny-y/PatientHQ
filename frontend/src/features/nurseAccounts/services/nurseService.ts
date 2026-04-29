@@ -4,6 +4,7 @@ import type {
   addNurseFormValues,
   editNurseFormValues,
   NurseAccount,
+  NurseMetaData,
 } from "../types/nurseAccount";
 
 export const nurseService = {
@@ -29,6 +30,8 @@ export const nurseService = {
       `nurses?${query.toString()}`,
     );
   },
+
+  getNurseMeta: () => fetchWithAuth<ApiResponse<NurseMetaData>>("nurses/meta"),
 
   createNurse: (values: addNurseFormValues) =>
     fetchWithAuth<ApiResponse<NurseAccount>>("nurses", {

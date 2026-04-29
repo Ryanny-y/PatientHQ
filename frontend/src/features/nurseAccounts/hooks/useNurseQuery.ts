@@ -15,3 +15,10 @@ export const useNurseQuery = (params: {
     placeholderData: (prev) => prev,
   });
 };
+
+export const useNurseMetaQuery = () => {
+  return useQuery({
+    queryKey: ["nursesMeta"],
+    queryFn: () => nurseService.getNurseMeta(),
+  });
+}

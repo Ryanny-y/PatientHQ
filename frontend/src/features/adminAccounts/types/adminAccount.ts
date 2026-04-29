@@ -12,6 +12,13 @@ export interface AdminAccount {
   createdAt: string;
 }
 
+export interface AdminMetaData {
+  totalAdmins: number;
+  activeAccounts: number;
+  inactiveAccounts: number;
+  recentlyAdded: number;
+}
+
 export type modalMode = 'add' | 'edit' | 'view' | 'reset-password' | 'delete' | null;
 
 // ── Add Admin ──────────────────────────────────────────────────────────────

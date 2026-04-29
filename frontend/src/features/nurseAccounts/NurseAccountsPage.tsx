@@ -18,6 +18,7 @@ import { toast } from "sonner";
 
 const NurseAccountsPage = (): ReactElement => {
   const {
+    metaData,
     data: nurses,
     totalCount,
     activeCount,
@@ -35,7 +36,6 @@ const NurseAccountsPage = (): ReactElement => {
     setWardFilter,
     sortOption,
     setSortOption,
-    allWards,
     modalMode,
     selectedNurse,
     openModal,
@@ -190,7 +190,7 @@ const NurseAccountsPage = (): ReactElement => {
         onSortChange={setSortOption}
         onRefresh={handleRefresh}
         totalFiltered={totalCount}
-        wards={allWards}
+        wards={metaData?.data.wards ?? []}
       />
 
       {/* Desktop Table */}

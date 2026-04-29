@@ -4,8 +4,11 @@ import { adminService } from "../services/adminService";
 export const useAdminMutations = () => {
   const queryClient = useQueryClient();
 
-  const invalidate = () =>
+  const invalidate = () => {
     queryClient.invalidateQueries({ queryKey: ["admins"] });
+    queryClient.invalidateQueries({ queryKey: ["adminsMeta"] });
+
+  }
 
   const createAdmin = useMutation({
     mutationFn: adminService.createAdmin,
