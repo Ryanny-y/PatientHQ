@@ -47,7 +47,14 @@ public class RoleController {
     ) {
         Role updatedRole = roleService.updateRole(id, request);
         RoleDto roleDto = roleMapper.toDto(updatedRole);
-        return ResponseEntity.ok(ApiResponse.success("Roles retrieved successfully.", roleDto));
+        return ResponseEntity.ok(ApiResponse.success("Roles updated successfully.", roleDto));
     }
 
+    @DeleteMapping("/{id}")
+    public ResponseEntity<ApiResponse<Void>> deleteRole(
+            @PathVariable Integer id
+    ) {
+        roleService.deleteRole(id);
+        return ResponseEntity.ok(ApiResponse.success("Roles deleted successfully.", null));
+    }
 }
