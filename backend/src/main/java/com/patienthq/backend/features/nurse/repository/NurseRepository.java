@@ -9,6 +9,7 @@ import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.UUID;
 
 @Repository
@@ -33,5 +34,12 @@ public interface NurseRepository extends JpaRepository<Nurse, UUID>, PagingAndSo
             @Param("search") String search,
             Pageable pageable
     );
+
+    long countByUserIsActiveTrue();
+
+    long countByUserIsActiveFalse();
+
+    @Query("SELECT DISTINCT n.assignedWard FROM Nurse n WHERE n.assignedWard IS NOT NULL AND n.assignedWard <> '' ORDER BY n.assignedWard ASC")
+    java.util.List<String> findDistinctAssignedWards();
 }
 

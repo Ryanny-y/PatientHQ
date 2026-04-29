@@ -9,6 +9,7 @@ import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Repository
@@ -28,5 +29,20 @@ public interface AdminRepository extends JpaRepository<Admin, UUID>, PagingAndSo
             @Param("isActive") Boolean isActive,
             @Param("search") String search,
             Pageable pageable
+    );
+
+    long countByUserIsActiveTrue();
+
+    long countByUserIsActiveFalse();
+
+    @Query("""
+        SELECT COUNT(a) FROM Admin a
+        JOIN a.user u
+        WHERE u.createdAt >= :start
+        AND u.createdAt < :end
+    """)
+    long countByUserCreatedAtBetween(
+            @Param("start") LocalDateTime start,
+            @Param("end") LocalDateTime end
     );
 }

@@ -2,6 +2,7 @@ package com.patienthq.backend.features.doctor;
 
 import com.patienthq.backend.features.admin.dto.AdminDto;
 import com.patienthq.backend.features.doctor.dto.DoctorDto;
+import com.patienthq.backend.features.doctor.dto.DoctorMetadataDto;
 import com.patienthq.backend.features.doctor.dto.request.CreateDoctorRequest;
 import com.patienthq.backend.features.doctor.dto.request.UpdateDoctorRequest;
 import com.patienthq.backend.features.doctor.model.Doctor;
@@ -38,6 +39,18 @@ public class DoctorController {
                         .success(true)
                         .message("Doctor created successfully")
                         .data(doctorDto)
+                        .build()
+        );
+    }
+
+    @GetMapping("/meta")
+    public ResponseEntity<ApiResponse<DoctorMetadataDto>> getDoctorMetadata() {
+        DoctorMetadataDto metadata = doctorService.getDoctorMetadata();
+        return ResponseEntity.ok(
+                ApiResponse.<DoctorMetadataDto>builder()
+                        .success(true)
+                        .message("Doctor metadata retrieved successfully")
+                        .data(metadata)
                         .build()
         );
     }

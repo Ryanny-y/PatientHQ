@@ -1,6 +1,7 @@
 package com.patienthq.backend.features.nurse;
 
 import com.patienthq.backend.features.nurse.dto.NurseDto;
+import com.patienthq.backend.features.nurse.dto.NurseMetadataDto;
 import com.patienthq.backend.features.nurse.dto.request.CreateNurseRequest;
 import com.patienthq.backend.features.nurse.dto.request.UpdateNurseRequest;
 import com.patienthq.backend.features.nurse.model.Nurse;
@@ -37,6 +38,18 @@ public class NurseController {
                         .success(true)
                         .message("Nurse created successfully")
                         .data(nurseMapper.toDto(nurse))
+                        .build()
+        );
+    }
+
+    @GetMapping("/meta")
+    public ResponseEntity<ApiResponse<NurseMetadataDto>> getNurseMetadata() {
+        NurseMetadataDto metadata = nurseService.getNurseMetadata();
+        return ResponseEntity.ok(
+                ApiResponse.<NurseMetadataDto>builder()
+                        .success(true)
+                        .message("Nurse metadata retrieved successfully")
+                        .data(metadata)
                         .build()
         );
     }

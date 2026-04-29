@@ -1,5 +1,6 @@
 package com.patienthq.backend.features.admin.service;
 
+import com.patienthq.backend.features.admin.dto.AdminMetadataDto;
 import com.patienthq.backend.features.admin.dto.request.CreateAdminRequest;
 import com.patienthq.backend.features.admin.dto.request.UpdateAdminRequest;
 import com.patienthq.backend.features.admin.exceptions.AdminNotFoundException;
@@ -18,6 +19,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Service
@@ -69,6 +71,25 @@ public class AdminServiceImpl implements AdminService {
     public Page<Admin> getAllAdmins(Boolean isActive, String search, Pageable pageable) {
         String formattedSearch = (search == null) ? null : "%" + search.toLowerCase() + "%";
         return adminRepository.findAllAdmins(isActive, formattedSearch, pageable);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public AdminMetadataDto getAdminMetadata() {
+        long totalAdmins = adminRepository.count();
+        long activeAccounts = adminRepository.countByUserIsActiveTrue();
+        long inactiveAccounts = adminRepository.countByUserIsActiveFalse();
+
+        LocalDateTime startOfDay = LocalDateTime.now().toLocalDate().atStartOfDay();
+        LocalDateTime endOfDay = startOfDay.plusDays(1);
+        long recentlyAdded = adminRepository.countByUserCreatedAtBetween(startOfDay, endOfDay);
+
+        return AdminMetadataDto.builder()
+                .totalAdmins(totalAdmins)
+                .activeAccounts(activeAccounts)
+                .inactiveAccounts(inactiveAccounts)
+                .recentlyAdded(recentlyAdded)
+                .build();
     }
 
     @Override

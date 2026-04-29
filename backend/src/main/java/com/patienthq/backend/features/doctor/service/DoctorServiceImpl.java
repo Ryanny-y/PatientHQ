@@ -1,6 +1,7 @@
 package com.patienthq.backend.features.doctor.service;
 
 import com.patienthq.backend.features.admin.exceptions.AdminNotFoundException;
+import com.patienthq.backend.features.doctor.dto.DoctorMetadataDto;
 import com.patienthq.backend.features.doctor.dto.request.CreateDoctorRequest;
 import com.patienthq.backend.features.doctor.dto.request.UpdateDoctorRequest;
 import com.patienthq.backend.features.doctor.model.Doctor;
@@ -19,6 +20,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.UUID;
 
 @Slf4j
@@ -76,6 +78,22 @@ public class DoctorServiceImpl implements DoctorService {
     public Page<Doctor> getAllDoctors(Boolean isActive, String search, Pageable pageable) {
         String formattedSearch = (search == null) ? null : "%" + search.toLowerCase() + "%";
         return doctorRepository.findAllDoctors(isActive, formattedSearch, pageable);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public DoctorMetadataDto getDoctorMetadata() {
+        long totalDoctors = doctorRepository.count();
+        long activeDoctors = doctorRepository.countByUserIsActiveTrue();
+        long inactiveDoctors = doctorRepository.countByUserIsActiveFalse();
+        List<String> specializations = doctorRepository.findDistinctSpecializations();
+
+        return DoctorMetadataDto.builder()
+                .totalDoctors(totalDoctors)
+                .activeDoctors(activeDoctors)
+                .inactiveDoctors(inactiveDoctors)
+                .specializations(specializations)
+                .build();
     }
 
     @Transactional(readOnly = true)

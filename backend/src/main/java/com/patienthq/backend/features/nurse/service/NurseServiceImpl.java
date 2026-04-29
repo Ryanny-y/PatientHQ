@@ -1,5 +1,6 @@
 package com.patienthq.backend.features.nurse.service;
 
+import com.patienthq.backend.features.nurse.dto.NurseMetadataDto;
 import com.patienthq.backend.features.nurse.dto.request.CreateNurseRequest;
 import com.patienthq.backend.features.nurse.dto.request.UpdateNurseRequest;
 import com.patienthq.backend.features.nurse.model.Nurse;
@@ -17,6 +18,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -74,6 +76,22 @@ public class NurseServiceImpl implements NurseService {
     public Page<Nurse> getAllNurses(Boolean isActive, String search, Pageable pageable) {
         String formattedSearch = (search == null) ? null : "%" + search.toLowerCase() + "%";
         return nurseRepository.findAllNurses(isActive, formattedSearch, pageable);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public NurseMetadataDto getNurseMetadata() {
+        long totalNurses = nurseRepository.count();
+        long activeNurses = nurseRepository.countByUserIsActiveTrue();
+        long inactiveNurses = nurseRepository.countByUserIsActiveFalse();
+        List<String> wards = nurseRepository.findDistinctAssignedWards();
+
+        return NurseMetadataDto.builder()
+                .totalNurses(totalNurses)
+                .activeNurses(activeNurses)
+                .inactiveNurses(inactiveNurses)
+                .wards(wards)
+                .build();
     }
 
     @Override

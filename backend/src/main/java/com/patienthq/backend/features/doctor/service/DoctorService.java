@@ -1,5 +1,6 @@
 package com.patienthq.backend.features.doctor.service;
 
+import com.patienthq.backend.features.doctor.dto.DoctorMetadataDto;
 import com.patienthq.backend.features.doctor.dto.request.CreateDoctorRequest;
 import com.patienthq.backend.features.doctor.dto.request.UpdateDoctorRequest;
 import com.patienthq.backend.features.doctor.model.Doctor;
@@ -14,6 +15,8 @@ public interface DoctorService {
     Page<Doctor> getAllDoctors(Boolean isActive, String search, Pageable pageable);
 
     Doctor getDoctorById(UUID id);
+
+    DoctorMetadataDto getDoctorMetadata();
 
     Doctor updateDoctor(UUID id, UpdateDoctorRequest request);
 

@@ -9,6 +9,7 @@ import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.UUID;
 
 @Repository
@@ -33,4 +34,11 @@ public interface DoctorRepository extends JpaRepository<Doctor, UUID>, PagingAnd
             @Param("search") String search,
             Pageable pageable
     );
+
+    long countByUserIsActiveTrue();
+
+    long countByUserIsActiveFalse();
+
+    @Query("SELECT DISTINCT d.specialization FROM Doctor d WHERE d.specialization IS NOT NULL AND d.specialization <> '' ORDER BY d.specialization ASC")
+    List<String> findDistinctSpecializations();
 }

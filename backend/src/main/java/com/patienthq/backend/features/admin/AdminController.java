@@ -3,6 +3,7 @@ package com.patienthq.backend.features.admin;
 import com.patienthq.backend.features.admin.dto.request.CreateAdminRequest;
 import com.patienthq.backend.features.admin.dto.request.UpdateAdminRequest;
 import com.patienthq.backend.features.admin.dto.AdminDto;
+import com.patienthq.backend.features.admin.dto.AdminMetadataDto;
 import com.patienthq.backend.features.admin.model.Admin;
 import com.patienthq.backend.features.admin.service.AdminService;
 import com.patienthq.backend.shared.response.ApiResponse;
@@ -34,6 +35,18 @@ public class AdminController {
                         .success(true)
                         .message("Admin account created successfully.")
                         .data(adminMapper.toDto(admin))
+                        .build()
+        );
+    }
+
+    @GetMapping("/meta")
+    public ResponseEntity<ApiResponse<AdminMetadataDto>> getAdminMetadata() {
+        AdminMetadataDto metadata = adminService.getAdminMetadata();
+        return ResponseEntity.ok(
+                ApiResponse.<AdminMetadataDto>builder()
+                        .success(true)
+                        .message("Admin metadata retrieved successfully")
+                        .data(metadata)
                         .build()
         );
     }
