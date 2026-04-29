@@ -74,6 +74,12 @@ public class RoleServiceImpl implements RoleService {
         roleRepository.save(role);
     }
 
+    @Override
+    public List<Permission> getRolePermissions(Integer roleId) {
+        Role role = getRoleById(roleId);
+        return role.getPermissions().stream().toList();
+    }
+
     private Role getRoleById(Integer id) {
         return roleRepository.findById(id)
                 .orElseThrow(() -> new AppException(HttpStatus.NOT_FOUND, "Role not found with ID: " + id));

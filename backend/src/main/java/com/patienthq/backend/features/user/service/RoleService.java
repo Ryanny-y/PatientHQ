@@ -2,6 +2,7 @@ package com.patienthq.backend.features.user.service;
 
 import com.patienthq.backend.features.user.dto.request.CreateRoleRequest;
 import com.patienthq.backend.features.user.dto.request.UpdateRoleRequest;
+import com.patienthq.backend.features.user.model.Permission;
 import com.patienthq.backend.features.user.model.Role;
 
 import java.util.List;
@@ -12,4 +13,5 @@ public interface RoleService {
     Role updateRole(Integer id, UpdateRoleRequest request);
     void deleteRole(Integer id);
     void addPermissionsToRole(Integer roleId, List<Integer> permissionIds);
+    List<Permission> getRolePermissions(Integer roleId);
 }

@@ -1,10 +1,13 @@
 package com.patienthq.backend.features.user.controller;
 
+import com.patienthq.backend.features.user.dto.PermissionDto;
 import com.patienthq.backend.features.user.dto.RoleDto;
 import com.patienthq.backend.features.user.dto.request.AssignPermissionsRequest;
 import com.patienthq.backend.features.user.dto.request.CreateRoleRequest;
 import com.patienthq.backend.features.user.dto.request.UpdateRoleRequest;
+import com.patienthq.backend.features.user.mapper.PermissionMapper;
 import com.patienthq.backend.features.user.mapper.RoleMapper;
+import com.patienthq.backend.features.user.model.Permission;
 import com.patienthq.backend.features.user.model.Role;
 import com.patienthq.backend.features.user.service.RoleService;
 import com.patienthq.backend.shared.response.ApiResponse;
@@ -21,6 +24,7 @@ import java.util.List;
 public class RoleController {
 
     private final RoleService roleService;
+    private final PermissionMapper permissionMapper;
     private final RoleMapper roleMapper;
 
     @GetMapping
@@ -28,6 +32,15 @@ public class RoleController {
         List<Role> roles = roleService.getAllRoles();
         List<RoleDto> roleDtos = roles.stream().map(roleMapper::toDto).toList();
         return ResponseEntity.ok(ApiResponse.success("Roles retrieved successfully.", roleDtos));
+    }
+
+    @GetMapping("/{id}/permissions")
+    public ResponseEntity<ApiResponse<List<PermissionDto>>> getRolePermissions(
+            @PathVariable Integer id
+    ) {
+        List<Permission> permissions = roleService.getRolePermissions(id);
+        List<PermissionDto> permissionDtos = permissions.stream().map(permissionMapper::toDto).toList();
+        return ResponseEntity.ok(ApiResponse.success("Permissions retrieved successfully.", permissionDtos));
     }
 
     @PostMapping
