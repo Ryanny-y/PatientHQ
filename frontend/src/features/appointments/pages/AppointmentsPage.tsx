@@ -1,6 +1,5 @@
 import { useState, useMemo, type ReactElement } from "react";
 import { Button } from "@/components/ui/button";
-import { useToast } from "@/shared/hooks/useToast";
 import { Plus, Calendar as CalendarIcon } from "lucide-react";
 import { useAuth } from "@/shared/context/AuthContext";
 import { AppointmentStatsCards } from "../components/AppointmentStatsCards";
@@ -12,49 +11,42 @@ import { ViewAppointmentDrawer } from "../components/ViewAppointmentDrawer";
 import { AppointmentFormModal } from "../components/AppointmentFormModal";
 import { RescheduleAppointmentModal } from "../components/RescheduleAppointmentModal";
 import { CancelAppointmentDialog } from "../components/CancelAppointmentDialog";
-import { useAppointmentQuery } from "../hooks/useAppointmentQuery";
-import { useAppointmentMutation } from "../hooks/useAppointmentMutation";
+import { useAppointments } from "../hooks/useAppointments";
 import { usePatientQuery } from "@/features/patients/hooks/usePatientQuery";
 import { useDoctorsQuery } from "@/features/doctorAccounts/hooks/useDoctorsQuery";
 import type {
   Appointment,
-  FilterOptions,
-  AppointmentStats,
   CreateAppointmentFormValues,
   UpdateAppointmentFormValues,
 } from "../types/appointment";
-
-const PAGE_SIZE = 10;
+import { toast } from "sonner";
 
 const AppointmentsPage = (): ReactElement => {
-  const { toast } = useToast();
   const { user } = useAuth();
   const userRole = (user?.role || 'ADMIN').toLowerCase() as 'admin' | 'doctor' | 'nurse';
 
-  // View mode
   const [viewMode, setViewMode] = useState<'table' | 'calendar'>('table');
-
-  // Filters state (mirrors original FilterOptions, but with doctorId as string)
-  const [filters, setFilters] = useState<FilterOptions>({
-    search: "",
-    dateRange: { from: null, to: null },
-    status: "all",
-    doctor: "all",
-    specialization: "all",
-    sortBy: "nearest",
-  });
-
-  // Pagination
-  const [page, setPage] = useState(1);
-
-  // Modal/drawer state
   const [viewDrawerOpen, setViewDrawerOpen] = useState(false);
   const [formModalOpen, setFormModalOpen] = useState(false);
   const [rescheduleModalOpen, setRescheduleModalOpen] = useState(false);
   const [cancelDialogOpen, setCancelDialogOpen] = useState(false);
   const [selectedAppointment, setSelectedAppointment] = useState<Appointment | null>(null);
 
-  // Fetch patients for dropdown (all)
+  const {
+    meta,
+    data: appointments,
+    isLoading,
+    page,
+    totalPages,
+    totalElements,
+    setPage,
+    refetch,
+    filters,
+    updateFilter,
+    createAppointment,
+    updateAppointment,
+  } = useAppointments();
+
   const { data: patientsResponse } = usePatientQuery({ page: 0, size: 1000 });
   const patients = useMemo(() => {
     const raw = patientsResponse?.data?.content ?? [];
@@ -65,7 +57,6 @@ const AppointmentsPage = (): ReactElement => {
     }));
   }, [patientsResponse]);
 
-  // Fetch doctors for dropdown and filter
   const { data: doctorsResponse } = useDoctorsQuery({ page: 0, size: 1000, isActive: true });
   const doctors = useMemo(() => {
     const raw = doctorsResponse?.data?.content ?? [];
@@ -76,151 +67,75 @@ const AppointmentsPage = (): ReactElement => {
     }));
   }, [doctorsResponse]);
 
-  const specializations = useMemo(() => {
-    const specs = doctors.map((d) => d.specialization);
-    return Array.from(new Set(specs));
-  }, [doctors]);
+  const specializations = useMemo(
+    () => Array.from(new Set(doctors.map((d) => d.specialization))),
+    [doctors],
+  );
 
-  // Build server-side sort param
-  const sortParam =
-    filters.sortBy === 'nearest' ? 'appointmentDate,asc' :
-    filters.sortBy === 'latest' ? 'appointmentDate,desc' :
-    'patientName,asc';
 
-  // Fetch appointments from server
-  const { data: response, isLoading, refetch } = useAppointmentQuery({
-    page: page - 1,
-    size: PAGE_SIZE,
-    search: filters.search || undefined,
-    status: filters.status !== 'all' ? filters.status : undefined,
-    doctorId: filters.doctor !== 'all' ? filters.doctor : undefined,
-    sort: sortParam,
-  });
-
-  const mutations = useAppointmentMutation();
-
-  const pageData = response?.data?.content ?? [];
-  const totalPages = response?.data?.totalPages ?? 1;
-  const totalElements = response?.data?.totalElements ?? 0;
-
-  // Client-side filtering: dateRange and specialization (not supported by backend)
-  const filteredAppointments = useMemo(() => {
-    let result = pageData.filter((appointment) => {
-      // Date range filter
-      if (filters.dateRange.from || filters.dateRange.to) {
-        const aptDate = new Date(appointment.appointmentDate);
-        if (filters.dateRange.from && aptDate < filters.dateRange.from) return false;
-        if (filters.dateRange.to) {
-          // Set to end of day for inclusive to
-          const end = new Date(filters.dateRange.to);
-          end.setHours(23, 59, 59, 999);
-          if (aptDate > end) return false;
-        }
-      }
-      return true;
-    });
-
-    if (filters.specialization && filters.specialization !== 'all') {
-      result = result.filter((apt) => apt.specialization === filters.specialization);
-    }
-
-    return result;
-  }, [pageData, filters.dateRange, filters.specialization]);
-
-  // Compute dummy stats from totalElements only (others require aggregated data)
-  const stats: AppointmentStats = {
-    totalAppointments: totalElements,
-    todayAppointments: 0, // could compute from current page only but inaccurate
-    pendingConfirmations: 0,
-    completedThisWeek: 0,
-  };
-
-  // Event handlers
-  const handleRefresh = () => {
+  const handleRefresh = (): void => {
     refetch();
-    toast("Appointments refreshed successfully.", "success");
+    toast.success("Appointments refreshed successfully.");
   };
 
-  const handleViewAppointment = (appointment: Appointment) => {
+  const handleViewAppointment = (appointment: Appointment): void => {
     setSelectedAppointment(appointment);
     setViewDrawerOpen(true);
   };
 
-  const handleEditAppointment = (appointment: Appointment) => {
+  const handleEditAppointment = (appointment: Appointment): void => {
     setSelectedAppointment(appointment);
     setRescheduleModalOpen(true);
   };
 
-  const handleCreateAppointment = () => {
-    setFormModalOpen(true);
-  };
-
-  const handleConfirmAppointment = async (appointment: Appointment) => {
+  const handleConfirmAppointment = async (appointment: Appointment): Promise<void> => {
     try {
-      await mutations.updateAppointment.mutateAsync({
-        id: appointment.appointmentId,
-        values: { status: 'CONFIRMED' },
-      });
-      toast("Appointment confirmed.", "success");
+      await updateAppointment(appointment.appointmentId, { status: 'CONFIRMED' });
+      toast.success("Appointment confirmed.");
     } catch {
-      toast("Failed to confirm appointment", "error");
+      toast.error("Failed to confirm appointment");
     }
   };
 
-  const handleCompleteAppointment = async (appointment: Appointment) => {
+  const handleCompleteAppointment = async (appointment: Appointment): Promise<void> => {
     try {
-      await mutations.updateAppointment.mutateAsync({
-        id: appointment.appointmentId,
-        values: { status: 'COMPLETED' },
-      });
-      toast("Appointment marked as completed.", "success");
+      await updateAppointment(appointment.appointmentId, { status: 'COMPLETED' });
+      toast.success("Appointment marked as completed.");
     } catch {
-      toast("Failed to update status", "error");
+      toast.error("Failed to update status");
     }
   };
 
-  const handleRescheduleAppointment = async (appointmentId: string, data: Partial<UpdateAppointmentFormValues>) => {
+  const handleRescheduleAppointment = async (appointmentId: string, data: Partial<UpdateAppointmentFormValues>): Promise<void> => {
     try {
-      await mutations.updateAppointment.mutateAsync({
-        id: appointmentId,
-        values: {
-          appointmentDate: data.appointmentDate,
-          reason: data.reason,
-          notes: data.notes,
-        },
+      await updateAppointment(appointmentId, {
+        appointmentDate: data.appointmentDate,
+        reason: data.reason,
+        notes: data.notes,
       });
-      toast("Appointment rescheduled successfully.", "success");
+      toast.success("Appointment rescheduled successfully.");
     } catch {
-      toast("Failed to reschedule appointment", "error");
+      toast.error("Failed to reschedule appointment");
     }
   };
 
-  const handleCancelAppointment = async (appointmentId: string, reason: string) => {
+  const handleCancelAppointment = async (appointmentId: string, reason: string): Promise<void> => {
     try {
-      await mutations.updateAppointment.mutateAsync({
-        id: appointmentId,
-        values: { status: 'CANCELLED', notes: reason },
-      });
-      toast("Appointment cancelled.", "warning");
+      await updateAppointment(appointmentId, { status: 'CANCELLED', notes: reason });
+      toast.warning("Appointment cancelled.");
     } catch {
-      toast("Failed to cancel appointment", "error");
+      toast.error("Failed to cancel appointment");
     }
   };
 
-  const handleSubmitAppointment = async (values: CreateAppointmentFormValues) => {
+  const handleSubmitAppointment = async (values: CreateAppointmentFormValues): Promise<void> => {
     try {
-      await mutations.createAppointment.mutateAsync(values);
-      toast("Appointment scheduled successfully.", "success");
+      await createAppointment(values);
+      toast.success("Appointment scheduled successfully.");
       setFormModalOpen(false);
     } catch {
-      toast("Failed to schedule appointment", "error");
+      toast.error("Failed to schedule appointment");
     }
-  };
-
-  const updateFilter = <K extends keyof FilterOptions>(key: K, value: FilterOptions[K]) => {
-    setFilters((prev) => ({ ...prev, [key]: value }));
-    // Reset to page 1 for most filters except dateRange maybe
-    if (key !== 'dateRange') setPage(1);
   };
 
   const canCreateAppointments = userRole === "admin" || userRole === "doctor";
@@ -241,7 +156,7 @@ const AppointmentsPage = (): ReactElement => {
             {viewMode === 'table' ? 'Calendar' : 'Table'} View
           </Button>
           {canCreateAppointments && (
-            <Button onClick={handleCreateAppointment}>
+            <Button onClick={() => setFormModalOpen(true)}>
               <Plus className="h-4 w-4 mr-2" />
               New Appointment
             </Button>
@@ -250,7 +165,7 @@ const AppointmentsPage = (): ReactElement => {
       </div>
 
       {/* Stats Cards */}
-      <AppointmentStatsCards stats={stats} />
+      <AppointmentStatsCards meta={meta?.data} />
 
       {/* Filter Toolbar - Only show in table view */}
       {viewMode === 'table' && (
@@ -272,7 +187,7 @@ const AppointmentsPage = (): ReactElement => {
         <>
           <div className="hidden lg:block">
             <AppointmentTable
-              appointments={filteredAppointments}
+              appointments={appointments}
               userRole={userRole}
               onViewAppointment={handleViewAppointment}
               onEditAppointment={handleEditAppointment}
@@ -288,7 +203,7 @@ const AppointmentsPage = (): ReactElement => {
 
           <div className="lg:hidden">
             <AppointmentCardListMobile
-              appointments={filteredAppointments}
+              appointments={appointments}
               userRole={userRole}
               onViewAppointment={handleViewAppointment}
               onEditAppointment={handleEditAppointment}
@@ -306,7 +221,7 @@ const AppointmentsPage = (): ReactElement => {
           {totalPages > 1 && (
             <div className="flex items-center justify-between">
               <p className="text-sm text-slate-600">
-                Showing {filteredAppointments.length} of {totalElements} appointments
+                Showing {appointments.length} of {totalElements} appointments
               </p>
               <div className="flex gap-2">
                 <Button
@@ -331,7 +246,7 @@ const AppointmentsPage = (): ReactElement => {
         </>
       ) : (
         <AppointmentCalendarView
-          appointments={filteredAppointments}
+          appointments={appointments}
           onViewAppointment={handleViewAppointment}
         />
       )}

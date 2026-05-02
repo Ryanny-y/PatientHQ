@@ -7,7 +7,7 @@ export interface Appointment {
   patientName: string;
   doctorId: string;
   doctorName: string;
-  specialization: string;
+  doctorSpecialization: string;
   appointmentDate: string; // ISO LocalDateTime: "2026-04-28T10:30:00"
   reason: string | null;
   status: AppointmentStatus;
@@ -23,8 +23,8 @@ export type UserRole = 'admin' | 'doctor' | 'nurse';
 // ── Stats (derived client-side from page data) ─────────────────────────────
 export interface AppointmentStats {
   totalAppointments: number;
-  todayAppointments: number;
-  pendingConfirmations: number;
+  todaysAppointments: number;
+  pendingAppointments: number;
   completedThisWeek: number;
 }
 

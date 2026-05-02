@@ -15,3 +15,10 @@ export const useAppointmentQuery = (params: {
     placeholderData: (prev) => prev,
   });
 };
+
+export const useAppoinmentMetaQuery = () => {
+  return useQuery({
+    queryKey: ['appointmentsMeta'],
+    queryFn: () => appointmentService.getAppointmentsMeta(),
+  })
+}

@@ -1,42 +1,24 @@
-import { useState } from 'react';
-import { useAppointmentQuery } from './useAppointmentQuery';
+import { useState, useMemo } from 'react';
+import { useAppoinmentMetaQuery, useAppointmentQuery } from './useAppointmentQuery';
 import { useAppointmentMutation } from './useAppointmentMutation';
 import type {
   Appointment,
-  AppointmentFilters,
   AppointmentModalMode,
+  FilterOptions,
   CreateAppointmentFormValues,
   UpdateAppointmentFormValues,
 } from '../types/appointment';
 
 const PAGE_SIZE = 10;
 
-interface UseAppointmentsReturn {
-  data: Appointment[];
-  isLoading: boolean;
-  page: number;
-  totalPages: number;
-  totalElements: number;
-  setPage: (page: number) => void;
-  refetch: () => void;
-  filters: AppointmentFilters;
-  setSearch: (v: string) => void;
-  setStatus: (v: string) => void;
-  setSortBy: (v: AppointmentFilters['sortBy']) => void;
-  modalMode: AppointmentModalMode;
-  selectedAppointment: Appointment | null;
-  openModal: (mode: NonNullable<AppointmentModalMode>, appointment?: Appointment) => void;
-  closeModal: () => void;
-  createAppointment: (values: CreateAppointmentFormValues) => Promise<void>;
-  updateAppointment: (id: string, values: UpdateAppointmentFormValues) => Promise<void>;
-  deleteAppointment: (id: string) => Promise<void>;
-}
-
-export const useAppointments = (): UseAppointmentsReturn => {
+export const useAppointments = () => {
   const [page, setPage] = useState(1);
-  const [filters, setFilters] = useState<AppointmentFilters>({
+  const [filters, setFilters] = useState<FilterOptions>({
     search: '',
+    dateRange: { from: null, to: null },
     status: 'all',
+    doctor: 'all',
+    specialization: 'all',
     sortBy: 'nearest',
   });
   const [modalMode, setModalMode] = useState<AppointmentModalMode>(null);
@@ -52,25 +34,48 @@ export const useAppointments = (): UseAppointmentsReturn => {
     size: PAGE_SIZE,
     search: filters.search || undefined,
     status: filters.status !== 'all' ? filters.status : undefined,
+    doctorId: filters.doctor !== 'all' ? filters.doctor : undefined,
     sort,
   });
 
   const mutations = useAppointmentMutation();
+  const { data: meta } = useAppoinmentMetaQuery();
 
-  const data = response?.data?.content ?? [];
+  const pageData = response?.data?.content ?? [];
   const totalPages = response?.data?.totalPages ?? 1;
   const totalElements = response?.data?.totalElements ?? 0;
 
-  const setSearch = (v: string) => { setFilters((f) => ({ ...f, search: v })); setPage(1); };
-  const setStatus = (v: string) => { setFilters((f) => ({ ...f, status: v })); setPage(1); };
-  const setSortBy = (v: AppointmentFilters['sortBy']) => { setFilters((f) => ({ ...f, sortBy: v })); setPage(1); };
+  // Client-side filtering for dateRange and specialization (not supported by backend)
+  const filteredData = useMemo(() => {
+    let result = pageData.filter((appointment) => {
+      if (filters.dateRange.from || filters.dateRange.to) {
+        const aptDate = new Date(appointment.appointmentDate);
+        if (filters.dateRange.from && aptDate < filters.dateRange.from) return false;
+        if (filters.dateRange.to) {
+          const end = new Date(filters.dateRange.to);
+          end.setHours(23, 59, 59, 999);
+          if (aptDate > end) return false;
+        }
+      }
+      return true;
+    });
+    if (filters.specialization && filters.specialization !== 'all') {
+      result = result.filter((apt) => apt.doctorSpecialization === filters.specialization);
+    }
+    return result;
+  }, [pageData, filters.dateRange, filters.specialization]);
 
-  const openModal = (mode: NonNullable<AppointmentModalMode>, appointment?: Appointment) => {
+  const updateFilter = <K extends keyof FilterOptions>(key: K, value: FilterOptions[K]): void => {
+    setFilters((prev) => ({ ...prev, [key]: value }));
+    if (key !== 'dateRange') setPage(1);
+  };
+
+  const openModal = (mode: NonNullable<AppointmentModalMode>, appointment?: Appointment): void => {
     setSelectedAppointment(appointment ?? null);
     setModalMode(mode);
   };
 
-  const closeModal = () => {
+  const closeModal = (): void => {
     setModalMode(null);
     setSelectedAppointment(null);
   };
@@ -88,7 +93,8 @@ export const useAppointments = (): UseAppointmentsReturn => {
   };
 
   return {
-    data,
+    meta,
+    data: filteredData,
     isLoading,
     page,
     totalPages,
@@ -96,9 +102,7 @@ export const useAppointments = (): UseAppointmentsReturn => {
     setPage,
     refetch,
     filters,
-    setSearch,
-    setStatus,
-    setSortBy,
+    updateFilter,
     modalMode,
     selectedAppointment,
     openModal,

@@ -2,37 +2,37 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Calendar, Clock, AlertCircle, CheckCircle } from "lucide-react";
 import { type ReactElement } from "react";
 import type { AppointmentStats } from "../types/appointment";
-
+  
 interface AppointmentStatsCardsProps {
-  stats: AppointmentStats;
+  meta: AppointmentStats | undefined;
 }
 
-export const AppointmentStatsCards = ({ stats }: AppointmentStatsCardsProps): ReactElement => {
+export const AppointmentStatsCards = ({ meta }: AppointmentStatsCardsProps): ReactElement => {
   const cards = [
     {
       title: "Total Appointments",
-      value: stats.totalAppointments.toLocaleString(),
+      value: meta?.totalAppointments.toLocaleString() || "0",
       icon: Calendar,
       color: "text-blue-600",
       bgColor: "bg-blue-50",
     },
     {
       title: "Today's Appointments",
-      value: stats.todayAppointments.toString(),
+      value: meta?.todaysAppointments?.toString() || "0",
       icon: Clock,
       color: "text-purple-600",
       bgColor: "bg-purple-50",
     },
     {
       title: "Pending Confirmations",
-      value: stats.pendingConfirmations.toString(),
+      value: meta?.pendingAppointments.toString() || "0",
       icon: AlertCircle,
       color: "text-orange-600",
       bgColor: "bg-orange-50",
     },
     {
       title: "Completed This Week",
-      value: stats.completedThisWeek.toString(),
+      value: meta?.completedThisWeek.toString() || "0",
       icon: CheckCircle,
       color: "text-green-600",
       bgColor: "bg-green-50",

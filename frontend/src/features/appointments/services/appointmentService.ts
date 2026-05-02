@@ -2,6 +2,7 @@ import { fetchWithAuth } from '@/shared/hooks/fetchWithAuth';
 import type { ApiResponse, PageResponse } from '@/shared/types/api';
 import type {
   Appointment,
+  AppointmentStats,
   CreateAppointmentFormValues,
   UpdateAppointmentFormValues,
 } from '../types/appointment';
@@ -29,6 +30,8 @@ export const appointmentService = {
       `appointments?${query.toString()}`,
     );
   },
+
+  getAppointmentsMeta: () => fetchWithAuth<ApiResponse<AppointmentStats>>('appointments/meta'),
 
   getAppointmentById: (id: string) =>
     fetchWithAuth<ApiResponse<Appointment>>(`appointments/${id}`),

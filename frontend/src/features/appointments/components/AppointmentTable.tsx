@@ -77,7 +77,7 @@ export const AppointmentTable = ({
                   </div>
                 </TableCell>
                 <TableCell className="text-slate-700">{appointment.doctorName}</TableCell>
-                <TableCell className="text-slate-700">{appointment.specialization}</TableCell>
+                <TableCell className="text-slate-700">{appointment.doctorSpecialization}</TableCell>
                 <TableCell>
                   <div title={appointment.reason || ''} className="max-w-50 text-slate-600">
                     {truncateText(appointment.reason)}
