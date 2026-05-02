@@ -2,20 +2,18 @@ import { useMemo, useState } from "react";
 import { Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useToast, ToastContainer } from "@/shared/hooks/useToast";
-import AssignmentStatsCards from "@/features/patients/components/assignment/AssignmentStatsCards";
-import AssignmentFilterToolbar from "@/features/patients/components/assignment/AssignmentFilterToolbar";
-import AssignmentTable from "@/features/patients/components/assignment/AssignmentTable";
-import AssignmentCardListMobile from "@/features/patients/components/assignment/AssignmentCardListMobile";
+import AssignmentStatsCards from "@/features/doctorAssignments/components/AssignmentStatsCards";
+import AssignmentFilterToolbar from "@/features/doctorAssignments/components/AssignmentFilterToolbar";
+import AssignmentTable from "@/features/doctorAssignments/components/AssignmentTable";
+import AssignmentCardListMobile from "@/features/doctorAssignments/components/AssignmentCardListMobile";
 import {
   ViewAssignmentDrawer,
-  AssignDoctorModal,
   ReassignDoctorModal,
   RemoveAssignmentDialog,
-} from "@/features/patients/components/assignment/AssignmentModals";
+} from "@/features/doctorAssignments/components/AssignmentModals";
 import type {
-  NewAssignmentPayload,
   ReassignPayload,
-} from "@/features/patients/components/assignment/AssignmentModals";
+} from "@/features/doctorAssignments/components/AssignmentModals";
 import {
   allAssignments,
   doctorProfiles,
@@ -24,7 +22,7 @@ import {
 import type {
   AssignmentRecord,
   PatientSummary,
-} from "@/features/patients/types/assignment";
+} from "@/features/doctorAssignments/types/assignment";
 
 const AssignDoctorPage = (): React.ReactElement => {
   const { toasts, toast, dismiss } = useToast();
@@ -145,49 +143,6 @@ const AssignDoctorPage = (): React.ReactElement => {
     setRemoveDialogOpen(true);
   };
 
-  const handleAssignDoctor = (payload: NewAssignmentPayload): void => {
-    const patient = unassigned.find(
-      (item) => item.patient_id === payload.patient_id,
-    );
-    const doctor = doctorProfiles.find(
-      (item) => item.doctor_id === payload.doctor_id,
-    );
-    if (!patient || !doctor) {
-      toast(
-        "Unable to create assignment with selected patient or doctor.",
-        "error",
-      );
-      return;
-    }
-
-    const nextId =
-      Math.max(
-        ...assignments.map((assignment) => assignment.assignment_id),
-        3000,
-      ) + 1;
-    const assignment: AssignmentRecord = {
-      assignment_id: nextId,
-      patient_id: patient.patient_id,
-      patient_name: patient.full_name,
-      patient_status: patient.status,
-      doctor_id: doctor.doctor_id,
-      doctor_name: doctor.doctor_name,
-      specialization: doctor.specialization,
-      assigned_date: new Date().toISOString().slice(0, 10),
-      is_active: payload.is_active,
-      patient_room: patient.room,
-      doctor_active_patients: doctor.active_patients + 1,
-      doctor_is_active: doctor.is_active,
-      priority: payload.priority,
-    };
-
-    setAssignments((prev) => [assignment, ...prev]);
-    setUnassigned((prev) =>
-      prev.filter((item) => item.patient_id !== payload.patient_id),
-    );
-    toast("Doctor assigned successfully");
-  };
-
   const handleConfirmReassign = (payload: ReassignPayload): void => {
     const doctor = doctorProfiles.find(
       (item) => item.doctor_id === payload.new_doctor_id,
@@ -255,14 +210,6 @@ const AssignDoctorPage = (): React.ReactElement => {
             Manage physician-to-patient assignments and care responsibility.
           </p>
         </div>
-        <div className="flex flex-wrap gap-2">
-          {role === "Admin" && (
-            <Button onClick={() => setAssignModalOpen(true)}>
-              <Plus className="mr-2 h-4 w-4" />
-              New Assignment
-            </Button>
-          )}
-        </div>
       </div>
 
       <AssignmentStatsCards
@@ -321,14 +268,6 @@ const AssignDoctorPage = (): React.ReactElement => {
         assignment={selectedAssignment}
         open={viewDrawerOpen}
         onOpenChange={setViewDrawerOpen}
-      />
-      <AssignDoctorModal
-        open={assignModalOpen}
-        onOpenChange={setAssignModalOpen}
-        patients={unassigned}
-        doctors={doctorProfiles}
-        assignments={assignments}
-        onAssign={handleAssignDoctor}
       />
       <ReassignDoctorModal
         open={reassignModalOpen}

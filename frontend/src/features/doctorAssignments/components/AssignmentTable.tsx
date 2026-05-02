@@ -14,7 +14,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import type { AssignmentRecord } from "@/features/patients/types/assignment";
+import type { AssignmentRecord } from "@/features/doctorAssignments/types/assignment";
 
 interface AssignmentTableProps {
   assignments: AssignmentRecord[];

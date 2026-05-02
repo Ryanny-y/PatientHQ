@@ -9,7 +9,7 @@ import DoctorAccountsPage from "./features/doctorAccounts/DoctorAccountsPage";
 import NurseAccountsPage from "./features/nurseAccounts/NurseAccountsPage";
 import PatientListPage from "./features/patients/pages/PatientListPage";
 import RegisterPatientPage from "./features/patients/pages/RegisterPatientPage";
-import AssignDoctorPage from "./features/patients/pages/AssignDoctorPage";
+import AssignDoctorPage from "./features/doctorAssignments/AssignDoctorPage";
 import MedicalRecordsPage from "./features/medicalRecords/pages/MedicalRecordsPage";
 import AppointmentsPage from "./features/appointments/pages/AppointmentsPage";
 import ReportsHistoryPage from "./features/reports/pages/ReportsHistoryPage";

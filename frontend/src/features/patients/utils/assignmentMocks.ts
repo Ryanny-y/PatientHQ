@@ -1,4 +1,4 @@
-import type { AssignmentRecord, DoctorProfile, PatientSummary, PatientStatus } from '@/features/patients/types/assignment';
+import type { AssignmentRecord, DoctorProfile, PatientSummary, PatientStatus } from '@/features/doctorAssignments/types/assignment';
 
 export const doctorProfiles: DoctorProfile[] = [
   { doctor_id: 12, doctor_name: 'Dr. Antonio Garcia', specialization: 'Cardiology', is_active: true, active_patients: 18, current_load: 18 },

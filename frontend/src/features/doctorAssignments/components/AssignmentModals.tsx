@@ -1,8 +1,8 @@
-import { useEffect, useMemo, useState, type ReactElement } from 'react';
+import { useEffect, useState, type ReactElement } from 'react';
 import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import { CheckCircle2, Search } from 'lucide-react';
+import { Search } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -18,10 +18,8 @@ import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from '
 import { Badge } from '@/components/ui/badge';
 import type {
   AssignmentRecord,
-  DoctorProfile,
-  PatientSummary,
-  PriorityLevel,
-} from '@/features/patients/types/assignment';
+} from '@/features/doctorAssignments/types/assignment';
+import type { DoctorAccount } from '@/features/doctorAccounts/types/doctorAccount';
 
 interface SearchableSelectOption {
   id: number;
@@ -110,14 +108,6 @@ const SearchableSelect = ({
   );
 };
 
-export interface NewAssignmentPayload {
-  patient_id: number;
-  doctor_id: number;
-  priority: PriorityLevel;
-  notes: string;
-  is_active: boolean;
-}
-
 export interface ReassignPayload {
   assignment_id: number;
   new_doctor_id: number;
@@ -125,184 +115,17 @@ export interface ReassignPayload {
   effective_date: string;
 }
 
-const assignSchema = z.object({
-  patient_id: z.number().int().positive({ message: 'Choose a patient' }),
-  doctor_id: z.number().int().positive({ message: 'Choose a doctor' }),
-  priority: z.enum(['Normal', 'Urgent', 'Critical']),
-  notes: z.string().max(250).optional(),
-  is_active: z.boolean(),
-});
-
 const reassignSchema = z.object({
   new_doctor_id: z.number().int().positive({ message: 'Select a new doctor' }),
   reason: z.string().min(10, 'Provide a reassignment reason'),
   effective_date: z.string().optional(),
 });
 
-interface AssignDoctorModalProps {
-  open: boolean;
-  onOpenChange: (open: boolean) => void;
-  patients: PatientSummary[];
-  doctors: DoctorProfile[];
-  assignments: AssignmentRecord[];
-  onAssign: (payload: NewAssignmentPayload) => void;
-}
-
-export const AssignDoctorModal = ({ open, onOpenChange, patients, doctors, assignments, onAssign }: AssignDoctorModalProps): ReactElement => {
-  const {
-    control,
-    handleSubmit,
-    register,
-    reset,
-    watch,
-    setError,
-    formState: { errors, isSubmitting },
-  } = useForm<z.infer<typeof assignSchema>>({
-    resolver: zodResolver(assignSchema),
-    defaultValues: {
-      patient_id: 0,
-      doctor_id: 0,
-      priority: 'Normal',
-      notes: '',
-      is_active: true,
-    },
-    mode: 'onTouched',
-  });
-
-  const selectedPatientId = watch('patient_id');
-  const selectedDoctorId = watch('doctor_id');
-  const selectedDoctor = doctors.find((doctor) => doctor.doctor_id === selectedDoctorId) ?? null;
-  const duplicateAssignment = selectedPatientId > 0 && assignments.some((assignment) => assignment.patient_id === selectedPatientId && assignment.is_active);
-
-  useEffect(() => {
-    if (!open) {
-      reset();
-    }
-  }, [open, reset]);
-
-  const onSubmit = async (values: z.infer<typeof assignSchema>): Promise<void> => {
-    if (duplicateAssignment) {
-      setError('patient_id', { message: 'This patient already has an active assignment.' });
-      return;
-    }
-
-    await new Promise((resolve) => setTimeout(resolve, 500));
-    onAssign({
-      ...values,
-      notes: values.notes ?? '',
-    });
-    onOpenChange(false);
-  };
-
-  return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-3xl">
-        <DialogHeader>
-          <DialogTitle>New Care Assignment</DialogTitle>
-          <DialogDescription>
-            Assign a physician to a patient while preserving workload balance and assignment security.
-          </DialogDescription>
-        </DialogHeader>
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-6 px-6 pb-6 pt-2">
-          <div className="grid gap-4 lg:grid-cols-2">
-            <Controller
-              control={control}
-              name="patient_id"
-              render={({ field }) => (
-                <SearchableSelect
-                  label="Select Patient"
-                  placeholder="Type patient name or ID"
-                  options={patients.map((patient) => ({
-                    id: patient.patient_id,
-                    title: `${patient.full_name} · ${patient.patient_id}`,
-                    subtitle: patient.room,
-                    meta: patient.status,
-                  }))}
-                  selectedId={field.value}
-                  onSelect={field.onChange}
-                  error={errors.patient_id?.message}
-                  helper="Search by patient name, ID, or current ward."
-                />
-              )}
-            />
-            <Controller
-              control={control}
-              name="doctor_id"
-              render={({ field }) => (
-                <SearchableSelect
-                  label="Select Doctor"
-                  placeholder="Type doctor or specialization"
-                  options={doctors.map((doctor) => ({
-                    id: doctor.doctor_id,
-                    title: `${doctor.doctor_name} · ${doctor.specialization}`,
-                    subtitle: `${doctor.current_load} active patients`,
-                    meta: doctor.is_active ? 'Available' : 'Inactive',
-                  }))}
-                  selectedId={field.value}
-                  onSelect={field.onChange}
-                  error={errors.doctor_id?.message}
-                  helper="Choose an available physician with the most balanced load."
-                />
-              )}
-            />
-          </div>
-
-          {selectedDoctor && selectedDoctor.current_load > 16 && (
-            <div className="rounded-3xl border border-amber-200 bg-amber-50 p-4 text-sm text-amber-700">
-              <span className="font-semibold">High workload warning:</span> {selectedDoctor.doctor_name} is currently handling {selectedDoctor.current_load} active patients.
-            </div>
-          )}
-
-          <div className="grid gap-4 lg:grid-cols-2">
-            <div className="space-y-2">
-              <Label>Priority Level</Label>
-              <select
-                className="flex h-10 w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                {...register('priority')}
-              >
-                <option value="Normal">Normal</option>
-                <option value="Urgent">Urgent</option>
-                <option value="Critical">Critical</option>
-              </select>
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="is_active">Active Assignment</Label>
-              <div className="flex items-center gap-3 rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3">
-                <input id="is_active" type="checkbox" className="h-4 w-4 rounded border-slate-300 text-blue-600 focus:ring-blue-500" {...register('is_active')} defaultChecked />
-                <div>
-                  <p className="text-sm font-semibold text-slate-900">Enable active assignment</p>
-                  <p className="text-xs text-slate-500">Patient will be routed to the assigned physician immediately.</p>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="notes">Assignment Notes</Label>
-            <Textarea id="notes" rows={4} {...register('notes')} placeholder="Add clinical direction or case context" />
-            {errors.notes && <p className="text-xs text-red-500">{errors.notes.message}</p>}
-          </div>
-
-          <div className="flex flex-col items-stretch gap-3 sm:flex-row sm:justify-end">
-            <Button variant="outline" type="button" onClick={() => onOpenChange(false)}>
-              Cancel
-            </Button>
-            <Button type="submit" disabled={isSubmitting}>
-              {isSubmitting ? <CheckCircle2 className="mr-2 h-4 w-4 animate-spin" /> : null}
-              Assign Doctor
-            </Button>
-          </div>
-        </form>
-      </DialogContent>
-    </Dialog>
-  );
-};
-
 interface ReassignDoctorModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   assignment: AssignmentRecord | null;
-  doctors: DoctorProfile[];
+  doctors: DoctorAccount[]; 
   onConfirm: (payload: ReassignPayload) => void;
 }
 
@@ -325,7 +148,7 @@ export const ReassignDoctorModal = ({ open, onOpenChange, assignment, doctors, o
   });
 
   const newDoctorId = watch('new_doctor_id');
-  const selectedDoctor = doctors.find((doctor) => doctor.doctor_id === newDoctorId) ?? null;
+  const selectedDoctor = doctors.find((doctor: any) => doctor.doctor_id === newDoctorId) ?? null;
 
   useEffect(() => {
     if (!open) {
@@ -373,8 +196,8 @@ export const ReassignDoctorModal = ({ open, onOpenChange, assignment, doctors, o
                 label="New Doctor"
                 placeholder="Search doctor"
                 options={doctors
-                  .filter((doctor) => doctor.doctor_id !== assignment.doctor_id)
-                  .map((doctor) => ({
+                  .filter((doctor: any) => doctor.doctor_id !== assignment.doctor_id)
+                  .map((doctor: any) => ({
                     id: doctor.doctor_id,
                     title: `${doctor.doctor_name} · ${doctor.specialization}`,
                     subtitle: `${doctor.current_load} active patients`,
@@ -386,12 +209,6 @@ export const ReassignDoctorModal = ({ open, onOpenChange, assignment, doctors, o
               />
             )}
           />
-
-          {selectedDoctor && selectedDoctor.current_load > 16 && (
-            <div className="rounded-3xl border border-amber-200 bg-amber-50 p-4 text-sm text-amber-700">
-              Recommended: physician is currently handling a heavy caseload, verify coverage before confirming.
-            </div>
-          )}
 
           <div className="space-y-2">
             <Label htmlFor="reason">Reason for Reassignment</Label>
