@@ -8,6 +8,7 @@ import {
 import { API_URL } from "../config/env";
 import type { ApiResponse } from "../types/api";
 import { toast } from "sonner";
+import { refreshToken as refreshTokenService } from "../service/authService";
 
 type UserRole = "ADMIN" | "DOCTOR" | "NURSE";
 
@@ -15,7 +16,7 @@ interface AuthUser {
   accessToken: string;
   username: string;
   role: UserRole;
-  permissions: string[]
+  permissions: string[];
 }
 
 type AuthResponseType = ApiResponse<AuthUser>;
@@ -74,28 +75,16 @@ export const AuthProvider = ({ children }: AuthProviderProps): ReactElement => {
   };
 
   const refreshToken = async (): Promise<AuthResponseType | null> => {
-    try {
-      const response = await fetch(`${API_URL}/auth/refresh-token`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        credentials: "include",
-      });
+    const data = await refreshTokenService();
 
-      const data: AuthResponseType = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data.message || response.statusText);
-      }
-
-      setUser(data.data);
-      setGlobalAccessToken(data.data.accessToken);
-      return data;
-    } catch (error: any) {
-      toast.error(error.message || "Session expired. Please log in again.");
+    if (!data) {
+      toast.error("Session expired. Please log in again.");
+      setUser(null);
       return null;
     }
+
+    setUser(data.data);
+    return data;
   };
 
   const logout = async (): Promise<void> => {

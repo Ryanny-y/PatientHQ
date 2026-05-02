@@ -1,17 +1,6 @@
 import { API_URL } from "../config/env";
 import { getAccessToken } from "../context/AuthContext";
-
-const refreshToken = async () => {
-  const res = await fetch(`${API_URL}/auth/refresh-token`, {
-    method: "POST",
-    credentials: "include",
-  });
-
-  if (!res.ok) return null;
-
-  return res.json();
-};
-
+import { refreshToken } from "../service/authService";
 
 export const fetchWithAuth = async <T>(
   url: string,
