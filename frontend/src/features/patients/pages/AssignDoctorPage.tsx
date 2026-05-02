@@ -1,48 +1,60 @@
-import { useMemo, useState } from 'react';
-import { Download, Plus, Shuffle } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { useToast, ToastContainer } from '@/shared/hooks/useToast';
-import AssignmentStatsCards from '@/features/patients/components/assignment/AssignmentStatsCards';
-import AssignmentFilterToolbar from '@/features/patients/components/assignment/AssignmentFilterToolbar';
-import AssignmentTable from '@/features/patients/components/assignment/AssignmentTable';
-import AssignmentCardListMobile from '@/features/patients/components/assignment/AssignmentCardListMobile';
-import RoleStateSwitcher from '@/features/patients/components/RoleStateSwitcher';
+import { useMemo, useState } from "react";
+import { Plus } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { useToast, ToastContainer } from "@/shared/hooks/useToast";
+import AssignmentStatsCards from "@/features/patients/components/assignment/AssignmentStatsCards";
+import AssignmentFilterToolbar from "@/features/patients/components/assignment/AssignmentFilterToolbar";
+import AssignmentTable from "@/features/patients/components/assignment/AssignmentTable";
+import AssignmentCardListMobile from "@/features/patients/components/assignment/AssignmentCardListMobile";
 import {
   ViewAssignmentDrawer,
   AssignDoctorModal,
   ReassignDoctorModal,
   RemoveAssignmentDialog,
-  AutoMatchModal,
-} from '@/features/patients/components/assignment/AssignmentModals';
-import type { NewAssignmentPayload, ReassignPayload, AutoMatchPayload } from '@/features/patients/components/assignment/AssignmentModals';
-import { allAssignments, doctorProfiles, unassignedPatients } from '@/features/patients/utils/assignmentMocks';
-import type { AssignmentRecord, PatientSummary } from '@/features/patients/types/assignment';
+} from "@/features/patients/components/assignment/AssignmentModals";
+import type {
+  NewAssignmentPayload,
+  ReassignPayload,
+} from "@/features/patients/components/assignment/AssignmentModals";
+import {
+  allAssignments,
+  doctorProfiles,
+  unassignedPatients,
+} from "@/features/patients/utils/assignmentMocks";
+import type {
+  AssignmentRecord,
+  PatientSummary,
+} from "@/features/patients/types/assignment";
 
 const AssignDoctorPage = (): React.ReactElement => {
   const { toasts, toast, dismiss } = useToast();
 
-  const [assignments, setAssignments] = useState<AssignmentRecord[]>(allAssignments);
-  const [unassigned, setUnassigned] = useState<PatientSummary[]>(unassignedPatients);
-  const [role, setRole] = useState<'Admin' | 'Doctor' | 'Nurse'>('Admin');
-  const [searchQuery, setSearchQuery] = useState('');
-  const [statusFilter, setStatusFilter] = useState('all');
-  const [specializationFilter, setSpecializationFilter] = useState('All');
-  const [patientStatusFilter, setPatientStatusFilter] = useState('all');
-  const [sortBy, setSortBy] = useState('newest');
-  const [selectedAssignment, setSelectedAssignment] = useState<AssignmentRecord | null>(null);
+  const [assignments, setAssignments] =
+    useState<AssignmentRecord[]>(allAssignments);
+  const [unassigned, setUnassigned] =
+    useState<PatientSummary[]>(unassignedPatients);
+  const [role, setRole] = useState<"Admin" | "Doctor" | "Nurse">("Admin");
+  const [searchQuery, setSearchQuery] = useState("");
+  const [statusFilter, setStatusFilter] = useState("all");
+  const [specializationFilter, setSpecializationFilter] = useState("All");
+  const [patientStatusFilter, setPatientStatusFilter] = useState("all");
+  const [sortBy, setSortBy] = useState("newest");
+  const [selectedAssignment, setSelectedAssignment] =
+    useState<AssignmentRecord | null>(null);
   const [viewDrawerOpen, setViewDrawerOpen] = useState(false);
   const [assignModalOpen, setAssignModalOpen] = useState(false);
   const [reassignModalOpen, setReassignModalOpen] = useState(false);
   const [removeDialogOpen, setRemoveDialogOpen] = useState(false);
-  const [autoMatchOpen, setAutoMatchOpen] = useState(false);
 
   const currentDoctorId = 12;
 
   const visibleAssignments = useMemo(() => {
     let filtered = assignments;
 
-    if (role === 'Doctor') {
-      filtered = filtered.filter((assignment) => assignment.doctor_id === currentDoctorId);
+    if (role === "Doctor") {
+      filtered = filtered.filter(
+        (assignment) => assignment.doctor_id === currentDoctorId,
+      );
     }
 
     if (searchQuery) {
@@ -51,46 +63,72 @@ const AssignDoctorPage = (): React.ReactElement => {
         (assignment) =>
           assignment.patient_name.toLowerCase().includes(normalized) ||
           assignment.doctor_name.toLowerCase().includes(normalized) ||
-          assignment.assignment_id.toString().includes(normalized)
+          assignment.assignment_id.toString().includes(normalized),
       );
     }
 
-    if (statusFilter !== 'all') {
+    if (statusFilter !== "all") {
       filtered = filtered.filter((assignment) =>
-        statusFilter === 'active' ? assignment.is_active : !assignment.is_active
+        statusFilter === "active"
+          ? assignment.is_active
+          : !assignment.is_active,
       );
     }
 
-    if (specializationFilter !== 'All') {
-      filtered = filtered.filter((assignment) => assignment.specialization === specializationFilter);
+    if (specializationFilter !== "All") {
+      filtered = filtered.filter(
+        (assignment) => assignment.specialization === specializationFilter,
+      );
     }
 
-    if (patientStatusFilter !== 'all') {
-      filtered = filtered.filter((assignment) => assignment.patient_status === patientStatusFilter);
+    if (patientStatusFilter !== "all") {
+      filtered = filtered.filter(
+        (assignment) => assignment.patient_status === patientStatusFilter,
+      );
     }
 
     filtered = [...filtered].sort((a, b) => {
-      if (sortBy === 'newest') {
-        return new Date(b.assigned_date).getTime() - new Date(a.assigned_date).getTime();
+      if (sortBy === "newest") {
+        return (
+          new Date(b.assigned_date).getTime() -
+          new Date(a.assigned_date).getTime()
+        );
       }
-      if (sortBy === 'oldest') {
-        return new Date(a.assigned_date).getTime() - new Date(b.assigned_date).getTime();
+      if (sortBy === "oldest") {
+        return (
+          new Date(a.assigned_date).getTime() -
+          new Date(b.assigned_date).getTime()
+        );
       }
-      if (sortBy === 'patient-asc') {
+      if (sortBy === "patient-asc") {
         return a.patient_name.localeCompare(b.patient_name);
       }
-      if (sortBy === 'doctor-asc') {
+      if (sortBy === "doctor-asc") {
         return a.doctor_name.localeCompare(b.doctor_name);
       }
       return 0;
     });
 
     return filtered;
-  }, [assignments, searchQuery, statusFilter, specializationFilter, patientStatusFilter, sortBy, role]);
+  }, [
+    assignments,
+    searchQuery,
+    statusFilter,
+    specializationFilter,
+    patientStatusFilter,
+    sortBy,
+    role,
+  ]);
 
-  const activeAssignments = visibleAssignments.filter((assignment) => assignment.is_active).length;
-  const availableDoctors = doctorProfiles.filter((doctor) => doctor.is_active && doctor.current_load < 20).length;
-  const highWorkloadDoctors = doctorProfiles.filter((doctor) => doctor.is_active && doctor.current_load >= 16).length;
+  const activeAssignments = visibleAssignments.filter(
+    (assignment) => assignment.is_active,
+  ).length;
+  const availableDoctors = doctorProfiles.filter(
+    (doctor) => doctor.is_active && doctor.current_load < 20,
+  ).length;
+  const highWorkloadDoctors = doctorProfiles.filter(
+    (doctor) => doctor.is_active && doctor.current_load >= 16,
+  ).length;
 
   const handleViewAssignment = (assignment: AssignmentRecord): void => {
     setSelectedAssignment(assignment);
@@ -108,14 +146,25 @@ const AssignDoctorPage = (): React.ReactElement => {
   };
 
   const handleAssignDoctor = (payload: NewAssignmentPayload): void => {
-    const patient = unassigned.find((item) => item.patient_id === payload.patient_id);
-    const doctor = doctorProfiles.find((item) => item.doctor_id === payload.doctor_id);
+    const patient = unassigned.find(
+      (item) => item.patient_id === payload.patient_id,
+    );
+    const doctor = doctorProfiles.find(
+      (item) => item.doctor_id === payload.doctor_id,
+    );
     if (!patient || !doctor) {
-      toast('Unable to create assignment with selected patient or doctor.', 'error');
+      toast(
+        "Unable to create assignment with selected patient or doctor.",
+        "error",
+      );
       return;
     }
 
-    const nextId = Math.max(...assignments.map((assignment) => assignment.assignment_id), 3000) + 1;
+    const nextId =
+      Math.max(
+        ...assignments.map((assignment) => assignment.assignment_id),
+        3000,
+      ) + 1;
     const assignment: AssignmentRecord = {
       assignment_id: nextId,
       patient_id: patient.patient_id,
@@ -126,7 +175,6 @@ const AssignDoctorPage = (): React.ReactElement => {
       specialization: doctor.specialization,
       assigned_date: new Date().toISOString().slice(0, 10),
       is_active: payload.is_active,
-      workload_count: doctor.current_load + 1,
       patient_room: patient.room,
       doctor_active_patients: doctor.active_patients + 1,
       doctor_is_active: doctor.is_active,
@@ -134,14 +182,18 @@ const AssignDoctorPage = (): React.ReactElement => {
     };
 
     setAssignments((prev) => [assignment, ...prev]);
-    setUnassigned((prev) => prev.filter((item) => item.patient_id !== payload.patient_id));
-    toast('Doctor assigned successfully');
+    setUnassigned((prev) =>
+      prev.filter((item) => item.patient_id !== payload.patient_id),
+    );
+    toast("Doctor assigned successfully");
   };
 
   const handleConfirmReassign = (payload: ReassignPayload): void => {
-    const doctor = doctorProfiles.find((item) => item.doctor_id === payload.new_doctor_id);
+    const doctor = doctorProfiles.find(
+      (item) => item.doctor_id === payload.new_doctor_id,
+    );
     if (!doctor) {
-      toast('Doctor selection not found.', 'error');
+      toast("Doctor selection not found.", "error");
       return;
     }
     setAssignments((prev) =>
@@ -153,10 +205,10 @@ const AssignDoctorPage = (): React.ReactElement => {
               doctor_name: doctor.doctor_name,
               specialization: doctor.specialization,
             }
-          : assignment
-      )
+          : assignment,
+      ),
     );
-    toast('Assignment updated');
+    toast("Assignment updated");
   };
 
   const handleConfirmRemove = (): void => {
@@ -165,12 +217,14 @@ const AssignDoctorPage = (): React.ReactElement => {
       prev.map((assignment) =>
         assignment.assignment_id === selectedAssignment.assignment_id
           ? { ...assignment, is_active: false }
-          : assignment
-      )
+          : assignment,
+      ),
     );
 
     setUnassigned((prev) => {
-      if (prev.some((item) => item.patient_id === selectedAssignment.patient_id)) {
+      if (
+        prev.some((item) => item.patient_id === selectedAssignment.patient_id)
+      ) {
         return prev;
       }
       return [
@@ -180,48 +234,16 @@ const AssignDoctorPage = (): React.ReactElement => {
           full_name: selectedAssignment.patient_name,
           status: selectedAssignment.patient_status,
           room: selectedAssignment.patient_room,
-          condition: 'Stable',
+          condition: "Stable",
         },
       ];
     });
     setRemoveDialogOpen(false);
-    toast('Assignment removed');
-  };
-
-  const handleAutoMatch = (payload: AutoMatchPayload): void => {
-    const patient = unassigned.find((item) => item.patient_id === payload.patient_id);
-    const doctor = doctorProfiles.find((item) => item.doctor_id === payload.doctor_id);
-    if (!patient || !doctor) {
-      toast('Smart match failed to connect doctor and patient.', 'error');
-      return;
-    }
-
-    const nextId = Math.max(...assignments.map((assignment) => assignment.assignment_id), 3000) + 1;
-    const assignment: AssignmentRecord = {
-      assignment_id: nextId,
-      patient_id: patient.patient_id,
-      patient_name: patient.full_name,
-      patient_status: patient.status,
-      doctor_id: doctor.doctor_id,
-      doctor_name: doctor.doctor_name,
-      specialization: doctor.specialization,
-      assigned_date: new Date().toISOString().slice(0, 10),
-      is_active: true,
-      workload_count: doctor.current_load + 1,
-      patient_room: patient.room,
-      doctor_active_patients: doctor.active_patients + 1,
-      doctor_is_active: doctor.is_active,
-      priority: 'Normal',
-    };
-
-    setAssignments((prev) => [assignment, ...prev]);
-    setUnassigned((prev) => prev.filter((item) => item.patient_id !== payload.patient_id));
-    setAutoMatchOpen(false);
-    toast('Smart match completed');
+    toast("Assignment removed");
   };
 
   const handleRefresh = (): void => {
-    toast('Assignment queue refreshed');
+    toast("Assignment queue refreshed");
   };
 
   return (
@@ -229,37 +251,26 @@ const AssignDoctorPage = (): React.ReactElement => {
       <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
         <div>
           <h1 className="text-3xl font-bold text-slate-900">Assign Doctor</h1>
-          <p className="mt-2 text-sm text-slate-500">Manage physician-to-patient assignments and care responsibility.</p>
+          <p className="mt-2 text-sm text-slate-500">
+            Manage physician-to-patient assignments and care responsibility.
+          </p>
         </div>
         <div className="flex flex-wrap gap-2">
-          {role === 'Admin' && (
+          {role === "Admin" && (
             <Button onClick={() => setAssignModalOpen(true)}>
               <Plus className="mr-2 h-4 w-4" />
               New Assignment
             </Button>
           )}
-          {role === 'Admin' && (
-            <Button variant="outline" onClick={() => setAutoMatchOpen(true)}>
-              <Shuffle className="mr-2 h-4 w-4" />
-              Auto Match
-            </Button>
-          )}
-          <Button variant="secondary" onClick={() => toast('Export completed.')}>
-            <Download className="mr-2 h-4 w-4" />
-            Export
-          </Button>
         </div>
       </div>
 
-      <div className="grid gap-4 xl:grid-cols-[1.5fr_0.9fr]">
-        <AssignmentStatsCards
-          activeAssignments={activeAssignments}
-          unassignedPatients={unassigned.length}
-          availableDoctors={availableDoctors}
-          highWorkloadDoctors={highWorkloadDoctors}
-        />
-        <RoleStateSwitcher role={role} onRoleChange={setRole} />
-      </div>
+      <AssignmentStatsCards
+        activeAssignments={activeAssignments}
+        unassignedPatients={unassigned.length}
+        availableDoctors={availableDoctors}
+        highWorkloadDoctors={highWorkloadDoctors}
+      />
 
       <AssignmentFilterToolbar
         searchQuery={searchQuery}
@@ -275,9 +286,12 @@ const AssignDoctorPage = (): React.ReactElement => {
         onRefresh={handleRefresh}
       />
 
-      {role !== 'Admin' && (
+      {role !== "Admin" && (
         <div className="rounded-3xl border border-slate-200 bg-slate-50 p-5 text-sm text-slate-600">
-          Access mode: <span className="font-semibold text-slate-900">{role}</span>. You can view assigned cases and patient load, but only administrators can create or remove assignments.
+          Access mode:{" "}
+          <span className="font-semibold text-slate-900">{role}</span>. You can
+          view assigned cases and patient load, but only administrators can
+          create or remove assignments.
         </div>
       )}
 
@@ -303,7 +317,11 @@ const AssignDoctorPage = (): React.ReactElement => {
         />
       </div>
 
-      <ViewAssignmentDrawer assignment={selectedAssignment} open={viewDrawerOpen} onOpenChange={setViewDrawerOpen} />
+      <ViewAssignmentDrawer
+        assignment={selectedAssignment}
+        open={viewDrawerOpen}
+        onOpenChange={setViewDrawerOpen}
+      />
       <AssignDoctorModal
         open={assignModalOpen}
         onOpenChange={setAssignModalOpen}
@@ -312,9 +330,19 @@ const AssignDoctorPage = (): React.ReactElement => {
         assignments={assignments}
         onAssign={handleAssignDoctor}
       />
-      <ReassignDoctorModal open={reassignModalOpen} onOpenChange={setReassignModalOpen} assignment={selectedAssignment} doctors={doctorProfiles} onConfirm={handleConfirmReassign} />
-      <RemoveAssignmentDialog open={removeDialogOpen} onOpenChange={setRemoveDialogOpen} assignment={selectedAssignment} onRemove={handleConfirmRemove} />
-      <AutoMatchModal open={autoMatchOpen} onOpenChange={setAutoMatchOpen} unassignedPatients={unassigned} doctors={doctorProfiles} onMatch={handleAutoMatch} />
+      <ReassignDoctorModal
+        open={reassignModalOpen}
+        onOpenChange={setReassignModalOpen}
+        assignment={selectedAssignment}
+        doctors={doctorProfiles}
+        onConfirm={handleConfirmReassign}
+      />
+      <RemoveAssignmentDialog
+        open={removeDialogOpen}
+        onOpenChange={setRemoveDialogOpen}
+        assignment={selectedAssignment}
+        onRemove={handleConfirmRemove}
+      />
       <ToastContainer toasts={toasts} dismiss={dismiss} />
     </div>
   );

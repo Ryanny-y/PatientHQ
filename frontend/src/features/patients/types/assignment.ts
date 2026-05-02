@@ -29,7 +29,6 @@ export interface AssignmentRecord {
   specialization: string;
   assigned_date: string;
   is_active: boolean;
-  workload_count: number;
   patient_room: string;
   doctor_active_patients: number;
   doctor_is_active: boolean;

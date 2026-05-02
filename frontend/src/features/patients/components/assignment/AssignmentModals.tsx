@@ -125,14 +125,6 @@ export interface ReassignPayload {
   effective_date: string;
 }
 
-export interface AutoMatchPayload {
-  patient_id: number;
-  doctor_id: number;
-  patient_name: string;
-  doctor_name: string;
-  specialization: string;
-}
-
 const assignSchema = z.object({
   patient_id: z.number().int().positive({ message: 'Choose a patient' }),
   doctor_id: z.number().int().positive({ message: 'Choose a doctor' }),
@@ -466,79 +458,6 @@ export const RemoveAssignmentDialog = ({ open, onOpenChange, assignment, onRemov
     </DialogContent>
   </Dialog>
 );
-
-interface AutoMatchModalProps {
-  open: boolean;
-  onOpenChange: (open: boolean) => void;
-  unassignedPatients: PatientSummary[];
-  doctors: DoctorProfile[];
-  onMatch: (payload: AutoMatchPayload) => void;
-}
-
-export const AutoMatchModal = ({ open, onOpenChange, unassignedPatients, doctors, onMatch }: AutoMatchModalProps): ReactElement => {
-  const recommendations = useMemo(() => {
-    const activeDoctors = doctors.filter((doctor) => doctor.is_active).sort((a, b) => a.current_load - b.current_load);
-    return unassignedPatients.slice(0, 3).map((patient, index) => ({
-      patient,
-      doctor: activeDoctors[index % Math.max(activeDoctors.length, 1)] ?? doctors[0],
-      note: patient.condition === 'Critical' ? 'Prioritize urgent specialist assignment' : 'Balance workload and availability',
-    }));
-  }, [unassignedPatients, doctors]);
-
-  return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-3xl">
-        <DialogHeader>
-          <DialogTitle>Smart Match Recommendations</DialogTitle>
-          <DialogDescription>
-            Review recommended physicians selected for specialization, workload balance, and patient condition.
-          </DialogDescription>
-        </DialogHeader>
-        <div className="space-y-4 px-6 pb-6 pt-2">
-          {recommendations.length === 0 ? (
-            <div className="rounded-3xl border border-slate-200 bg-slate-50 p-6 text-center text-sm text-slate-500">
-              No unassigned patients are available for smart matching right now.
-            </div>
-          ) : (
-            <div className="space-y-4">
-              {recommendations.map((recommendation) => (
-                <div key={recommendation.patient.patient_id} className="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm">
-                  <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-                    <div>
-                      <p className="text-sm uppercase tracking-[0.24em] text-slate-400">Patient match</p>
-                      <p className="mt-2 text-lg font-semibold text-slate-900">{recommendation.patient.full_name}</p>
-                      <p className="text-sm text-slate-500">{recommendation.patient.room} · {recommendation.patient.status}</p>
-                    </div>
-                    <Button onClick={() => onMatch({
-                      patient_id: recommendation.patient.patient_id,
-                      doctor_id: recommendation.doctor.doctor_id,
-                      patient_name: recommendation.patient.full_name,
-                      doctor_name: recommendation.doctor.doctor_name,
-                      specialization: recommendation.doctor.specialization,
-                    })}>
-                      Assign Now
-                    </Button>
-                  </div>
-                  <div className="mt-4 grid gap-3 sm:grid-cols-2">
-                    <div className="rounded-3xl bg-slate-50 p-4 text-sm text-slate-600">
-                      <p className="font-semibold text-slate-900">Recommended physician</p>
-                      <p>{recommendation.doctor.doctor_name}</p>
-                      <p className="mt-1 text-xs text-slate-500">Load: {recommendation.doctor.current_load} active patients</p>
-                    </div>
-                    <div className="rounded-3xl bg-slate-50 p-4 text-sm text-slate-600">
-                      <p className="font-semibold text-slate-900">Matching rationale</p>
-                      <p>{recommendation.note}</p>
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          )}
-        </div>
-      </DialogContent>
-    </Dialog>
-  );
-};
 
 export const ViewAssignmentDrawer = ({
   open,
