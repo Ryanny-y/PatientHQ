@@ -1,10 +1,11 @@
 import { type ReactElement } from "react";
-import { MoreVertical, Eye, Edit, History } from "lucide-react";
+import { MoreVertical, Eye, Edit, History, UserPlus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
+  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import type { Patient } from "@/features/patients/types/patient";
@@ -16,6 +17,7 @@ interface PatientCardListProps {
   onViewProfile: (patient: Patient) => void;
   onEditPatient: (patient: Patient) => void;
   onViewHistory: (patient: Patient) => void;
+  onAssignDoctor: (patient: Patient) => void;
 }
 
 const PatientCardList = ({
@@ -23,6 +25,7 @@ const PatientCardList = ({
   onViewProfile,
   onEditPatient,
   onViewHistory,
+  onAssignDoctor,
 }: PatientCardListProps): ReactElement => {
   if (patients.length === 0) {
     return (
@@ -64,6 +67,11 @@ const PatientCardList = ({
                 <DropdownMenuItem onClick={() => onViewHistory(patient)}>
                   <History className="mr-2 h-4 w-4" />
                   View History
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem onClick={() => onAssignDoctor(patient)}>
+                  <UserPlus className="mr-2 h-4 w-4" />
+                  Assign Doctor
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>

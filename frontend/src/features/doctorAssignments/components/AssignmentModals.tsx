@@ -108,6 +108,8 @@ const SearchableSelect = ({
   );
 };
 
+export { SearchableSelect };
+
 export interface ReassignPayload {
   assignmentId: string;
   newDoctorId: string;

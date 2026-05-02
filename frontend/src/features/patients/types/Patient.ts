@@ -27,8 +27,8 @@ export interface Patient {
   emergencyContactName: string;
   emergencyContactNumber: string;
   status: patientStatus;
-  createdAt: string;
   assignedDoctor: string;
+  createdAt: string;
 }
 
 export interface PatientMetaData {
@@ -52,7 +52,7 @@ export interface PatientHistoryEvent {
     | "discharge";
 }
 
-export type patientModalMode = "view" | "edit" | "history" | null;
+export type patientModalMode = "view" | "edit" | "history" | "assign" | null;
 
 export const bloodtypeS: bloodType[] = [
   "A+",

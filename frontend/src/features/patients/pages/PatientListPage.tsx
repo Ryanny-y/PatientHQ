@@ -11,6 +11,7 @@ import PatientCardList from "@/features/patients/components/PatientCardList";
 import ViewPatientDrawer from "@/features/patients/components/ViewPatientDrawer";
 import EditPatientModal from "@/features/patients/components/EditPatientModal";
 import PatientHistoryModal from "@/features/patients/components/PatientHistoryModal";
+import { AssignDoctorModal } from "@/features/patients/components/AssignDoctorModal";
 
 import type { Patient } from "@/features/patients/types/patient";
 import { useNavigate } from "react-router-dom";
@@ -47,6 +48,8 @@ const PatientListPage = (): ReactElement => {
     openModal,
     closeModal,
 
+    doctors,
+    assignDoctor,
     updatePatient,
   } = usePatients();
 
@@ -61,6 +64,16 @@ const PatientListPage = (): ReactElement => {
 
     if (res?.success) {
       toast.success("Patient updated successfully");
+    }
+  };
+
+  const handleAssignDoctor = async (patientId: string, doctorId: string) => {
+    try {
+      await assignDoctor({ patientId, doctorId });
+      toast.success("Doctor assigned successfully");
+      refetch();
+    } catch (error) {
+      toast.error("Failed to assign doctor");
     }
   };
 
@@ -114,6 +127,7 @@ const PatientListPage = (): ReactElement => {
           onViewProfile={(p) => openModal("view", p)}
           onEditPatient={(p) => openModal("edit", p)}
           onViewHistory={(p) => openModal("history", p)}
+          onAssignDoctor={(p) => openModal("assign", p)}
         />
       </div>
 
@@ -124,6 +138,7 @@ const PatientListPage = (): ReactElement => {
           onViewProfile={(p) => openModal("view", p)}
           onEditPatient={(p) => openModal("edit", p)}
           onViewHistory={(p) => openModal("history", p)}
+          onAssignDoctor={(p) => openModal("assign", p)}
         />
       </div>
 
@@ -147,6 +162,15 @@ const PatientListPage = (): ReactElement => {
         patient={selectedPatient}
         open={modalMode === "history"}
         onClose={closeModal}
+      />
+
+      {/* Assign Doctor */}
+      <AssignDoctorModal
+        patient={selectedPatient}
+        doctors={doctors}
+        open={modalMode === "assign"}
+        onClose={closeModal}
+        onAssign={handleAssignDoctor}
       />
     </div>
   );

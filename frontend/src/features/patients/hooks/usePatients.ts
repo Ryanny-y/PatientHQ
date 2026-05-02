@@ -1,6 +1,9 @@
 import { useState } from "react";
+import { useMutation } from "@tanstack/react-query";
 import { usePatientMutation } from "./usePatientMutation";
 import { usePatientMetaQuery, usePatientQuery } from "./usePatientQuery";
+import { useDoctorsQuery } from "@/features/doctorAccounts/hooks/useDoctorsQuery";
+import { doctorAssignmentService } from "@/features/doctorAssignments/service/doctorAssignmentService";
 import type {
   isAssigned,
   Patient,
@@ -40,8 +43,19 @@ export const usePatients = () => {
             ? "fullName,asc"
             : "fullName,desc",
   });
+
   const { data: metaData } = usePatientMetaQuery();
+  const { data: doctorsData } = useDoctorsQuery({
+    page: 0,
+    size: 100, // Get all active doctors
+    isActive: true,
+  });
   const mutations = usePatientMutation();
+
+  const assignDoctorMutation = useMutation({
+    mutationFn: ({ patientId, doctorId }: { patientId: string; doctorId: string }) =>
+      doctorAssignmentService.assignDoctor({ patientId, doctorId }),
+  });
 
   const accounts = data?.data?.content ?? [];
   const totalPages = data?.data?.totalPages ?? 1;
@@ -90,6 +104,7 @@ export const usePatients = () => {
     // data
     metaData: metaData?.data,
     data: accounts,
+    doctors: doctorsData?.data?.content ?? [],
 
     // pagination
     page,
@@ -123,5 +138,6 @@ export const usePatients = () => {
     createPatient: mutations.createPatient.mutateAsync,
     updatePatient: mutations.updatePatient.mutateAsync,
     deletePatient: mutations.deletePatient.mutateAsync,
+    assignDoctor: assignDoctorMutation.mutateAsync,
   };
 };

@@ -35,6 +35,7 @@ interface PatientTableProps {
   onViewProfile: (patient: Patient) => void;
   onEditPatient: (patient: Patient) => void;
   onViewHistory: (patient: Patient) => void;
+  onAssignDoctor: (patient: Patient) => void;
 }
 
 const PatientTable = ({
@@ -42,6 +43,7 @@ const PatientTable = ({
   onViewProfile,
   onEditPatient,
   onViewHistory,
+  onAssignDoctor,
 }: PatientTableProps): ReactElement => {
   return (
     <div className="bg-white rounded-xl border border-slate-100 shadow-sm overflow-hidden">
@@ -128,7 +130,9 @@ const PatientTable = ({
                           View History
                         </DropdownMenuItem>
                         <DropdownMenuSeparator />
-                        <DropdownMenuItem>
+                        <DropdownMenuItem
+                          onClick={() => onAssignDoctor(patient)}
+                        >
                           <UserPlus className="mr-2 h-4 w-4" />
                           Assign Doctor
                         </DropdownMenuItem>
