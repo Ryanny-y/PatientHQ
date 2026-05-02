@@ -65,6 +65,18 @@ public class AppointmentController {
         );
     }
 
+    @GetMapping("/meta")
+    public ResponseEntity<ApiResponse<AppointmentMetadataDto>> getAppointmentMetadata() {
+        AppointmentMetadataDto metadata = appointmentService.getAppointmentMetadata();
+        return ResponseEntity.ok(
+                ApiResponse.<AppointmentMetadataDto>builder()
+                        .success(true)
+                        .message("Appointment metadata retrieved successfully")
+                        .data(metadata)
+                        .build()
+        );
+    }
+
     @GetMapping("/{id}")
     public ResponseEntity<ApiResponse<AppointmentDto>> getAppointmentById(@PathVariable UUID id) {
         AppointmentDto appointment = appointmentService.getAppointmentById(id);
@@ -103,15 +115,4 @@ public class AppointmentController {
         );
     }
 
-    @GetMapping("/meta")
-    public ResponseEntity<ApiResponse<AppointmentMetadataDto>> getAppointmentMetadata() {
-        AppointmentMetadataDto metadata = appointmentService.getAppointmentMetadata();
-        return ResponseEntity.ok(
-                ApiResponse.<AppointmentMetadataDto>builder()
-                        .success(true)
-                        .message("Appointment metadata retrieved successfully")
-                        .data(metadata)
-                        .build()
-        );
-    }
 }

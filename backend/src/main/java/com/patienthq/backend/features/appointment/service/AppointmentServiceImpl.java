@@ -22,6 +22,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.DayOfWeek;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
@@ -100,10 +101,20 @@ public class AppointmentServiceImpl implements AppointmentService {
     @Transactional(readOnly = true)
     public AppointmentMetadataDto getAppointmentMetadata() {
         long totalAppointments = appointmentRepository.count();
-        long todaysAppointments = appointmentRepository.countTodaysAppointments();
+
+        LocalDate today = LocalDate.now();
+        LocalDateTime startOfDay = today.atStartOfDay();
+        LocalDateTime endOfDay = today.plusDays(1).atStartOfDay();
+
+        long todaysAppointments = appointmentRepository.countTodaysAppointments(startOfDay, endOfDay);
+
         long pendingAppointments = appointmentRepository.countByStatus(AppointmentStatus.PENDING);
-        
-        LocalDateTime startOfWeek = LocalDateTime.now().with(DayOfWeek.MONDAY).toLocalDate().atStartOfDay();
+
+        LocalDateTime startOfWeek = LocalDateTime.now()
+                .with(DayOfWeek.MONDAY)
+                .toLocalDate()
+                .atStartOfDay();
+
         long completedThisWeek = appointmentRepository.countCompletedThisWeek(startOfWeek);
 
         return AppointmentMetadataDto.builder()
