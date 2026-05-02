@@ -1,7 +1,7 @@
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Edit, Bell, Calendar, Phone, User, Stethoscope, Clock, CheckCircle } from "lucide-react";
+import { Edit, Calendar, User, Stethoscope, Clock, CheckCircle } from "lucide-react";
 import { type ReactElement } from "react";
 import type { Appointment } from "../types/appointment";
 import { StatusBadge } from "./StatusBadge";
@@ -11,7 +11,6 @@ interface ViewAppointmentDrawerProps {
   open: boolean;
   onClose: () => void;
   onEdit: (appointment: Appointment) => void;
-  onNotify: (appointment: Appointment) => void;
 }
 
 export const ViewAppointmentDrawer = ({
@@ -19,7 +18,6 @@ export const ViewAppointmentDrawer = ({
   open,
   onClose,
   onEdit,
-  onNotify,
 }: ViewAppointmentDrawerProps): ReactElement => {
   if (!appointment) return <></>;
 
@@ -29,16 +27,12 @@ export const ViewAppointmentDrawer = ({
         <SheetHeader className="pb-6">
           <div className="flex items-center justify-between">
             <SheetTitle className="text-xl font-semibold text-slate-900">
-              Appointment #{appointment.appointment_id}
+              Appointment #{appointment.appointmentId}
             </SheetTitle>
             <div className="flex gap-2">
               <Button variant="outline" size="sm" onClick={() => onEdit(appointment)}>
                 <Edit className="h-4 w-4 mr-2" />
                 Edit
-              </Button>
-              <Button variant="outline" size="sm" onClick={() => onNotify(appointment)}>
-                <Bell className="h-4 w-4 mr-2" />
-                Notify
               </Button>
             </div>
           </div>
@@ -55,7 +49,7 @@ export const ViewAppointmentDrawer = ({
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <label className="text-sm font-medium text-slate-600">Appointment ID</label>
-                  <div className="text-sm text-slate-900 mt-1">#{appointment.appointment_id}</div>
+                  <div className="text-sm text-slate-900 mt-1">#{appointment.appointmentId}</div>
                 </div>
                 <div>
                   <label className="text-sm font-medium text-slate-600">Status</label>
@@ -66,7 +60,7 @@ export const ViewAppointmentDrawer = ({
                 <div>
                   <label className="text-sm font-medium text-slate-600">Date</label>
                   <div className="text-sm text-slate-900 mt-1">
-                    {new Date(appointment.appointment_date).toLocaleDateString('en-US', {
+                    {new Date(appointment.appointmentDate).toLocaleDateString('en-US', {
                       year: 'numeric',
                       month: 'long',
                       day: 'numeric'
@@ -76,14 +70,13 @@ export const ViewAppointmentDrawer = ({
                 <div>
                   <label className="text-sm font-medium text-slate-600">Time</label>
                   <div className="text-sm text-slate-900 mt-1">
-                    {appointment.appointment_date.split(' ')[1]}
-                    {appointment.duration_minutes && ` (${appointment.duration_minutes} min)`}
+                    {new Date(appointment.appointmentDate).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                   </div>
                 </div>
                 <div className="col-span-2">
                   <label className="text-sm font-medium text-slate-600">Reason</label>
                   <div className="text-sm text-slate-900 mt-1 p-3 bg-white rounded-lg border border-slate-200">
-                    {appointment.reason}
+                    {appointment.reason || '—'}
                   </div>
                 </div>
               </div>
@@ -98,27 +91,8 @@ export const ViewAppointmentDrawer = ({
               <div className="space-y-3">
                 <div>
                   <label className="text-sm font-medium text-slate-600">Full Name</label>
-                  <div className="text-sm text-slate-900 mt-1">{appointment.patient_name}</div>
+                  <div className="text-sm text-slate-900 mt-1">{appointment.patientName}</div>
                 </div>
-                <div>
-                  <label className="text-sm font-medium text-slate-600">Patient ID</label>
-                  <div className="text-sm text-slate-900 mt-1">#{appointment.patient_id}</div>
-                </div>
-                {appointment.patient_contact && (
-                  <div className="flex items-center gap-2">
-                    <Phone className="h-4 w-4 text-slate-600" />
-                    <div>
-                      <label className="text-sm font-medium text-slate-600">Contact</label>
-                      <div className="text-sm text-slate-900">{appointment.patient_contact}</div>
-                    </div>
-                  </div>
-                )}
-                {appointment.patient_status && (
-                  <div>
-                    <label className="text-sm font-medium text-slate-600">Status</label>
-                    <div className="text-sm text-slate-900 mt-1">{appointment.patient_status}</div>
-                  </div>
-                )}
               </div>
             </div>
 
@@ -131,7 +105,7 @@ export const ViewAppointmentDrawer = ({
               <div className="space-y-3">
                 <div>
                   <label className="text-sm font-medium text-slate-600">Doctor Name</label>
-                  <div className="text-sm text-slate-900 mt-1">{appointment.doctor_name}</div>
+                  <div className="text-sm text-slate-900 mt-1">{appointment.doctorName}</div>
                 </div>
                 <div>
                   <label className="text-sm font-medium text-slate-600">Specialization</label>
@@ -161,7 +135,7 @@ export const ViewAppointmentDrawer = ({
                   <div>
                     <div className="font-medium text-slate-900">Appointment Created</div>
                     <div className="text-sm text-slate-500">
-                      {new Date(appointment.created_at).toLocaleDateString()}
+                      {new Date(appointment.createdAt).toLocaleDateString()}
                     </div>
                   </div>
                 </div>

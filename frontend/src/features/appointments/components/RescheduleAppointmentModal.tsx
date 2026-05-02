@@ -8,10 +8,11 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { type ReactElement, useEffect } from "react";
-import type { Appointment } from "../types/appointment";
+import type { Appointment, UpdateAppointmentFormValues } from "../types/appointment";
 
 const rescheduleSchema = z.object({
-  appointment_date: z.string()
+  appointmentDate: z
+    .string()
     .min(1, "Date is required")
     .refine((date) => new Date(date) > new Date(), "Appointment must be in the future"),
   reason: z.string().optional(),
@@ -24,7 +25,7 @@ interface RescheduleAppointmentModalProps {
   appointment: Appointment | null;
   open: boolean;
   onClose: () => void;
-  onSubmit: (appointmentId: number, data: Partial<Appointment>) => void;
+  onSubmit: (appointmentId: string, data: Partial<UpdateAppointmentFormValues>) => void;
 }
 
 export const RescheduleAppointmentModal = ({
@@ -41,7 +42,7 @@ export const RescheduleAppointmentModal = ({
   } = useForm<RescheduleFormValues>({
     resolver: zodResolver(rescheduleSchema),
     defaultValues: {
-      appointment_date: appointment?.appointment_date || "",
+      appointmentDate: appointment?.appointmentDate || "",
       reason: appointment?.reason || "",
       notes: appointment?.notes || "",
     },
@@ -50,17 +51,17 @@ export const RescheduleAppointmentModal = ({
   useEffect(() => {
     if (appointment) {
       reset({
-        appointment_date: appointment.appointment_date,
-        reason: appointment.reason,
-        notes: appointment.notes,
+        appointmentDate: appointment.appointmentDate,
+        reason: appointment.reason || "",
+        notes: appointment.notes || "",
       });
     }
   }, [appointment, reset]);
 
-  const onFormSubmit = (data: RescheduleFormValues) => {
+  const onFormSubmit = async (data: RescheduleFormValues) => {
     if (appointment) {
-      onSubmit(appointment.appointment_id, {
-        appointment_date: data.appointment_date,
+      await onSubmit(appointment.appointmentId, {
+        appointmentDate: data.appointmentDate,
         reason: data.reason,
         notes: data.notes,
       });
@@ -80,7 +81,7 @@ export const RescheduleAppointmentModal = ({
       <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto p-6">
         <DialogHeader>
           <DialogTitle className="text-xl font-semibold text-slate-900">
-            Reschedule Appointment #{appointment.appointment_id}
+            Reschedule Appointment #{appointment.appointmentId}
           </DialogTitle>
         </DialogHeader>
 
@@ -91,15 +92,17 @@ export const RescheduleAppointmentModal = ({
             <div className="grid grid-cols-2 gap-4 text-sm">
               <div>
                 <span className="text-slate-600">Patient:</span>
-                <div className="font-medium text-slate-900">{appointment.patient_name}</div>
+                <div className="font-medium text-slate-900">{appointment.patientName}</div>
               </div>
               <div>
                 <span className="text-slate-600">Doctor:</span>
-                <div className="font-medium text-slate-900">{appointment.doctor_name}</div>
+                <div className="font-medium text-slate-900">{appointment.doctorName}</div>
               </div>
               <div>
                 <span className="text-slate-600">Current Date:</span>
-                <div className="font-medium text-slate-900">{appointment.appointment_date}</div>
+                <div className="font-medium text-slate-900">
+                  {new Date(appointment.appointmentDate).toLocaleString()}
+                </div>
               </div>
               <div>
                 <span className="text-slate-600">Specialization:</span>
@@ -115,14 +118,14 @@ export const RescheduleAppointmentModal = ({
             <h3 className="text-lg font-medium text-slate-900">New Schedule</h3>
 
             <div>
-              <Label htmlFor="appointment_date">New Date & Time *</Label>
+              <Label htmlFor="appointmentDate">New Date & Time *</Label>
               <Input
-                id="appointment_date"
+                id="appointmentDate"
                 type="datetime-local"
-                {...register("appointment_date")}
+                {...register("appointmentDate")}
               />
-              {errors.appointment_date && (
-                <p className="text-sm text-red-600 mt-1">{errors.appointment_date.message}</p>
+              {errors.appointmentDate && (
+                <p className="text-sm text-red-600 mt-1">{errors.appointmentDate.message}</p>
               )}
             </div>
 

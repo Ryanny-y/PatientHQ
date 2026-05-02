@@ -2,6 +2,7 @@ package com.patienthq.backend.features.appointment.service;
 
 import com.patienthq.backend.features.appointment.AppointmentMapper;
 import com.patienthq.backend.features.appointment.dto.AppointmentDto;
+import com.patienthq.backend.features.appointment.dto.AppointmentMetadataDto;
 import com.patienthq.backend.features.appointment.dto.request.CreateAppointmentRequest;
 import com.patienthq.backend.features.appointment.dto.request.UpdateAppointmentRequest;
 import com.patienthq.backend.features.appointment.exception.AppointmentNotFoundException;
@@ -20,6 +21,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.DayOfWeek;
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Service
@@ -91,5 +94,23 @@ public class AppointmentServiceImpl implements AppointmentService {
         Appointment appointment = appointmentRepository.findById(id)
                 .orElseThrow(() -> new AppointmentNotFoundException(id));
         appointmentRepository.delete(appointment);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public AppointmentMetadataDto getAppointmentMetadata() {
+        long totalAppointments = appointmentRepository.count();
+        long todaysAppointments = appointmentRepository.countTodaysAppointments();
+        long pendingAppointments = appointmentRepository.countByStatus(AppointmentStatus.PENDING);
+        
+        LocalDateTime startOfWeek = LocalDateTime.now().with(DayOfWeek.MONDAY).toLocalDate().atStartOfDay();
+        long completedThisWeek = appointmentRepository.countCompletedThisWeek(startOfWeek);
+
+        return AppointmentMetadataDto.builder()
+                .totalAppointments(totalAppointments)
+                .todaysAppointments(todaysAppointments)
+                .pendingAppointments(pendingAppointments)
+                .completedThisWeek(completedThisWeek)
+                .build();
     }
 }

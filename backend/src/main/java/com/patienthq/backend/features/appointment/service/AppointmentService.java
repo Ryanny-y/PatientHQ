@@ -1,6 +1,7 @@
 package com.patienthq.backend.features.appointment.service;
 
 import com.patienthq.backend.features.appointment.dto.AppointmentDto;
+import com.patienthq.backend.features.appointment.dto.AppointmentMetadataDto;
 import com.patienthq.backend.features.appointment.dto.request.CreateAppointmentRequest;
 import com.patienthq.backend.features.appointment.dto.request.UpdateAppointmentRequest;
 import com.patienthq.backend.features.appointment.model.AppointmentStatus;
@@ -20,4 +21,6 @@ public interface AppointmentService {
     AppointmentDto updateAppointment(UUID id, UpdateAppointmentRequest request);
 
     void deleteAppointment(UUID id);
+
+    AppointmentMetadataDto getAppointmentMetadata();
 }

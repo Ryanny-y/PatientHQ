@@ -1,6 +1,7 @@
 package com.patienthq.backend.features.appointment;
 
 import com.patienthq.backend.features.appointment.dto.AppointmentDto;
+import com.patienthq.backend.features.appointment.dto.AppointmentMetadataDto;
 import com.patienthq.backend.features.appointment.dto.request.CreateAppointmentRequest;
 import com.patienthq.backend.features.appointment.dto.request.UpdateAppointmentRequest;
 import com.patienthq.backend.features.appointment.model.AppointmentStatus;
@@ -98,6 +99,18 @@ public class AppointmentController {
                         .success(true)
                         .message("Appointment deleted successfully")
                         .data(null)
+                        .build()
+        );
+    }
+
+    @GetMapping("/meta")
+    public ResponseEntity<ApiResponse<AppointmentMetadataDto>> getAppointmentMetadata() {
+        AppointmentMetadataDto metadata = appointmentService.getAppointmentMetadata();
+        return ResponseEntity.ok(
+                ApiResponse.<AppointmentMetadataDto>builder()
+                        .success(true)
+                        .message("Appointment metadata retrieved successfully")
+                        .data(metadata)
                         .build()
         );
     }

@@ -8,7 +8,7 @@ interface CancelAppointmentDialogProps {
   appointment: Appointment | null;
   open: boolean;
   onClose: () => void;
-  onConfirm: (appointmentId: number, reason: string) => void;
+  onConfirm: (appointmentId: string, reason: string) => void;
 }
 
 export const CancelAppointmentDialog = ({
@@ -21,7 +21,7 @@ export const CancelAppointmentDialog = ({
 
   const handleConfirm = () => {
     if (appointment) {
-      onConfirm(appointment.appointment_id, cancellationReason);
+      onConfirm(appointment.appointmentId, cancellationReason);
       setCancellationReason("");
       onClose();
     }
@@ -45,11 +45,13 @@ export const CancelAppointmentDialog = ({
           <div className="bg-slate-50 rounded-lg p-4">
             <div className="text-sm">
               <span className="font-medium text-slate-700">Patient:</span>
-              <div className="text-slate-900">{appointment.patient_name}</div>
+              <div className="text-slate-900">{appointment.patientName}</div>
             </div>
             <div className="text-sm mt-2">
               <span className="font-medium text-slate-700">Date & Time:</span>
-              <div className="text-slate-900">{appointment.appointment_date}</div>
+              <div className="text-slate-900">
+                {new Date(appointment.appointmentDate).toLocaleString()}
+              </div>
             </div>
           </div>
 

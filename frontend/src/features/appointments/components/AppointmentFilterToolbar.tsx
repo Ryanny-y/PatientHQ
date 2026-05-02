@@ -4,13 +4,13 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { RefreshCw, Search, Filter } from "lucide-react";
 import { type ReactElement } from "react";
-import type { FilterOptions } from "../types/appointment";
+import type { FilterOptions, AppointmentSortOption } from "../types/appointment";
 
 interface AppointmentFilterToolbarProps {
   filters: FilterOptions;
-  onFiltersChange: (filters: FilterOptions) => void;
+  onFiltersChange: <K extends keyof FilterOptions>(key: K, value: FilterOptions[K]) => void;
   onRefresh: () => void;
-  doctors: Array<{ id: number; name: string; specialization: string }>;
+  doctors: Array<{ doctorId: string; fullName: string; specialization: string }>;
   specializations: string[];
 }
 
@@ -22,7 +22,7 @@ export const AppointmentFilterToolbar = ({
   specializations,
 }: AppointmentFilterToolbarProps): ReactElement => {
   const updateFilter = <K extends keyof FilterOptions>(key: K, value: FilterOptions[K]) => {
-    onFiltersChange({ ...filters, [key]: value });
+    onFiltersChange(key, value);
   };
 
   return (
@@ -104,8 +104,8 @@ export const AppointmentFilterToolbar = ({
             <SelectContent>
               <SelectItem value="all">All Doctors</SelectItem>
               {doctors.map((doctor) => (
-                <SelectItem key={doctor.id} value={doctor.id.toString()}>
-                  {doctor.name}
+                <SelectItem key={doctor.doctorId} value={doctor.doctorId}>
+                  {doctor.fullName}
                 </SelectItem>
               ))}
             </SelectContent>
@@ -137,7 +137,7 @@ export const AppointmentFilterToolbar = ({
           <Label className="text-sm font-medium text-slate-700 mb-2 block">
             Sort By
           </Label>
-          <Select value={filters.sortBy} onValueChange={(value: any) => updateFilter('sortBy', value)}>
+          <Select value={filters.sortBy} onValueChange={(value) => updateFilter('sortBy', value as AppointmentSortOption)}>
             <SelectTrigger className="w-full lg:w-35">
               <SelectValue />
             </SelectTrigger>

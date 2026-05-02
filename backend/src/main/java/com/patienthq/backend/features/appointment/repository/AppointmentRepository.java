@@ -27,4 +27,13 @@ public interface AppointmentRepository extends JpaRepository<Appointment, UUID> 
         AND (:doctorId IS NULL OR d.doctorId = :doctorId)
     """)
     Page<Appointment> findAllAppointments(String search, AppointmentStatus status, UUID patientId, UUID doctorId, Pageable pageable);
+
+    @Query("SELECT COUNT(a) FROM Appointment a WHERE a.status = :status")
+    long countByStatus(AppointmentStatus status);
+
+    @Query("SELECT COUNT(a) FROM Appointment a WHERE DATE(a.appointmentDate) = CURRENT_DATE")
+    long countTodaysAppointments();
+
+    @Query("SELECT COUNT(a) FROM Appointment a WHERE a.status = 'COMPLETED' AND a.appointmentDate >= :startOfWeek")
+    long countCompletedThisWeek(java.time.LocalDateTime startOfWeek);
 }

@@ -1,7 +1,7 @@
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
-import { MoreHorizontal, Eye, Edit, CheckCircle, Clock, XCircle, Bell } from "lucide-react";
+import { MoreHorizontal, Eye, Edit, CheckCircle, Clock, XCircle } from "lucide-react";
 import { type ReactElement } from "react";
 import type { Appointment, UserRole } from "../types/appointment";
 import { StatusBadge } from "./StatusBadge";
@@ -15,7 +15,6 @@ interface AppointmentTableProps {
   onCompleteAppointment: (appointment: Appointment) => void;
   onRescheduleAppointment: (appointment: Appointment) => void;
   onCancelAppointment: (appointment: Appointment) => void;
-  onNotifyPatient: (appointment: Appointment) => void;
 }
 
 export const AppointmentTable = ({
@@ -27,17 +26,20 @@ export const AppointmentTable = ({
   onCompleteAppointment,
   onRescheduleAppointment,
   onCancelAppointment,
-  onNotifyPatient,
 }: AppointmentTableProps): ReactElement => {
   const canEdit = userRole === 'admin' || userRole === 'doctor';
   const canConfirm = userRole === 'admin' || userRole === 'doctor';
 
   const formatDateTime = (dateTimeStr: string) => {
-    const [date, time] = dateTimeStr.split(' ');
-    return { date, time };
+    const date = new Date(dateTimeStr);
+    return {
+      date: date.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' }),
+      time: date.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })
+    };
   };
 
-  const truncateText = (text: string, maxLength: number = 40) => {
+  const truncateText = (text: string | null | undefined, maxLength: number = 40) => {
+    if (!text) return '';
     return text.length > maxLength ? `${text.substring(0, maxLength)}...` : text;
   };
 
@@ -59,11 +61,11 @@ export const AppointmentTable = ({
         </TableHeader>
         <TableBody>
           {appointments.map((appointment) => {
-            const { date, time } = formatDateTime(appointment.appointment_date);
+            const { date, time } = formatDateTime(appointment.appointmentDate);
             return (
-              <TableRow key={appointment.appointment_id} className="hover:bg-slate-50/50 transition-colors">
+              <TableRow key={appointment.appointmentId} className="hover:bg-slate-50/50 transition-colors">
                 <TableCell className="font-medium text-slate-900">
-                  #{appointment.appointment_id}
+                  #{appointment.appointmentId}
                 </TableCell>
                 <TableCell className="text-slate-700">
                   <div className="font-medium">{date}</div>
@@ -71,14 +73,13 @@ export const AppointmentTable = ({
                 </TableCell>
                 <TableCell>
                   <div>
-                    <div className="font-medium text-slate-900">{appointment.patient_name}</div>
-                    <div className="text-sm text-slate-500">ID: {appointment.patient_id}</div>
+                    <div className="font-medium text-slate-900">{appointment.patientName}</div>
                   </div>
                 </TableCell>
-                <TableCell className="text-slate-700">{appointment.doctor_name}</TableCell>
+                <TableCell className="text-slate-700">{appointment.doctorName}</TableCell>
                 <TableCell className="text-slate-700">{appointment.specialization}</TableCell>
                 <TableCell>
-                  <div title={appointment.reason} className="max-w-50 text-slate-600">
+                  <div title={appointment.reason || ''} className="max-w-50 text-slate-600">
                     {truncateText(appointment.reason)}
                   </div>
                 </TableCell>
@@ -86,7 +87,7 @@ export const AppointmentTable = ({
                   <StatusBadge status={appointment.status} />
                 </TableCell>
                 <TableCell className="text-slate-600">
-                  {new Date(appointment.created_at).toLocaleDateString()}
+                  {new Date(appointment.createdAt).toLocaleDateString()}
                 </TableCell>
                 <TableCell>
                   <DropdownMenu>
@@ -133,10 +134,6 @@ export const AppointmentTable = ({
                           Cancel
                         </DropdownMenuItem>
                       )}
-                      <DropdownMenuItem onClick={() => onNotifyPatient(appointment)}>
-                        <Bell className="mr-2 h-4 w-4" />
-                        Send Reminder
-                      </DropdownMenuItem>
                     </DropdownMenuContent>
                   </DropdownMenu>
                 </TableCell>

@@ -22,7 +22,7 @@ export const AppointmentCalendarView = ({
   // Get appointments for the current month
   const monthAppointments = useMemo(() => {
     return appointments.filter((appointment) => {
-      const appointmentDate = new Date(appointment.appointment_date.split(' ')[0]);
+      const appointmentDate = new Date(appointment.appointmentDate);
       return appointmentDate.getMonth() === currentMonth && appointmentDate.getFullYear() === currentYear;
     });
   }, [appointments, currentMonth, currentYear]);
@@ -31,7 +31,7 @@ export const AppointmentCalendarView = ({
   const appointmentsByDate = useMemo(() => {
     const grouped: Record<string, Appointment[]> = {};
     monthAppointments.forEach((appointment) => {
-      const dateKey = appointment.appointment_date.split(' ')[0];
+      const dateKey = new Date(appointment.appointmentDate).toISOString().split('T')[0];
       if (!grouped[dateKey]) {
         grouped[dateKey] = [];
       }
@@ -86,6 +86,10 @@ export const AppointmentCalendarView = ({
     setCurrentDate(new Date());
   };
 
+  const formatTime = (dateStr: string) => {
+    return new Date(dateStr).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+  };
+
   return (
     <div className="space-y-6">
       {/* Calendar Header */}
@@ -137,15 +141,15 @@ export const AppointmentCalendarView = ({
                 <div className="space-y-1">
                   {day.appointments.slice(0, 3).map((appointment) => (
                     <div
-                      key={appointment.appointment_id}
+                      key={appointment.appointmentId}
                       className="text-xs p-1 rounded cursor-pointer hover:bg-slate-100 transition-colors"
                       onClick={() => onViewAppointment(appointment)}
                     >
                       <div className="font-medium truncate text-slate-900">
-                        {appointment.patient_name.split(' ')[0]}
+                        {appointment.patientName.split(' ')[0]}
                       </div>
                       <div className="text-slate-500">
-                        {appointment.appointment_date.split(' ')[1]}
+                        {formatTime(appointment.appointmentDate)}
                       </div>
                       <StatusBadge status={appointment.status} />
                     </div>

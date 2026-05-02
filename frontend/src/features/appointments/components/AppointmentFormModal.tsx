@@ -8,29 +8,26 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { type ReactElement } from "react";
-import type { AppointmentFormData } from "../types/appointment";
+import type { CreateAppointmentFormValues } from "../types/appointment";
 
 const appointmentSchema = z.object({
-  patient_id: z.number().min(1, "Patient is required"),
-  doctor_id: z.number().min(1, "Doctor is required"),
-  appointment_date: z.string()
+  patientId: z.string().min(1, "Patient is required"),
+  doctorId: z.string().min(1, "Doctor is required"),
+  appointmentDate: z
+    .string()
     .min(1, "Date is required")
     .refine((date) => new Date(date) > new Date(), "Appointment must be in the future"),
-  reason: z.string().min(1, "Reason is required"),
+  reason: z.string().optional(),
   notes: z.string().optional(),
-  duration_minutes: z.number().optional(),
 });
-
-type AppointmentFormValues = z.infer<typeof appointmentSchema>;
 
 interface AppointmentFormModalProps {
   open: boolean;
   onClose: () => void;
-  onSubmit: (data: AppointmentFormData) => void;
-  patients: Array<{ id: number; name: string; contact: string }>;
-  doctors: Array<{ id: number; name: string; specialization: string }>;
-  userRole: 'admin' | 'doctor' | 'nurse';
-  currentUserId?: number;
+  onSubmit: (values: CreateAppointmentFormValues) => Promise<void>;
+  patients: Array<{ patientId: string; fullName: string; contactNumber?: string }>;
+  doctors: Array<{ doctorId: string; fullName: string; specialization: string }>;
+  currentUserId?: string;
 }
 
 export const AppointmentFormModal = ({
@@ -39,9 +36,10 @@ export const AppointmentFormModal = ({
   onSubmit,
   patients,
   doctors,
-  userRole,
   currentUserId,
 }: AppointmentFormModalProps): ReactElement => {
+  const isDoctor = !!currentUserId;
+
   const {
     register,
     handleSubmit,
@@ -49,33 +47,24 @@ export const AppointmentFormModal = ({
     watch,
     reset,
     formState: { errors, isSubmitting },
-  } = useForm<AppointmentFormValues>({
+  } = useForm<CreateAppointmentFormValues>({
     resolver: zodResolver(appointmentSchema),
     defaultValues: {
-      patient_id: 0,
-      doctor_id: userRole === 'doctor' && currentUserId ? currentUserId : 0,
-      appointment_date: "",
+      patientId: "",
+      doctorId: isDoctor ? currentUserId : "",
+      appointmentDate: "",
       reason: "",
       notes: "",
-      duration_minutes: 30,
     },
   });
 
-  const selectedPatientId = watch("patient_id");
-  const selectedPatient = patients.find((p) => p.id === selectedPatientId);
-  const selectedDoctorId = watch("doctor_id");
-  const selectedDoctor = doctors.find((d) => d.id === selectedDoctorId);
+  const selectedPatientId = watch("patientId");
+  const selectedPatient = patients.find((p) => p.patientId === selectedPatientId);
+  const selectedDoctorId = watch("doctorId");
+  const selectedDoctor = doctors.find((d) => d.doctorId === selectedDoctorId);
 
-  const onFormSubmit = (data: AppointmentFormValues) => {
-    const formData: AppointmentFormData = {
-      patient_id: data.patient_id,
-      doctor_id: data.doctor_id,
-      appointment_date: data.appointment_date,
-      reason: data.reason,
-      notes: data.notes || "",
-      duration_minutes: data.duration_minutes || 30,
-    };
-    onSubmit(formData);
+  const onFormSubmit = async (data: CreateAppointmentFormValues) => {
+    await onSubmit(data);
     reset();
     onClose();
   };
@@ -101,62 +90,64 @@ export const AppointmentFormModal = ({
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <Label htmlFor="patient_id">Select Patient *</Label>
+                <Label htmlFor="patientId">Select Patient *</Label>
                 <Select
-                  value={selectedPatientId?.toString() || ""}
-                  onValueChange={(value) => setValue("patient_id", parseInt(value))}
+                  value={selectedPatientId}
+                  onValueChange={(value) => setValue("patientId", value)}
                 >
                   <SelectTrigger>
                     <SelectValue placeholder="Choose a patient" />
                   </SelectTrigger>
                   <SelectContent>
                     {patients.map((patient) => (
-                      <SelectItem key={patient.id} value={patient.id.toString()}>
-                        {patient.name}
+                      <SelectItem key={patient.patientId} value={patient.patientId}>
+                        {patient.fullName}
                       </SelectItem>
                     ))}
                   </SelectContent>
                 </Select>
-                {errors.patient_id && (
-                  <p className="text-sm text-red-600 mt-1">{errors.patient_id.message}</p>
+                {errors.patientId && (
+                  <p className="text-sm text-red-600 mt-1">{errors.patientId.message}</p>
                 )}
               </div>
 
               <div>
-                <Label htmlFor="doctor_id">Select Doctor *</Label>
+                <Label htmlFor="doctorId">Select Doctor *</Label>
                 <Select
-                  value={selectedDoctorId?.toString() || ""}
-                  onValueChange={(value) => setValue("doctor_id", parseInt(value))}
-                  disabled={userRole === 'doctor'}
+                  value={selectedDoctorId}
+                  onValueChange={(value) => setValue("doctorId", value)}
+                  disabled={isDoctor}
                 >
                   <SelectTrigger>
                     <SelectValue placeholder="Choose a doctor" />
                   </SelectTrigger>
                   <SelectContent>
                     {doctors.map((doctor) => (
-                      <SelectItem key={doctor.id} value={doctor.id.toString()}>
-                        {doctor.name} - {doctor.specialization}
+                      <SelectItem key={doctor.doctorId} value={doctor.doctorId}>
+                        {doctor.fullName} - {doctor.specialization}
                       </SelectItem>
                     ))}
                   </SelectContent>
                 </Select>
-                {errors.doctor_id && (
-                  <p className="text-sm text-red-600 mt-1">{errors.doctor_id.message}</p>
+                {errors.doctorId && (
+                  <p className="text-sm text-red-600 mt-1">{errors.doctorId.message}</p>
                 )}
               </div>
             </div>
 
             {selectedPatient && (
               <div className="bg-slate-50 rounded-lg p-4">
-                <div className="text-sm text-slate-600">Patient: {selectedPatient.name}</div>
-                <div className="text-sm text-slate-600">Contact: {selectedPatient.contact}</div>
+                <div className="text-sm text-slate-600">Patient: {selectedPatient.fullName}</div>
+                {selectedPatient.contactNumber && (
+                  <div className="text-sm text-slate-600">Contact: {selectedPatient.contactNumber}</div>
+                )}
               </div>
             )}
 
             {selectedDoctor && (
               <div className="bg-blue-50 rounded-lg p-4 border-l-4 border-blue-200">
                 <div className="text-sm text-slate-700">
-                  <span className="font-medium">Physician:</span> {selectedDoctor.name}
+                  <span className="font-medium">Physician:</span> {selectedDoctor.fullName}
                 </div>
                 <div className="text-sm text-slate-700">
                   <span className="font-medium">Specialization:</span> {selectedDoctor.specialization}
@@ -166,25 +157,15 @@ export const AppointmentFormModal = ({
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <Label htmlFor="appointment_date">Date & Time *</Label>
+                <Label htmlFor="appointmentDate">Date & Time *</Label>
                 <Input
-                  id="appointment_date"
+                  id="appointmentDate"
                   type="datetime-local"
-                  {...register("appointment_date")}
+                  {...register("appointmentDate")}
                 />
-                {errors.appointment_date && (
-                  <p className="text-sm text-red-600 mt-1">{errors.appointment_date.message}</p>
+                {errors.appointmentDate && (
+                  <p className="text-sm text-red-600 mt-1">{errors.appointmentDate.message}</p>
                 )}
-              </div>
-
-              <div>
-                <Label htmlFor="duration_minutes">Duration (minutes)</Label>
-                <Input
-                  id="duration_minutes"
-                  type="number"
-                  defaultValue="30"
-                  {...register("duration_minutes", { valueAsNumber: true })}
-                />
               </div>
             </div>
 

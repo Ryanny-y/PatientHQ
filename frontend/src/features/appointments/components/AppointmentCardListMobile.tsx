@@ -15,7 +15,6 @@ interface AppointmentCardListMobileProps {
   onCompleteAppointment: (appointment: Appointment) => void;
   onRescheduleAppointment: (appointment: Appointment) => void;
   onCancelAppointment: (appointment: Appointment) => void;
-  onNotifyPatient: (appointment: Appointment) => void;
 }
 
 export const AppointmentCardListMobile = ({
@@ -27,25 +26,25 @@ export const AppointmentCardListMobile = ({
   onCompleteAppointment,
   onRescheduleAppointment,
   onCancelAppointment,
-  onNotifyPatient,
 }: AppointmentCardListMobileProps): ReactElement => {
   const canEdit = userRole === 'admin' || userRole === 'doctor';
 
-  const truncateText = (text: string, maxLength: number = 60) => {
+  const truncateText = (text: string | null | undefined, maxLength: number = 60) => {
+    if (!text) return '';
     return text.length > maxLength ? `${text.substring(0, maxLength)}...` : text;
   };
 
   return (
     <div className="space-y-4">
       {appointments.map((appointment) => (
-        <Card key={appointment.appointment_id} className="rounded-xl border-slate-200 shadow-sm">
+        <Card key={appointment.appointmentId} className="rounded-xl border-slate-200 shadow-sm">
           <CardHeader className="pb-3">
             <div className="flex items-start justify-between">
               <div>
-                <div className="font-semibold text-slate-900">Appointment #{appointment.appointment_id}</div>
+                <div className="font-semibold text-slate-900">Appointment #{appointment.appointmentId}</div>
                 <div className="text-sm text-slate-500 flex items-center gap-1 mt-1">
                   <Calendar className="h-3 w-3" />
-                  {new Date(appointment.appointment_date).toLocaleDateString()} at {appointment.appointment_date.split(' ')[1]}
+                  {new Date(appointment.appointmentDate).toLocaleDateString()} at {new Date(appointment.appointmentDate).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                 </div>
               </div>
               <div className="flex items-center gap-2">
@@ -94,10 +93,6 @@ export const AppointmentCardListMobile = ({
                         Cancel
                       </DropdownMenuItem>
                     )}
-                    <DropdownMenuItem onClick={() => onNotifyPatient(appointment)}>
-                      <Bell className="mr-2 h-4 w-4" />
-                      Send Reminder
-                    </DropdownMenuItem>
                   </DropdownMenuContent>
                 </DropdownMenu>
               </div>
@@ -107,14 +102,13 @@ export const AppointmentCardListMobile = ({
             <div className="space-y-3">
               <div>
                 <div className="text-sm font-medium text-slate-700 mb-1">Patient</div>
-                <div className="text-sm text-slate-900">{appointment.patient_name}</div>
-                <div className="text-xs text-slate-500">ID: {appointment.patient_id}</div>
+                <div className="text-sm text-slate-900">{appointment.patientName}</div>
               </div>
 
               <div className="flex gap-4">
                 <div className="flex-1">
                   <div className="text-sm font-medium text-slate-700 mb-1">Doctor</div>
-                  <div className="text-sm text-slate-900">{appointment.doctor_name}</div>
+                  <div className="text-sm text-slate-900">{appointment.doctorName}</div>
                 </div>
                 <div className="flex-1">
                   <div className="text-sm font-medium text-slate-700 mb-1">Specialty</div>
