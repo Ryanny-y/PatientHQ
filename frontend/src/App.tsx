@@ -11,6 +11,7 @@ import PatientListPage from "./features/patients/pages/PatientListPage";
 import RegisterPatientPage from "./features/patients/pages/RegisterPatientPage";
 import AssignDoctorPage from "./features/doctorAssignments/AssignDoctorPage";
 import MedicalRecordsPage from "./features/medicalRecords/pages/MedicalRecordsPage";
+import MonitoringPage from "./features/monitoring/MonitoringPage";
 import AppointmentsPage from "./features/appointments/pages/AppointmentsPage";
 import ReportsHistoryPage from "./features/reports/pages/ReportsHistoryPage";
 import AuditLogsPage from "./features/auditLogs/components/AuditLogsPage";
@@ -78,6 +79,7 @@ const AppRoutes = (): ReactElement => (
       <Route path="patients/register" element={<RegisterPatientPage />} />
       <Route path="patients/assign" element={<AssignDoctorPage />} />
       <Route path="records" element={<MedicalRecordsPage />} />
+      <Route path="monitoring" element={<MonitoringPage />} />
       <Route path="appointments" element={<AppointmentsPage />} />
       <Route path="reports" element={<ReportsHistoryPage />} />
       <Route path="audit" element={<AuditLogsPage />} />
