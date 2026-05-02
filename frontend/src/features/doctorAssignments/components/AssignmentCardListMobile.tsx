@@ -50,18 +50,20 @@ const AssignmentCardListMobile = ({
                 View Assignment
               </DropdownMenuItem>
               {role === "Admin" && (
-                <DropdownMenuItem
-                  onClick={() => onReassignAssignment(assignment)}
-                >
-                  Reassign Doctor
-                </DropdownMenuItem>
-              )}
-              {role === "Admin" && (
-                <DropdownMenuItem
-                  onClick={() => onRemoveAssignment(assignment)}
-                >
-                  Remove Assignment
-                </DropdownMenuItem>
+                <>
+                  {assignment.isActive && (
+                    <DropdownMenuItem
+                      onClick={() => onReassignAssignment(assignment)}
+                    >
+                      Reassign Doctor
+                    </DropdownMenuItem>
+                  )}
+                  <DropdownMenuItem
+                    onClick={() => onRemoveAssignment(assignment)}
+                  >
+                    Remove Assignment
+                  </DropdownMenuItem>
+                </>
               )}
             </DropdownMenuContent>
           </DropdownMenu>

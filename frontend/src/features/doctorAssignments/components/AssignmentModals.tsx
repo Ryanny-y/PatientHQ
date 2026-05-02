@@ -6,7 +6,6 @@ import { Search } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
 import {
   Dialog,
   DialogContent,
@@ -47,38 +46,38 @@ const SearchableSelect = ({
   helper,
   error,
 }: SearchableSelectProps): ReactElement => {
-  const [query, setQuery] = useState('');
+  const [inputValue, setInputValue] = useState('');
   const [open, setOpen] = useState(false);
-  const selectedItem = options.find((option) => option.id === selectedId);
-  const filtered = query
+
+  // Sync input display when selectedId changes externally (e.g. form reset)
+  useEffect(() => {
+    const match = options.find((o) => o.id === selectedId);
+    setInputValue(match ? match.title : '');
+  }, [selectedId, options]);
+
+  const filtered = inputValue && !options.find((o) => o.id === selectedId && o.title === inputValue)
     ? options.filter((option) =>
         [option.title, option.subtitle, option.meta]
           .filter((value): value is string => typeof value === 'string')
-          .some((value) => value.toLowerCase().includes(query.toLowerCase()))
+          .some((value) => value.toLowerCase().includes(inputValue.toLowerCase()))
       )
     : options;
-
-  useEffect(() => {
-    if (selectedItem) {
-      setQuery(selectedItem.title);
-    }
-  }, [selectedItem]);
 
   return (
     <div className="relative">
       <Label>{label}</Label>
       <Input
-        value={selectedItem ? selectedItem.title : query}
+        value={inputValue}
         placeholder={placeholder}
         onChange={(event) => {
-          setQuery(event.target.value);
+          setInputValue(event.target.value);
           setOpen(true);
         }}
         onFocus={() => setOpen(true)}
         onBlur={() => setTimeout(() => setOpen(false), 120)}
         className="pr-10"
       />
-      <div className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-slate-400">
+      <div className="pointer-events-none absolute right-3 top-[calc(50%+11px)] -translate-y-1/2 text-slate-400">
         <Search className="h-4 w-4" />
       </div>
       {helper && <p className="mt-2 text-xs text-slate-400">{helper}</p>}
@@ -92,8 +91,8 @@ const SearchableSelect = ({
               onMouseDown={(event) => event.preventDefault()}
               onClick={() => {
                 onSelect(option.id);
+                setInputValue(option.title);
                 setOpen(false);
-                setQuery(option.title);
               }}
               className="w-full px-4 py-3 text-left transition hover:bg-slate-50"
             >
@@ -113,14 +112,10 @@ export { SearchableSelect };
 export interface ReassignPayload {
   assignmentId: string;
   newDoctorId: string;
-  reason: string;
-  effectiveDate: string;
 }
 
 const reassignSchema = z.object({
   newDoctorId: z.string().min(1, 'Select a new doctor'),
-  reason: z.string().min(10, 'Provide a reassignment reason'),
-  effectiveDate: z.string().optional(),
 });
 
 interface ReassignDoctorModalProps {
@@ -135,16 +130,11 @@ export const ReassignDoctorModal = ({ open, onOpenChange, assignment, doctors, o
   const {
     control,
     handleSubmit,
-    register,
     reset,
     formState: { errors, isSubmitting },
   } = useForm<z.infer<typeof reassignSchema>>({
     resolver: zodResolver(reassignSchema),
-    defaultValues: {
-      newDoctorId: '',
-      reason: '',
-      effectiveDate: '',
-    },
+    defaultValues: { newDoctorId: '' },
     mode: 'onTouched',
   });
 
@@ -156,12 +146,7 @@ export const ReassignDoctorModal = ({ open, onOpenChange, assignment, doctors, o
 
   const onSubmit = async (values: z.infer<typeof reassignSchema>): Promise<void> => {
     if (!assignment) return;
-    onConfirm({
-      assignmentId: assignment.assignmentId,
-      newDoctorId: values.newDoctorId,
-      reason: values.reason,
-      effectiveDate: values.effectiveDate ?? '',
-    });
+    onConfirm({ assignmentId: assignment.assignmentId, newDoctorId: values.newDoctorId });
     onOpenChange(false);
   };
 
@@ -175,7 +160,7 @@ export const ReassignDoctorModal = ({ open, onOpenChange, assignment, doctors, o
         <DialogHeader>
           <DialogTitle>Reassign Doctor</DialogTitle>
           <DialogDescription>
-            Route the care assignment to a new physician and capture the reason for audit records.
+            Route the care assignment to a new physician.
           </DialogDescription>
         </DialogHeader>
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-6 px-6 pb-6 pt-2">
@@ -206,18 +191,6 @@ export const ReassignDoctorModal = ({ open, onOpenChange, assignment, doctors, o
               />
             )}
           />
-
-          <div className="space-y-2">
-            <Label htmlFor="reason">Reason for Reassignment</Label>
-            <Textarea id="reason" rows={4} {...register('reason')} placeholder="Example: coverage handover or clinical escalation" />
-            {errors.reason && <p className="text-xs text-red-500">{errors.reason.message}</p>}
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="effectiveDate">Effective Date</Label>
-            <Input id="effectiveDate" type="date" {...register('effectiveDate')} />
-            {errors.effectiveDate && <p className="text-xs text-red-500">{errors.effectiveDate.message}</p>}
-          </div>
 
           <div className="flex flex-col items-stretch gap-3 sm:flex-row sm:justify-end">
             <Button variant="outline" type="button" onClick={() => onOpenChange(false)}>

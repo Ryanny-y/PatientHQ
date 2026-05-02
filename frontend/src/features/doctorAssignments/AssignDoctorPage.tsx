@@ -12,6 +12,7 @@ import {
 import type { ReassignPayload } from "@/features/doctorAssignments/components/AssignmentModals";
 import { useDoctorAssignments } from "@/features/doctorAssignments/hooks/useDoctorAssignments";
 import { doctorAssignmentService } from "@/features/doctorAssignments/service/doctorAssignmentService";
+import { useDoctorsQuery } from "@/features/doctorAccounts/hooks/useDoctorsQuery";
 
 const AssignDoctorPage = (): ReactElement => {
   const { toasts, toast, dismiss } = useToast();
@@ -37,6 +38,8 @@ const AssignDoctorPage = (): ReactElement => {
   } = useDoctorAssignments();
 
   const activeAssignments = data.filter((a) => a.isActive).length;
+
+  const { data: doctorsResponse } = useDoctorsQuery({ page: 0, size: 200, isActive: true });
 
   const handleConfirmReassign = async (payload: ReassignPayload): Promise<void> => {
     try {
@@ -108,8 +111,6 @@ const AssignDoctorPage = (): ReactElement => {
               onViewAssignment={(a) => openModal("view", a)}
               onReassignAssignment={(a) => openModal("reassign", a)}
               onRemoveAssignment={(a) => openModal("remove", a)}
-              onViewPatient={(a) => openModal("view", a)}
-              onViewDoctor={(a) => openModal("view", a)}
             />
           </div>
 
@@ -134,7 +135,7 @@ const AssignDoctorPage = (): ReactElement => {
         open={modalMode === "reassign"}
         onOpenChange={(open) => { if (!open) closeModal(); }}
         assignment={selectedAssignment}
-        doctors={[]}
+        doctors={doctorsResponse?.data?.content ?? []}
         onConfirm={handleConfirmReassign}
       />
       <RemoveAssignmentDialog

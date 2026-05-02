@@ -71,7 +71,7 @@ export const AssignDoctorModal = ({
             Assign a doctor to {patient?.fullName}
           </DialogDescription>
         </DialogHeader>
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4 px-5 pb-5">
           <Controller
             name="doctorId"
             control={control}

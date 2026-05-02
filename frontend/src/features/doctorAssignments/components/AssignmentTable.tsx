@@ -22,8 +22,6 @@ interface AssignmentTableProps {
   onViewAssignment: (assignment: DoctorAssignment) => void;
   onReassignAssignment: (assignment: DoctorAssignment) => void;
   onRemoveAssignment: (assignment: DoctorAssignment) => void;
-  onViewPatient: (assignment: DoctorAssignment) => void;
-  onViewDoctor: (assignment: DoctorAssignment) => void;
 }
 
 const statusClasses: Record<string, string> = {
@@ -41,8 +39,6 @@ const AssignmentTable = ({
   onViewAssignment,
   onReassignAssignment,
   onRemoveAssignment,
-  onViewPatient,
-  onViewDoctor,
 }: AssignmentTableProps): ReactElement => (
   <div className="overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-sm">
     <Table className="min-w-full">
@@ -101,19 +97,15 @@ const AssignmentTable = ({
                   >
                     View Assignment
                   </DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => onViewPatient(assignment)}>
-                    View Patient Profile
-                  </DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => onViewDoctor(assignment)}>
-                    View Doctor Profile
-                  </DropdownMenuItem>
                   {role === "Admin" && (
                     <>
-                      <DropdownMenuItem
-                        onClick={() => onReassignAssignment(assignment)}
-                      >
-                        Reassign Doctor
-                      </DropdownMenuItem>
+                      {assignment.isActive && (
+                        <DropdownMenuItem
+                          onClick={() => onReassignAssignment(assignment)}
+                        >
+                          Reassign Doctor
+                        </DropdownMenuItem>
+                      )}
                       <DropdownMenuItem
                         onClick={() => onRemoveAssignment(assignment)}
                       >
