@@ -36,6 +36,9 @@ const PatientListPage = (): ReactElement => {
     bloodTypeFilter,
     setBloodTypeFilter,
 
+    isAssigned,
+    setIsAssigned,
+
     sortOption,
     setSortOption,
 
@@ -97,6 +100,8 @@ const PatientListPage = (): ReactElement => {
         onGenderFilterChange={setGenderFilter}
         bloodTypeFilter={bloodTypeFilter}
         onBloodTypeFilterChange={setBloodTypeFilter}
+        isAssigned={isAssigned}
+        setIsAssigned={setIsAssigned}
         sortBy={sortOption}
         onSortByChange={setSortOption}
         onRefresh={refetch}

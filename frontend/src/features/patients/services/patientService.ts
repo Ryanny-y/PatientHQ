@@ -14,6 +14,7 @@ export const patientService = {
     search?: string;
     status?: string;
     gender?: string;
+    assigned?: boolean;
     bloodType?: string;
     sort?: string;
   }) => {
@@ -25,6 +26,7 @@ export const patientService = {
     if (params.status) query.append("status", params.status);
     if (params.gender) query.append("gender", params.gender);
     if (params.bloodType) query.append("bloodType", params.bloodType);
+    if (params.assigned !== undefined) query.append("assigned", String(params.assigned));
     if (params.sort) query.append("sort", params.sort);
 
     return fetchWithAuth<ApiResponse<PageResponse<Patient>>>(

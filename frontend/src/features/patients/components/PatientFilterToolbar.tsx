@@ -1,9 +1,15 @@
-import { type ReactElement } from 'react';
-import { Search, RefreshCw } from 'lucide-react';
-import { Input } from '@/components/ui/input';
-import { Button } from '@/components/ui/button';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import type { sortOption, statusFilter } from '../types/patient';
+import { type ReactElement } from "react";
+import { Search, RefreshCw } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import type { isAssigned, sortOption, statusFilter } from "../types/patient";
 
 interface PatientFilterToolbarProps {
   searchQuery: string;
@@ -16,6 +22,8 @@ interface PatientFilterToolbarProps {
   onBloodTypeFilterChange: (value: string) => void;
   sortBy: sortOption;
   onSortByChange: (value: sortOption) => void;
+  isAssigned: isAssigned;
+  setIsAssigned: (value: isAssigned) => void;
   onRefresh: () => void;
 }
 
@@ -30,6 +38,8 @@ const PatientFilterToolbar = ({
   onBloodTypeFilterChange,
   sortBy,
   onSortByChange,
+  isAssigned,
+  setIsAssigned,
   onRefresh,
 }: PatientFilterToolbarProps): ReactElement => {
   return (
@@ -88,6 +98,20 @@ const PatientFilterToolbar = ({
             <SelectItem value="B-">B-</SelectItem>
             <SelectItem value="AB+">AB+</SelectItem>
             <SelectItem value="AB-">AB-</SelectItem>
+          </SelectContent>
+        </Select>
+
+        <Select
+          value={isAssigned}
+          onValueChange={(value) => setIsAssigned(value as isAssigned)}
+        >
+          <SelectTrigger>
+            <SelectValue placeholder="Assignment Status" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">All Patients</SelectItem>
+            <SelectItem value="assigned">Assigned</SelectItem>
+            <SelectItem value="unassigned">Not Assigned</SelectItem>
           </SelectContent>
         </Select>
 

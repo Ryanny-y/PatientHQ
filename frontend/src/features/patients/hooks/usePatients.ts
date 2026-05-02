@@ -2,6 +2,7 @@ import { useState } from "react";
 import { usePatientMutation } from "./usePatientMutation";
 import { usePatientMetaQuery, usePatientQuery } from "./usePatientQuery";
 import type {
+  isAssigned,
   Patient,
   patientModalMode,
   sortOption,
@@ -16,6 +17,7 @@ export const usePatients = () => {
   const [genderFilter, setGenderFilter] = useState<string>("all");
   const [bloodTypeFilter, setBloodTypeFilter] = useState<string>("all");
   const [sortOption, setSortOption] = useState<sortOption>("newest");
+  const [isAssigned, setIsAssigned] = useState<isAssigned>("all");
   const [page, setPage] = useState(1);
   const [modalMode, setModalMode] = useState<patientModalMode>(null);
   const [selectedPatient, setSelectedPatient] = useState<Patient | null>(null);
@@ -28,6 +30,7 @@ export const usePatients = () => {
       statusFilter === "all" ? undefined : statusFilter.toLowerCase(),
     gender: genderFilter === "all" ? undefined : genderFilter,
     bloodType: bloodTypeFilter === "all" ? undefined : bloodTypeFilter,
+    assigned: isAssigned === "all" ? undefined : isAssigned === "assigned",
     sort:
       sortOption === "newest"
         ? "createdAt,desc"
@@ -105,6 +108,8 @@ export const usePatients = () => {
     setGenderFilter: handleSetGender,
     bloodTypeFilter,
     setBloodTypeFilter: handleSetBloodType,
+    isAssigned,
+    setIsAssigned,
     sortOption,
     setSortOption: handleSetSort,
 

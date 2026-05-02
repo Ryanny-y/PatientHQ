@@ -7,6 +7,7 @@ export const usePatientQuery = (params: {
   search?: string;
   status?: string;
   gender?: string;
+  assigned?: boolean;
   bloodType?: string;
   sort?: string;
 }) => {

@@ -74,6 +74,7 @@ export type patientStatusFilter =
 export type genderFilter = "all" | patientGender;
 export type bloodTypeFilter = "all" | bloodType;
 export type sortOption = "newest" | "oldest" | "name-az";
+export type isAssigned = "all" | "assigned" | "unassigned";
 
 // ── Add Patient Schema ────────────────────────────────────────────────────
 export const addPatientSchema = z.object({
