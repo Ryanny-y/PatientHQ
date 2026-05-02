@@ -46,6 +46,7 @@ public class AuthController {
         Set<String> permissions = user.getRole().getPermissions().stream().map(Permission::getPermissionName).collect(Collectors.toSet());
 
         LoginResponse loginResponse = new LoginResponse(
+                user.getUserId(),
                 accessToken,
                 user.getUsername(),
                 user.getRole().getRoleName(),
@@ -71,6 +72,7 @@ public class AuthController {
         Set<String> permissions = user.getRole().getPermissions().stream().map(Permission::getPermissionName).collect(Collectors.toSet());
 
         RefreshResponse refreshResponse = new RefreshResponse(
+                user.getUserId(),
                 accessToken,
                 user.getUsername(),
                 user.getRole(),
