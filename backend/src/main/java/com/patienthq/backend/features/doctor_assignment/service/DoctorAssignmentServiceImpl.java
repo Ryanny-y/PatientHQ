@@ -71,10 +71,9 @@ public class DoctorAssignmentServiceImpl implements DoctorAssignmentService {
 
     @Override
     @Transactional(readOnly = true)
-    public Page<DoctorAssignment> getAllDoctorAssignments(Boolean activeOnly, Pageable pageable) {
-        return (activeOnly != null && activeOnly)
-                ? doctorAssignmentRepository.findAllActiveAssignments(pageable)
-                : doctorAssignmentRepository.findAllAssignments(pageable);
+    public Page<DoctorAssignment> getAllDoctorAssignments(String search, Boolean isActive, PatientStatus patientStatus, Pageable pageable) {
+        String formattedSearch = (search == null) ? null : "%" + search.toLowerCase() + "%";
+        return doctorAssignmentRepository.findAllAssignments(formattedSearch, isActive, patientStatus, pageable);
     }
 
     @Override

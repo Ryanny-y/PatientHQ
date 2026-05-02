@@ -1,6 +1,7 @@
 package com.patienthq.backend.features.doctor_assignment.repository;
 
 import com.patienthq.backend.features.doctor_assignment.model.DoctorAssignment;
+import com.patienthq.backend.features.patient.model.PatientStatus;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -20,17 +21,16 @@ public interface DoctorAssignmentRepository extends JpaRepository<DoctorAssignme
         LEFT JOIN FETCH da.patient p
         LEFT JOIN FETCH da.doctor d
         LEFT JOIN FETCH d.user u
-        WHERE da.isActive = true
+        WHERE  (
+                :search IS NULL OR
+                LOWER(d.fullName) LIKE :search OR
+                LOWER(p.fullName) LIKE :search OR
+                LOWER(d.email) LIKE :search
+            ) AND
+            (:isActive IS NULL OR da.isActive = :isActive) AND
+            (:patientStatus IS NULL OR p.status = :patientStatus)
     """)
-    Page<DoctorAssignment> findAllActiveAssignments(Pageable pageable);
-
-    @Query("""
-        SELECT da FROM DoctorAssignment da
-        LEFT JOIN FETCH da.patient p
-        LEFT JOIN FETCH da.doctor d
-        LEFT JOIN FETCH d.user u
-    """)
-    Page<DoctorAssignment> findAllAssignments(Pageable pageable);
+    Page<DoctorAssignment> findAllAssignments(String search, Boolean isActive, PatientStatus patientStatus, Pageable pageable);
 
     @Query("""
         SELECT da FROM DoctorAssignment da

@@ -5,6 +5,7 @@ import com.patienthq.backend.features.doctor_assignment.dto.DoctorAssignmentMeta
 import com.patienthq.backend.features.doctor_assignment.dto.request.AssignDoctorRequest;
 import com.patienthq.backend.features.doctor_assignment.dto.request.ReassignDoctorRequest;
 import com.patienthq.backend.features.doctor_assignment.model.DoctorAssignment;
+import com.patienthq.backend.features.patient.model.PatientStatus;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -14,7 +15,7 @@ public interface DoctorAssignmentService {
 
     DoctorAssignmentDto assignDoctorToPatient(AssignDoctorRequest request);
 
-    Page<DoctorAssignment> getAllDoctorAssignments(Boolean activeOnly, Pageable pageable);
+    Page<DoctorAssignment> getAllDoctorAssignments(String search, Boolean isActive, PatientStatus patientStatus, Pageable pageable);
 
     DoctorAssignmentDto reassignDoctor(ReassignDoctorRequest request);
 

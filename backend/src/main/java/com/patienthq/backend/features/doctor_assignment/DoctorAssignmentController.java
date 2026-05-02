@@ -6,6 +6,7 @@ import com.patienthq.backend.features.doctor_assignment.dto.request.AssignDoctor
 import com.patienthq.backend.features.doctor_assignment.dto.request.ReassignDoctorRequest;
 import com.patienthq.backend.features.doctor_assignment.model.DoctorAssignment;
 import com.patienthq.backend.features.doctor_assignment.service.DoctorAssignmentService;
+import com.patienthq.backend.features.patient.model.PatientStatus;
 import com.patienthq.backend.shared.response.ApiResponse;
 import com.patienthq.backend.shared.response.PageResponse;
 import jakarta.validation.Valid;
@@ -43,10 +44,12 @@ public class DoctorAssignmentController {
 
     @GetMapping
     public ResponseEntity<ApiResponse<PageResponse<DoctorAssignmentDto>>> getAllDoctorAssignments(
-            @RequestParam(required = false) Boolean activeOnly,
+            @RequestParam(required = false) String search,
+            @RequestParam(required = false) Boolean isActive,
+            @RequestParam(required = false) PatientStatus patientStatus,
             Pageable pageable
     ) {
-        Page<DoctorAssignment> assignments = doctorAssignmentService.getAllDoctorAssignments(activeOnly, pageable);
+        Page<DoctorAssignment> assignments = doctorAssignmentService.getAllDoctorAssignments(search, isActive, patientStatus, pageable);
         Page<DoctorAssignmentDto> assignmentDtos = assignments.map(doctorAssignmentMapper::toDto);
 
         PageResponse<DoctorAssignmentDto> pageResponse = PageResponse.<DoctorAssignmentDto>builder()
