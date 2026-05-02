@@ -60,12 +60,13 @@ public class PatientController {
             @RequestParam(required = false) String status,
             @RequestParam(required = false) String gender,
             @RequestParam(required = false) String bloodType,
+            @RequestParam(required = false) Boolean assigned,
             Pageable pageable
     ) {
         com.patienthq.backend.features.patient.model.PatientStatus patientStatus = 
             (status == null) ? null : com.patienthq.backend.features.patient.model.PatientStatus.valueOf(status.toUpperCase());
         
-        Page<Patient> patients = patientService.getAllPatients(search, patientStatus, gender, bloodType, pageable);
+        Page<Patient> patients = patientService.getAllPatients(search, patientStatus, gender, bloodType, assigned, pageable);
 
         List<PatientDto> patientsDto = patients.map(patientMapper::toDto).stream().toList();
         PageResponse<PatientDto> pageResponse = PageResponse.<PatientDto>builder()

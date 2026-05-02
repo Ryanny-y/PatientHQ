@@ -14,7 +14,7 @@ public interface PatientService {
 
     Patient createPatient(CreatePatientRequest request);
 
-    Page<Patient> getAllPatients(String search, PatientStatus status, String gender, String bloodType, Pageable pageable);
+    Page<Patient> getAllPatients(String search, PatientStatus status, String gender, String bloodType, Boolean assigned, Pageable pageable);
 
     PatientMetadataDto getPatientMetadata();
 

@@ -24,12 +24,24 @@ public interface PatientRepository extends JpaRepository<Patient, UUID>, PagingA
         AND (:status IS NULL OR p.status = :status)
         AND (:gender IS NULL OR LOWER(p.gender) = :gender)
         AND (:bloodType IS NULL OR LOWER(p.bloodType) = :bloodType)
+        AND (
+            :assigned IS NULL
+            OR (:assigned = true AND EXISTS (
+                SELECT da FROM DoctorAssignment da
+                WHERE da.patient = p AND da.isActive = true
+            ))
+            OR (:assigned = false AND NOT EXISTS (
+                SELECT da FROM DoctorAssignment da
+                WHERE da.patient = p AND da.isActive = true
+            ))
+      )
     """)
     Page<Patient> findAllPatients(
             @Param("search") String search,
             @Param("status") PatientStatus status,
             @Param("gender") String gender,
             @Param("bloodType") String bloodType,
+            @Param("assigned") Boolean assigned,
             Pageable pageable
     );
 
