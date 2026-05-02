@@ -3,6 +3,7 @@ import type { ApiResponse, PageResponse } from '@/shared/types/api';
 import type {
   AssignDoctorRequest,
   DoctorAssignment,
+  DoctorAssignmentMeta,
   ReassignDoctorRequest,
 } from '../types/assignment';
 
@@ -27,6 +28,11 @@ export const doctorAssignmentService = {
       `doctor-assignments?${query.toString()}`,
     );
   },
+
+  getDoctorAssignmentMeta: () =>
+    fetchWithAuth<ApiResponse<DoctorAssignmentMeta>>(
+      'doctor-assignments/meta',
+    ),
 
   getAssignmentById: (id: string) =>
     fetchWithAuth<ApiResponse<DoctorAssignment>>(`doctor-assignments/${id}`),

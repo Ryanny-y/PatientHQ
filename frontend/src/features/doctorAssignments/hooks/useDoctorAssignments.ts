@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useDoctorAssignmentQuery } from './useDoctorAssignmentQuery';
+import { useDoctorAssignmentMetaQuery, useDoctorAssignmentQuery } from './useDoctorAssignmentQuery';
 import type {
   assignmentSortOption,
   assignmentStatusFilter,
@@ -35,6 +35,7 @@ export const useDoctorAssignments = () => {
     patientStatus: patientStatusFilter !== 'all' ? patientStatusFilter : undefined,
     sort,
   });
+  const { data: metaData } = useDoctorAssignmentMetaQuery();
 
   const data = response?.data?.content ?? [];
 
@@ -58,6 +59,7 @@ export const useDoctorAssignments = () => {
   };
 
   return {
+    metaData,
     data,
     isLoading,
     page,

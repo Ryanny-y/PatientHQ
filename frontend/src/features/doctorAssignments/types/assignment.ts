@@ -14,6 +14,13 @@ export interface DoctorAssignment {
   isActive: boolean;
 }
 
+export interface DoctorAssignmentMeta {
+  activeAssignments: number;
+  unassignedPatients: number;
+  availableDoctors: number;
+  highWorkloadDoctors: number;
+}
+
 export interface AssignDoctorRequest {
   patientId: string;
   doctorId: string;

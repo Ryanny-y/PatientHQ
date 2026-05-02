@@ -2,12 +2,10 @@ import { type ReactElement } from 'react';
 import { ShieldCheck, Users, Activity, TrendingUp } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { cn } from '@/shared/utils/cn';
+import type { DoctorAssignmentMeta } from '../types/assignment';
 
 interface AssignmentStatsCardsProps {
-  activeAssignments: number;
-  unassignedPatients: number;
-  availableDoctors: number;
-  highWorkloadDoctors: number;
+  metaData: DoctorAssignmentMeta | undefined
 }
 
 const stats: Array<{
@@ -22,12 +20,12 @@ const stats: Array<{
   { label: 'High Workload Doctors', icon: TrendingUp, variant: 'amber', key: 'workload' },
 ];
 
-const AssignmentStatsCards = ({ activeAssignments, unassignedPatients, availableDoctors, highWorkloadDoctors }: AssignmentStatsCardsProps): ReactElement => {
+const AssignmentStatsCards = ({ metaData }: AssignmentStatsCardsProps): ReactElement => {
   const values = {
-    active: activeAssignments,
-    unassigned: unassignedPatients,
-    available: availableDoctors,
-    workload: highWorkloadDoctors,
+    active: metaData?.activeAssignments ?? 0,
+    unassigned: metaData?.unassignedPatients ?? 0,
+    available: metaData?.availableDoctors ?? 0,
+    workload: metaData?.highWorkloadDoctors ?? 0,
   };
 
   return (

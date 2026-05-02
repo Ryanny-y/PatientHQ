@@ -15,3 +15,10 @@ export const useDoctorAssignmentQuery = (params: {
     placeholderData: (prev) => prev,
   });
 };
+
+export const useDoctorAssignmentMetaQuery = () => {
+  return useQuery({
+    queryKey: ["doctorAssignmentMeta"],
+    queryFn: () => doctorAssignmentService.getDoctorAssignmentMeta(),
+  });
+};

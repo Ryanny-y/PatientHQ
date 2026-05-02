@@ -18,6 +18,7 @@ const AssignDoctorPage = (): ReactElement => {
   const { toasts, toast, dismiss } = useToast();
 
   const {
+    metaData,
     data,
     isLoading,
     refetch,
@@ -34,8 +35,6 @@ const AssignDoctorPage = (): ReactElement => {
     openModal,
     closeModal,
   } = useDoctorAssignments();
-
-  const activeAssignments = data.filter((a) => a.isActive).length;
 
   const { data: doctorsResponse } = useDoctorsQuery({ page: 0, size: 200, isActive: true });
 
@@ -76,10 +75,7 @@ const AssignDoctorPage = (): ReactElement => {
       </div>
 
       <AssignmentStatsCards
-        activeAssignments={activeAssignments}
-        unassignedPatients={0}
-        availableDoctors={0}
-        highWorkloadDoctors={0}
+        metaData={metaData?.data}
       />
 
       <AssignmentFilterToolbar
