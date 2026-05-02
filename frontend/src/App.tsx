@@ -13,7 +13,7 @@ import AssignDoctorPage from "./features/doctorAssignments/AssignDoctorPage";
 import MedicalRecordsPage from "./features/medicalRecords/pages/MedicalRecordsPage";
 import MonitoringPage from "./features/monitoring/MonitoringPage";
 import AppointmentsPage from "./features/appointments/pages/AppointmentsPage";
-import ReportsHistoryPage from "./features/reports/pages/ReportsHistoryPage";
+import ReportsHistoryPage from "./features/reports/ReportsHistoryPage";
 import AuditLogsPage from "./features/auditLogs/components/AuditLogsPage";
 import RolesPermissionsPage from "./features/rolesPermissions/RolesPermissionsPage";
 import { Toaster } from "sonner";

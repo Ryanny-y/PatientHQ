@@ -1,29 +1,26 @@
 import { useMemo, useState, type ReactElement } from 'react';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/shared/hooks/useToast';
-import { Download, Printer, FilePlus } from 'lucide-react';
-import { RoleStateSwitcher } from '../components/RoleStateSwitcher';
-import { ReportsTab } from '../components/ReportsTab';
-import { HistoryTab } from '../components/HistoryTab';
-import { AnalyticsTab } from '../components/AnalyticsTab';
-import { GenerateReportModal } from '../components/GenerateReportModal';
-import { ReportPreviewModal } from '../components/ReportPreviewModal';
-import { DeleteReportDialog } from '../components/DeleteReportDialog';
+import { FilePlus } from 'lucide-react';
+import { ReportsTab } from './components/ReportsTab';
+import { HistoryTab } from './components/HistoryTab';
+import { GenerateReportModal } from './components/GenerateReportModal';
+import { ReportPreviewModal } from './components/ReportPreviewModal';
+import { DeleteReportDialog } from './components/DeleteReportDialog';
 import {
   mockReports,
   mockHistoryEvents,
   mockPatients,
   mockReportStats,
-  mockAnalytics,
   reportTypes,
-} from '../utils/mockReportData';
+} from './utils/mockReportData';
 import type {
   ReportRecord,
   GenerateReportForm,
   HistoryEvent,
   PatientSummary,
   UserRole,
-} from '../types/report';
+} from './types/report';
 
 const ReportsHistoryPage = (): ReactElement => {
   const [activeTab, setActiveTab] = useState<'reports' | 'history' | 'analytics'>('reports');
@@ -170,22 +167,12 @@ const ReportsHistoryPage = (): ReactElement => {
             <FilePlus className="h-4 w-4 mr-2" />
             Generate Report
           </Button>
-          <Button variant="outline" onClick={() => toast('Confidential export completed.', 'success')}>
-            <Download className="h-4 w-4 mr-2" />
-            Export Data
-          </Button>
-          <Button variant="outline" onClick={() => toast('Print command submitted for hospital reports.', 'success')}>
-            <Printer className="h-4 w-4 mr-2" />
-            Print
-          </Button>
         </div>
       </div>
 
-      <RoleStateSwitcher currentRole={userRole} onRoleChange={setUserRole} />
-
       <div className="rounded-3xl border border-slate-200 bg-white p-3 shadow-sm">
         <div className="flex flex-wrap items-center gap-2">
-          {(['reports', 'history', 'analytics'] as const).map((tab) => (
+          {(['reports', 'history'] as const).map((tab) => (
             <Button
               key={tab}
               variant={activeTab === tab ? 'default' : 'outline'}
@@ -193,7 +180,7 @@ const ReportsHistoryPage = (): ReactElement => {
               onClick={() => setActiveTab(tab)}
               className="capitalize"
             >
-              {tab === 'reports' ? 'Reports' : tab === 'history' ? 'Patient History' : 'Analytics Overview'}
+              {tab === 'reports' ? 'Reports' : 'Patient History'}
             </Button>
           ))}
         </div>
@@ -239,10 +226,6 @@ const ReportsHistoryPage = (): ReactElement => {
           onEventTypeChange={(value) => setHistoryFilters((prev) => ({ ...prev, eventType: value }))}
           onSelectPatient={handleSelectPatient}
         />
-      )}
-
-      {activeTab === 'analytics' && (
-        <AnalyticsTab userRole={userRole} analyticsData={mockAnalytics} />
       )}
 
       <GenerateReportModal
