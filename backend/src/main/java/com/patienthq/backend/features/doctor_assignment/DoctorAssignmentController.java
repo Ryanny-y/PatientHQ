@@ -1,8 +1,10 @@
 package com.patienthq.backend.features.doctor_assignment;
 
 import com.patienthq.backend.features.doctor_assignment.dto.DoctorAssignmentDto;
+import com.patienthq.backend.features.doctor_assignment.dto.DoctorAssignmentMetadataDto;
 import com.patienthq.backend.features.doctor_assignment.dto.request.AssignDoctorRequest;
 import com.patienthq.backend.features.doctor_assignment.dto.request.ReassignDoctorRequest;
+import com.patienthq.backend.features.doctor_assignment.model.DoctorAssignment;
 import com.patienthq.backend.features.doctor_assignment.service.DoctorAssignmentService;
 import com.patienthq.backend.shared.response.ApiResponse;
 import com.patienthq.backend.shared.response.PageResponse;
@@ -22,6 +24,7 @@ import java.util.UUID;
 public class DoctorAssignmentController {
 
     private final DoctorAssignmentService doctorAssignmentService;
+    private final DoctorAssignmentMapper doctorAssignmentMapper;
 
     @PostMapping("/assign")
     public ResponseEntity<ApiResponse<DoctorAssignmentDto>> assignDoctorToPatient(
@@ -43,10 +46,11 @@ public class DoctorAssignmentController {
             @RequestParam(required = false) Boolean activeOnly,
             Pageable pageable
     ) {
-        Page<DoctorAssignmentDto> assignments = doctorAssignmentService.getAllDoctorAssignments(activeOnly, pageable);
+        Page<DoctorAssignment> assignments = doctorAssignmentService.getAllDoctorAssignments(activeOnly, pageable);
+        Page<DoctorAssignmentDto> assignmentDtos = assignments.map(doctorAssignmentMapper::toDto);
 
         PageResponse<DoctorAssignmentDto> pageResponse = PageResponse.<DoctorAssignmentDto>builder()
-                .content(assignments.getContent())
+                .content(assignmentDtos.getContent())
                 .page(assignments.getNumber())
                 .size(assignments.getSize())
                 .totalElements(assignments.getTotalElements())
@@ -101,6 +105,19 @@ public class DoctorAssignmentController {
                         .success(true)
                         .message("Doctor assignment deleted successfully")
                         .data(null)
+                        .build()
+        );
+    }
+
+    @GetMapping("/meta")
+    public ResponseEntity<ApiResponse<DoctorAssignmentMetadataDto>> getDoctorAssignmentMetadata() {
+        DoctorAssignmentMetadataDto metadata = doctorAssignmentService.getDoctorAssignmentMetadata();
+
+        return ResponseEntity.ok(
+                ApiResponse.<DoctorAssignmentMetadataDto>builder()
+                        .success(true)
+                        .message("Doctor assignment metadata retrieved successfully")
+                        .data(metadata)
                         .build()
         );
     }

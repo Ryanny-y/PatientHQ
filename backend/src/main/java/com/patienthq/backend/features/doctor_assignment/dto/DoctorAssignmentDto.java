@@ -1,5 +1,6 @@
 package com.patienthq.backend.features.doctor_assignment.dto;
 
+import com.patienthq.backend.features.patient.model.PatientStatus;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -17,6 +18,7 @@ public class DoctorAssignmentDto {
     private UUID assignmentId;
     private UUID patientId;
     private String patientName;
+    private PatientStatus patientStatus;
     private UUID doctorId;
     private String doctorName;
     private String doctorSpecialization;

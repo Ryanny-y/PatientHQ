@@ -3,6 +3,7 @@ package com.patienthq.backend.features.doctor_assignment.service;
 import com.patienthq.backend.features.doctor.model.Doctor;
 import com.patienthq.backend.features.doctor.repository.DoctorRepository;
 import com.patienthq.backend.features.doctor_assignment.dto.DoctorAssignmentDto;
+import com.patienthq.backend.features.doctor_assignment.dto.DoctorAssignmentMetadataDto;
 import com.patienthq.backend.features.doctor_assignment.dto.request.AssignDoctorRequest;
 import com.patienthq.backend.features.doctor_assignment.dto.request.ReassignDoctorRequest;
 import com.patienthq.backend.features.doctor_assignment.exceptions.DoctorAssignmentException.*;
@@ -69,12 +70,10 @@ public class DoctorAssignmentServiceImpl implements DoctorAssignmentService {
 
     @Override
     @Transactional(readOnly = true)
-    public Page<DoctorAssignmentDto> getAllDoctorAssignments(Boolean activeOnly, Pageable pageable) {
-        Page<DoctorAssignment> assignments = activeOnly != null && activeOnly
+    public Page<DoctorAssignment> getAllDoctorAssignments(Boolean activeOnly, Pageable pageable) {
+        return (activeOnly != null && activeOnly)
                 ? doctorAssignmentRepository.findAllActiveAssignments(pageable)
                 : doctorAssignmentRepository.findAllAssignments(pageable);
-
-        return assignments.map(this::mapToDto);
     }
 
     @Override
@@ -139,6 +138,22 @@ public class DoctorAssignmentServiceImpl implements DoctorAssignmentService {
                 .orElseThrow(() -> new AssignmentNotFoundException(assignmentId));
 
         return mapToDto(assignment);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public DoctorAssignmentMetadataDto getDoctorAssignmentMetadata() {
+        long activeAssignments = doctorAssignmentRepository.countActiveAssignments();
+        long unassignedPatients = doctorAssignmentRepository.countUnassignedPatients();
+        long availableDoctors = doctorAssignmentRepository.countAvailableDoctors();
+        long highWorkloadDoctors = doctorAssignmentRepository.countHighWorkloadDoctors();
+
+        return DoctorAssignmentMetadataDto.builder()
+                .activeAssignments(activeAssignments)
+                .unassignedPatients(unassignedPatients)
+                .availableDoctors(availableDoctors)
+                .highWorkloadDoctors(highWorkloadDoctors)
+                .build();
     }
 
     private DoctorAssignmentDto mapToDto(DoctorAssignment assignment) {
