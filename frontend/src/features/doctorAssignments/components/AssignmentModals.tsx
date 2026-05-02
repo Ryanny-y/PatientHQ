@@ -17,12 +17,12 @@ import {
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from '@/components/ui/sheet';
 import { Badge } from '@/components/ui/badge';
 import type {
-  AssignmentRecord,
+  DoctorAssignment,
 } from '@/features/doctorAssignments/types/assignment';
 import type { DoctorAccount } from '@/features/doctorAccounts/types/doctorAccount';
 
 interface SearchableSelectOption {
-  id: number;
+  id: string;
   title: string;
   subtitle: string;
   meta?: string;
@@ -32,8 +32,8 @@ interface SearchableSelectProps {
   label: string;
   placeholder: string;
   options: SearchableSelectOption[];
-  selectedId: number | null;
-  onSelect: (id: number) => void;
+  selectedId: string | null;
+  onSelect: (id: string) => void;
   helper?: string;
   error?: string;
 }
@@ -109,23 +109,23 @@ const SearchableSelect = ({
 };
 
 export interface ReassignPayload {
-  assignment_id: number;
-  new_doctor_id: number;
+  assignmentId: string;
+  newDoctorId: string;
   reason: string;
-  effective_date: string;
+  effectiveDate: string;
 }
 
 const reassignSchema = z.object({
-  new_doctor_id: z.number().int().positive({ message: 'Select a new doctor' }),
+  newDoctorId: z.string().min(1, 'Select a new doctor'),
   reason: z.string().min(10, 'Provide a reassignment reason'),
-  effective_date: z.string().optional(),
+  effectiveDate: z.string().optional(),
 });
 
 interface ReassignDoctorModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  assignment: AssignmentRecord | null;
-  doctors: DoctorAccount[]; 
+  assignment: DoctorAssignment | null;
+  doctors: DoctorAccount[];
   onConfirm: (payload: ReassignPayload) => void;
 }
 
@@ -135,20 +135,16 @@ export const ReassignDoctorModal = ({ open, onOpenChange, assignment, doctors, o
     handleSubmit,
     register,
     reset,
-    watch,
     formState: { errors, isSubmitting },
   } = useForm<z.infer<typeof reassignSchema>>({
     resolver: zodResolver(reassignSchema),
     defaultValues: {
-      new_doctor_id: 0,
+      newDoctorId: '',
       reason: '',
-      effective_date: '',
+      effectiveDate: '',
     },
     mode: 'onTouched',
   });
-
-  const newDoctorId = watch('new_doctor_id');
-  const selectedDoctor = doctors.find((doctor: any) => doctor.doctor_id === newDoctorId) ?? null;
 
   useEffect(() => {
     if (!open) {
@@ -158,12 +154,11 @@ export const ReassignDoctorModal = ({ open, onOpenChange, assignment, doctors, o
 
   const onSubmit = async (values: z.infer<typeof reassignSchema>): Promise<void> => {
     if (!assignment) return;
-    await new Promise((resolve) => setTimeout(resolve, 400));
     onConfirm({
-      assignment_id: assignment.assignment_id,
-      new_doctor_id: values.new_doctor_id,
+      assignmentId: assignment.assignmentId,
+      newDoctorId: values.newDoctorId,
       reason: values.reason,
-      effective_date: values.effective_date ?? '',
+      effectiveDate: values.effectiveDate ?? '',
     });
     onOpenChange(false);
   };
@@ -184,28 +179,28 @@ export const ReassignDoctorModal = ({ open, onOpenChange, assignment, doctors, o
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-6 px-6 pb-6 pt-2">
           <div className="rounded-3xl border border-slate-200 bg-slate-50 p-5">
             <p className="text-xs uppercase tracking-[0.24em] text-slate-400">Current physician</p>
-            <p className="mt-2 text-base font-semibold text-slate-900">{assignment.doctor_name}</p>
-            <p className="text-sm text-slate-500">{assignment.specialization}</p>
+            <p className="mt-2 text-base font-semibold text-slate-900">{assignment.doctorName}</p>
+            <p className="text-sm text-slate-500">{assignment.doctorSpecialization}</p>
           </div>
 
           <Controller
             control={control}
-            name="new_doctor_id"
+            name="newDoctorId"
             render={({ field }) => (
               <SearchableSelect
                 label="New Doctor"
                 placeholder="Search doctor"
                 options={doctors
-                  .filter((doctor: any) => doctor.doctor_id !== assignment.doctor_id)
-                  .map((doctor: any) => ({
-                    id: doctor.doctor_id,
-                    title: `${doctor.doctor_name} · ${doctor.specialization}`,
-                    subtitle: `${doctor.current_load} active patients`,
-                    meta: doctor.is_active ? 'Available' : 'Inactive',
+                  .filter((doctor) => doctor.doctorId !== assignment.doctorId)
+                  .map((doctor) => ({
+                    id: doctor.doctorId,
+                    title: `${doctor.fullName} · ${doctor.specialization}`,
+                    subtitle: doctor.specialization,
+                    meta: doctor.isActive ? 'Available' : 'Inactive',
                   }))}
                 selectedId={field.value}
                 onSelect={field.onChange}
-                error={errors.new_doctor_id?.message}
+                error={errors.newDoctorId?.message}
               />
             )}
           />
@@ -217,9 +212,9 @@ export const ReassignDoctorModal = ({ open, onOpenChange, assignment, doctors, o
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="effective_date">Effective Date</Label>
-            <Input id="effective_date" type="date" {...register('effective_date')} />
-            {errors.effective_date && <p className="text-xs text-red-500">{errors.effective_date.message}</p>}
+            <Label htmlFor="effectiveDate">Effective Date</Label>
+            <Input id="effectiveDate" type="date" {...register('effectiveDate')} />
+            {errors.effectiveDate && <p className="text-xs text-red-500">{errors.effectiveDate.message}</p>}
           </div>
 
           <div className="flex flex-col items-stretch gap-3 sm:flex-row sm:justify-end">
@@ -239,7 +234,7 @@ export const ReassignDoctorModal = ({ open, onOpenChange, assignment, doctors, o
 interface RemoveAssignmentDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  assignment: AssignmentRecord | null;
+  assignment: DoctorAssignment | null;
   onRemove: () => void;
 }
 
@@ -255,9 +250,9 @@ export const RemoveAssignmentDialog = ({ open, onOpenChange, assignment, onRemov
       <div className="space-y-4 px-6 pb-6 pt-2">
         <div className="rounded-3xl border border-slate-200 bg-slate-50 p-5 text-sm text-slate-600">
           <p className="font-semibold text-slate-900">Assignment</p>
-          <p>{assignment ? `ASM-${assignment.assignment_id}` : 'No assignment selected.'}</p>
-          <p className="mt-3">Patient: {assignment?.patient_name}</p>
-          <p>Doctor: {assignment?.doctor_name}</p>
+          <p>{assignment ? assignment.assignmentId.slice(0, 8).toUpperCase() : 'No assignment selected.'}</p>
+          <p className="mt-3">Patient: {assignment?.patientName}</p>
+          <p>Doctor: {assignment?.doctorName}</p>
         </div>
         <div className="rounded-3xl border border-red-200 bg-red-50 p-4 text-sm text-red-700">
           <p className="font-semibold">Warning</p>
@@ -283,7 +278,7 @@ export const ViewAssignmentDrawer = ({
 }: {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  assignment: AssignmentRecord | null;
+  assignment: DoctorAssignment | null;
 }): ReactElement => (
   <Sheet open={open} onOpenChange={onOpenChange}>
     <SheetContent side="right" className="max-w-xl">
@@ -297,9 +292,9 @@ export const ViewAssignmentDrawer = ({
             <div className="rounded-3xl border border-slate-200 bg-slate-50 p-5">
               <p className="text-xs uppercase tracking-[0.24em] text-slate-400">Assignment</p>
               <div className="mt-4 flex flex-col gap-2 text-sm text-slate-700">
-                <p><span className="font-semibold text-slate-900">ID:</span> ASM-{assignment.assignment_id}</p>
-                <p><span className="font-semibold text-slate-900">Date assigned:</span> {new Date(assignment.assigned_date).toLocaleDateString()}</p>
-                <p><span className="font-semibold text-slate-900">Status:</span> <span className={`inline-flex rounded-full px-3 py-1 text-xs font-semibold ${assignment.is_active ? 'bg-emerald-100 text-emerald-700' : 'bg-slate-100 text-slate-700'}`}>{assignment.is_active ? 'Active' : 'Inactive'}</span></p>
+                <p><span className="font-semibold text-slate-900">ID:</span> {assignment.assignmentId.slice(0, 8).toUpperCase()}</p>
+                <p><span className="font-semibold text-slate-900">Date assigned:</span> {new Date(assignment.assignedDate).toLocaleDateString()}</p>
+                <p><span className="font-semibold text-slate-900">Status:</span> <span className={`inline-flex rounded-full px-3 py-1 text-xs font-semibold ${assignment.isActive ? 'bg-emerald-100 text-emerald-700' : 'bg-slate-100 text-slate-700'}`}>{assignment.isActive ? 'Active' : 'Inactive'}</span></p>
               </div>
             </div>
 
@@ -308,13 +303,12 @@ export const ViewAssignmentDrawer = ({
                 <div className="flex items-center justify-between gap-3">
                   <div>
                     <p className="text-xs uppercase tracking-[0.24em] text-slate-400">Patient Info</p>
-                    <p className="mt-2 text-lg font-semibold text-slate-900">{assignment.patient_name}</p>
+                    <p className="mt-2 text-lg font-semibold text-slate-900">{assignment.patientName}</p>
                   </div>
-                  <Badge variant="secondary" className="rounded-full px-3 py-1 text-xs uppercase">{assignment.patient_status}</Badge>
+                  <Badge variant="secondary" className="rounded-full px-3 py-1 text-xs uppercase">{assignment.patientStatus}</Badge>
                 </div>
                 <div className="mt-4 grid gap-3 text-sm text-slate-600">
-                  <p><span className="font-semibold text-slate-900">Patient ID:</span> {assignment.patient_id}</p>
-                  <p><span className="font-semibold text-slate-900">Room/Ward:</span> {assignment.patient_room}</p>
+                  <p><span className="font-semibold text-slate-900">Patient ID:</span> {assignment.patientId}</p>
                 </div>
               </div>
 
@@ -322,16 +316,12 @@ export const ViewAssignmentDrawer = ({
                 <div className="flex items-center justify-between gap-3">
                   <div>
                     <p className="text-xs uppercase tracking-[0.24em] text-slate-400">Doctor Info</p>
-                    <p className="mt-2 text-lg font-semibold text-slate-900">{assignment.doctor_name}</p>
+                    <p className="mt-2 text-lg font-semibold text-slate-900">{assignment.doctorName}</p>
                   </div>
-                  <Badge variant={assignment.doctor_is_active ? 'success' : 'secondary'} className="rounded-full px-3 py-1 text-xs uppercase">
-                    {assignment.doctor_is_active ? 'Available' : 'Inactive'}
-                  </Badge>
                 </div>
                 <div className="mt-4 grid gap-3 text-sm text-slate-600">
-                  <p><span className="font-semibold text-slate-900">Doctor ID:</span> {assignment.doctor_id}</p>
-                  <p><span className="font-semibold text-slate-900">Specialization:</span> {assignment.specialization}</p>
-                  <p><span className="font-semibold text-slate-900">Active patients:</span> {assignment.doctor_active_patients}</p>
+                  <p><span className="font-semibold text-slate-900">Doctor ID:</span> {assignment.doctorId}</p>
+                  <p><span className="font-semibold text-slate-900">Specialization:</span> {assignment.doctorSpecialization}</p>
                 </div>
               </div>
             </div>

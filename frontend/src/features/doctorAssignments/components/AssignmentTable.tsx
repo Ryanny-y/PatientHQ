@@ -14,16 +14,16 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import type { AssignmentRecord } from "@/features/doctorAssignments/types/assignment";
+import type { DoctorAssignment } from "@/features/doctorAssignments/types/assignment";
 
 interface AssignmentTableProps {
-  assignments: AssignmentRecord[];
+  assignments: DoctorAssignment[];
   role: "Admin" | "Doctor" | "Nurse";
-  onViewAssignment: (assignment: AssignmentRecord) => void;
-  onReassignAssignment: (assignment: AssignmentRecord) => void;
-  onRemoveAssignment: (assignment: AssignmentRecord) => void;
-  onViewPatient: (assignment: AssignmentRecord) => void;
-  onViewDoctor: (assignment: AssignmentRecord) => void;
+  onViewAssignment: (assignment: DoctorAssignment) => void;
+  onReassignAssignment: (assignment: DoctorAssignment) => void;
+  onRemoveAssignment: (assignment: DoctorAssignment) => void;
+  onViewPatient: (assignment: DoctorAssignment) => void;
+  onViewDoctor: (assignment: DoctorAssignment) => void;
 }
 
 const statusClasses: Record<string, string> = {
@@ -60,22 +60,22 @@ const AssignmentTable = ({
       </TableHeader>
       <TableBody>
         {assignments.map((assignment) => (
-          <TableRow key={assignment.assignment_id}>
+          <TableRow key={assignment.assignmentId}>
             <TableCell className="font-medium text-slate-900">
-              ASM-{assignment.assignment_id}
+              {assignment.assignmentId.slice(0, 8).toUpperCase()}
             </TableCell>
-            <TableCell>{assignment.patient_name}</TableCell>
+            <TableCell>{assignment.patientName}</TableCell>
             <TableCell>
               <span
-                className={`inline-flex rounded-full px-3 py-1 text-xs font-semibold ${statusClasses[assignment.patient_status] ?? "bg-slate-100 text-slate-700"}`}
+                className={`inline-flex rounded-full px-3 py-1 text-xs font-semibold ${statusClasses[assignment.patientStatus] ?? "bg-slate-100 text-slate-700"}`}
               >
-                {assignment.patient_status}
+                {assignment.patientStatus}
               </span>
             </TableCell>
-            <TableCell>{assignment.doctor_name}</TableCell>
-            <TableCell>{assignment.specialization}</TableCell>
+            <TableCell>{assignment.doctorName}</TableCell>
+            <TableCell>{assignment.doctorSpecialization}</TableCell>
             <TableCell>
-              {new Date(assignment.assigned_date).toLocaleDateString("en-US", {
+              {new Date(assignment.assignedDate).toLocaleDateString("en-US", {
                 month: "short",
                 day: "numeric",
                 year: "numeric",
@@ -83,9 +83,9 @@ const AssignmentTable = ({
             </TableCell>
             <TableCell>
               <span
-                className={`inline-flex rounded-full px-3 py-1 text-xs font-semibold ${statusClasses[assignment.is_active ? "Active" : "Inactive"]}`}
+                className={`inline-flex rounded-full px-3 py-1 text-xs font-semibold ${statusClasses[assignment.isActive ? "Active" : "Inactive"]}`}
               >
-                {assignment.is_active ? "Active" : "Inactive"}
+                {assignment.isActive ? "Active" : "Inactive"}
               </span>
             </TableCell>
             <TableCell className="sticky right-0 bg-white">
