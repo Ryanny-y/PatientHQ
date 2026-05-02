@@ -41,6 +41,7 @@ public class DoctorAssignmentServiceImpl implements DoctorAssignmentService {
             throw new PatientNotActiveException(patient.getFullName());
         }
 
+
         // Validate doctor exists and is active
         Doctor doctor = doctorRepository.findById(request.getDoctorId())
                 .orElseThrow(() -> new DoctorNotFoundException(request.getDoctorId()));

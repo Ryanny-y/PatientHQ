@@ -66,17 +66,17 @@ public class PatientController {
         com.patienthq.backend.features.patient.model.PatientStatus patientStatus = 
             (status == null) ? null : com.patienthq.backend.features.patient.model.PatientStatus.valueOf(status.toUpperCase());
         
-        Page<Patient> patients = patientService.getAllPatients(search, patientStatus, gender, bloodType, assigned, pageable);
+        Page<PatientDto> patientsDto = patientService.getAllPatients(search, patientStatus, gender, bloodType, assigned, pageable);
 
-        List<PatientDto> patientsDto = patients.map(patientMapper::toDto).stream().toList();
+//        List<PatientDto> patientsDto = patients.map(patientMapper::toDto).stream().toList();
         PageResponse<PatientDto> pageResponse = PageResponse.<PatientDto>builder()
-                .content(patientsDto)
-                .page(patients.getNumber())
-                .size(patients.getSize())
-                .totalElements(patients.getTotalElements())
-                .totalPages(patients.getTotalPages())
-                .first(patients.isFirst())
-                .last(patients.isLast())
+                .content(patientsDto.getContent())
+                .page(patientsDto.getNumber())
+                .size(patientsDto.getSize())
+                .totalElements(patientsDto.getTotalElements())
+                .totalPages(patientsDto.getTotalPages())
+                .first(patientsDto.isFirst())
+                .last(patientsDto.isLast())
                 .build();
 
         return ResponseEntity.ok(

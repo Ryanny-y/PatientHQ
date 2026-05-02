@@ -32,6 +32,8 @@ public class PatientDto {
     private String emergencyContactName;
     private String emergencyContactNumber;
 
+    private String assignedDoctor;
+
     private PatientStatus status;
     private LocalDateTime createdAt;
 }

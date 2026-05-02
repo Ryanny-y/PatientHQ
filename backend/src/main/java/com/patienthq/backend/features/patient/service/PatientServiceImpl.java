@@ -1,5 +1,7 @@
 package com.patienthq.backend.features.patient.service;
 
+import com.patienthq.backend.features.patient.PatientMapper;
+import com.patienthq.backend.features.patient.dto.PatientDto;
 import com.patienthq.backend.features.patient.dto.PatientMetadataDto;
 import com.patienthq.backend.features.patient.dto.request.CreatePatientRequest;
 import com.patienthq.backend.features.patient.dto.request.UpdatePatientRequest;
@@ -24,6 +26,7 @@ import java.util.UUID;
 public class PatientServiceImpl implements PatientService {
 
     private final PatientRepository patientRepository;
+    private final PatientMapper patientMapper;
 
     @Override
     @Transactional
@@ -48,7 +51,7 @@ public class PatientServiceImpl implements PatientService {
 
     @Override
     @Transactional(readOnly = true)
-    public Page<Patient> getAllPatients(String search, PatientStatus status, String gender, String bloodType, Boolean assigned, Pageable pageable) {
+    public Page<PatientDto> getAllPatients(String search, PatientStatus status, String gender, String bloodType, Boolean assigned, Pageable pageable) {
         String formattedSearch = (search == null) ? null : "%" + search.toLowerCase() + "%";
         String formattedGender = (gender == null || gender.isBlank())
                 ? null
@@ -57,7 +60,21 @@ public class PatientServiceImpl implements PatientService {
         String formattedBloodType = (bloodType == null || bloodType.isBlank())
                 ? null
                 : bloodType.trim().toLowerCase();
-        return patientRepository.findAllPatients(formattedSearch, status, formattedGender, formattedBloodType, assigned, pageable);
+        Page<Object[]> result = patientRepository.findAllPatientsWithDoctor(
+                formattedSearch, status, formattedGender, formattedBloodType, assigned, pageable
+        );
+
+        Page<PatientDto> dtoPage = result.map(obj -> {
+            Patient patient = (Patient) obj[0];
+            String doctorName = (String) obj[1];
+
+            PatientDto dto = patientMapper.toDto(patient);
+            dto.setAssignedDoctor(doctorName);
+
+            return dto;
+        });
+
+        return dtoPage;
     }
 
     @Override

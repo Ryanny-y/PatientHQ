@@ -1,5 +1,6 @@
 package com.patienthq.backend.features.patient.service;
 
+import com.patienthq.backend.features.patient.dto.PatientDto;
 import com.patienthq.backend.features.patient.dto.PatientMetadataDto;
 import com.patienthq.backend.features.patient.dto.request.CreatePatientRequest;
 import com.patienthq.backend.features.patient.dto.request.UpdatePatientRequest;
@@ -14,7 +15,7 @@ public interface PatientService {
 
     Patient createPatient(CreatePatientRequest request);
 
-    Page<Patient> getAllPatients(String search, PatientStatus status, String gender, String bloodType, Boolean assigned, Pageable pageable);
+    Page<PatientDto> getAllPatients(String search, PatientStatus status, String gender, String bloodType, Boolean assigned, Pageable pageable);
 
     PatientMetadataDto getPatientMetadata();
 

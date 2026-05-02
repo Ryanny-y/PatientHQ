@@ -16,27 +16,24 @@ import java.util.UUID;
 @Repository
 public interface PatientRepository extends JpaRepository<Patient, UUID>, PagingAndSortingRepository<Patient, UUID> {
     @Query("""
-        SELECT p FROM Patient p
-        WHERE (:search IS NULL OR
-               LOWER(p.fullName) LIKE :search OR
-               LOWER(p.email) LIKE :search OR
-               LOWER(p.contactNumber) LIKE :search)
-        AND (:status IS NULL OR p.status = :status)
-        AND (:gender IS NULL OR LOWER(p.gender) = :gender)
-        AND (:bloodType IS NULL OR LOWER(p.bloodType) = :bloodType)
-        AND (
-            :assigned IS NULL
-            OR (:assigned = true AND EXISTS (
-                SELECT da FROM DoctorAssignment da
-                WHERE da.patient = p AND da.isActive = true
-            ))
-            OR (:assigned = false AND NOT EXISTS (
-                SELECT da FROM DoctorAssignment da
-                WHERE da.patient = p AND da.isActive = true
-            ))
-      )
-    """)
-    Page<Patient> findAllPatients(
+                SELECT p, d.fullName FROM Patient p
+                LEFT JOIN DoctorAssignment da 
+                    ON da.patient = p AND da.isActive = true
+                LEFT JOIN da.doctor d
+                WHERE (:search IS NULL OR
+                       LOWER(p.fullName) LIKE :search OR
+                       LOWER(p.email) LIKE :search OR
+                       LOWER(p.contactNumber) LIKE :search)
+                AND (:status IS NULL OR p.status = :status)
+                AND (:gender IS NULL OR LOWER(p.gender) = :gender)
+                AND (:bloodType IS NULL OR LOWER(p.bloodType) = :bloodType)
+                AND (
+                    :assigned IS NULL
+                    OR (:assigned = true AND da IS NOT NULL)
+                    OR (:assigned = false AND da IS NULL)
+                )
+            """)
+    Page<Object[]> findAllPatientsWithDoctor(
             @Param("search") String search,
             @Param("status") PatientStatus status,
             @Param("gender") String gender,
