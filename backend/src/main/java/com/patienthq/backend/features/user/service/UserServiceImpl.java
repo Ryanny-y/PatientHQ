@@ -16,6 +16,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -32,12 +33,12 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User getUserById(Integer userId) {
+    public User getUserById(UUID userId) {
         return findUserById(userId);
     }
 
     @Override
-    public User updateUser(Integer userId, UpdateUserRequest request) {
+    public User updateUser(UUID userId, UpdateUserRequest request) {
         User user = findUserById(userId);
 
         Role role = roleRepository.findByRoleName(request.getRoleName())
@@ -58,7 +59,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void deleteUser(Integer userId) {
+    public void deleteUser(UUID userId) {
         userRepository.delete(findUserById(userId));
     }
 
@@ -68,7 +69,7 @@ public class UserServiceImpl implements UserService {
                 .orElseThrow(() -> new UserNotFoundException("User not found with username: " + username));
     }
 
-    private User findUserById(Integer id) {
+    private User findUserById(UUID id) {
         return userRepository.findById(id)
                 .orElseThrow(() -> new UserNotFoundException("User not found with ID: " + id));
     }

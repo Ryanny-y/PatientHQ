@@ -13,6 +13,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/v1/users")
@@ -30,7 +31,7 @@ public class UserController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<ApiResponse<UserDto>> getUserById(@PathVariable Integer id) {
+    public ResponseEntity<ApiResponse<UserDto>> getUserById(@PathVariable UUID id) {
         User user = userService.getUserById(id);
         UserDto userDto = userMapper.toDto(user);
         return ResponseEntity.ok(ApiResponse.success("User retrieved successfully", userDto));
@@ -38,7 +39,7 @@ public class UserController {
 
     @PutMapping("/{id}")
     public ResponseEntity<ApiResponse<UserDto>> updateUser(
-            @PathVariable Integer id,
+            @PathVariable UUID id,
             @Valid @RequestBody UpdateUserRequest request) {
         User user = userService.updateUser(id, request);
         UserDto userDto = userMapper.toDto(user);
@@ -46,7 +47,7 @@ public class UserController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<ApiResponse<Void>> deleteUser(@PathVariable Integer id) {
+    public ResponseEntity<ApiResponse<Void>> deleteUser(@PathVariable UUID id) {
         userService.deleteUser(id);
         return ResponseEntity.ok(ApiResponse.success("User deleted successfully", null));
     }
