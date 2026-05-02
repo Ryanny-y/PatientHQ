@@ -10,13 +10,17 @@ export const doctorAssignmentService = {
   getAssignments: (params: {
     page?: number;
     size?: number;
-    activeOnly?: boolean;
+    search?: string;
+    isActive?: boolean;
+    patientStatus?: string;
     sort?: string;
   }) => {
     const query = new URLSearchParams();
     if (params.page !== undefined) query.append('page', String(params.page));
     if (params.size !== undefined) query.append('size', String(params.size));
-    if (params.activeOnly !== undefined) query.append('activeOnly', String(params.activeOnly));
+    if (params.search) query.append('search', params.search);
+    if (params.isActive !== undefined) query.append('isActive', String(params.isActive));
+    if (params.patientStatus) query.append('patientStatus', params.patientStatus);
     if (params.sort) query.append('sort', params.sort);
 
     return fetchWithAuth<ApiResponse<PageResponse<DoctorAssignment>>>(

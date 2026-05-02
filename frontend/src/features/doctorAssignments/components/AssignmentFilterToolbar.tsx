@@ -10,8 +10,6 @@ interface AssignmentFilterToolbarProps {
   searchQuery: string;
   statusFilter: assignmentStatusFilter;
   onSearchChange: (value: string) => void;
-  specializationFilter: string;
-  onSpecializationChange: (value: string) => void;
   patientStatusFilter: string;
   onPatientStatusChange: (value: string) => void;
   sortBy: assignmentSortOption;
@@ -24,8 +22,6 @@ const AssignmentFilterToolbar = ({
   searchQuery,
   statusFilter,
   onSearchChange,
-  specializationFilter,
-  onSpecializationChange,
   patientStatusFilter,
   onPatientStatusChange,
   sortBy,
@@ -34,7 +30,7 @@ const AssignmentFilterToolbar = ({
   onRefresh,
 }: AssignmentFilterToolbarProps): ReactElement => (
   <div className="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm">
-    <div className="grid gap-4 xl:grid-cols-[1.6fr_1fr_1fr_1fr]">
+    <div className="grid gap-4 xl:grid-cols-[1.6fr_auto_1fr_1fr]">
       <div className="space-y-2">
         <Label>Search assignments</Label>
         <div className="relative">
@@ -48,7 +44,7 @@ const AssignmentFilterToolbar = ({
         </div>
       </div>
 
-      <div className="grid gap-4 sm:grid-cols-2">
+      <div className="grid gap-4">
         <div>
           <Label>Assignment status</Label>
           <Select value={statusFilter} onValueChange={(v) => onStatusFilterChange(v as assignmentStatusFilter)}>
@@ -59,22 +55,6 @@ const AssignmentFilterToolbar = ({
               <SelectItem value="all">All</SelectItem>
               <SelectItem value="active">Active</SelectItem>
               <SelectItem value="inactive">Inactive</SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
-        <div>
-          <Label>Specialization</Label>
-          <Select value={specializationFilter} onValueChange={onSpecializationChange}>
-            <SelectTrigger>
-              <SelectValue placeholder="All" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="All">All</SelectItem>
-              <SelectItem value="Cardiology">Cardiology</SelectItem>
-              <SelectItem value="Pulmonology">Pulmonology</SelectItem>
-              <SelectItem value="Neurology">Neurology</SelectItem>
-              <SelectItem value="Orthopedics">Orthopedics</SelectItem>
-              <SelectItem value="Emergency Medicine">Emergency Medicine</SelectItem>
             </SelectContent>
           </Select>
         </div>
@@ -91,7 +71,7 @@ const AssignmentFilterToolbar = ({
               <SelectItem value="all">All</SelectItem>
               <SelectItem value="ACTIVE">Active</SelectItem>
               <SelectItem value="ADMITTED">Admitted</SelectItem>
-              <SelectItem value="CRITICAL">Critical</SelectItem>
+              <SelectItem value="DISCHARGED">Discharged</SelectItem>
               <SelectItem value="INACTIVE">Inactive</SelectItem>
             </SelectContent>
           </Select>

@@ -4,7 +4,9 @@ import { doctorAssignmentService } from '../service/doctorAssignmentService';
 export const useDoctorAssignmentQuery = (params: {
   page: number;
   size: number;
-  activeOnly?: boolean;
+  search?: string;
+  isActive?: boolean;
+  patientStatus?: string;
   sort?: string;
 }) => {
   return useQuery({

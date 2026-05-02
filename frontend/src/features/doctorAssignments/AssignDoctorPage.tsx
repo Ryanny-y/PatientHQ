@@ -25,8 +25,6 @@ const AssignDoctorPage = (): ReactElement => {
     setSearchQuery,
     statusFilter,
     setStatusFilter,
-    specializationFilter,
-    setSpecializationFilter,
     patientStatusFilter,
     setPatientStatusFilter,
     sortBy,
@@ -89,8 +87,6 @@ const AssignDoctorPage = (): ReactElement => {
         onSearchChange={setSearchQuery}
         statusFilter={statusFilter}
         onStatusFilterChange={setStatusFilter}
-        specializationFilter={specializationFilter}
-        onSpecializationChange={setSpecializationFilter}
         patientStatusFilter={patientStatusFilter}
         onPatientStatusChange={setPatientStatusFilter}
         sortBy={sortBy}
