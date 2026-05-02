@@ -4,18 +4,19 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import type { assignmentStatusFilter, assignmentSortOption } from '../types/assignment';
 
 interface AssignmentFilterToolbarProps {
   searchQuery: string;
-  statusFilter: string;
+  statusFilter: assignmentStatusFilter;
   onSearchChange: (value: string) => void;
   specializationFilter: string;
   onSpecializationChange: (value: string) => void;
   patientStatusFilter: string;
   onPatientStatusChange: (value: string) => void;
-  sortBy: string;
-  onSortByChange: (value: string) => void;
-  onStatusFilterChange: (value: string) => void;
+  sortBy: assignmentSortOption;
+  onSortByChange: (value: assignmentSortOption) => void;
+  onStatusFilterChange: (value: assignmentStatusFilter) => void;
   onRefresh: () => void;
 }
 
@@ -50,7 +51,7 @@ const AssignmentFilterToolbar = ({
       <div className="grid gap-4 sm:grid-cols-2">
         <div>
           <Label>Assignment status</Label>
-          <Select value={statusFilter} onValueChange={onStatusFilterChange}>
+          <Select value={statusFilter} onValueChange={(v) => onStatusFilterChange(v as assignmentStatusFilter)}>
             <SelectTrigger>
               <SelectValue placeholder={statusFilter === 'all' ? 'All statuses' : statusFilter} />
             </SelectTrigger>
@@ -97,7 +98,7 @@ const AssignmentFilterToolbar = ({
         </div>
         <div>
           <Label>Sort</Label>
-          <Select value={sortBy} onValueChange={onSortByChange}>
+          <Select value={sortBy} onValueChange={(v) => onSortByChange(v as assignmentSortOption)}>
             <SelectTrigger>
               <SelectValue placeholder="Newest" />
             </SelectTrigger>
