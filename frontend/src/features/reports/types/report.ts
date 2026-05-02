@@ -1,13 +1,32 @@
 export type UserRole = 'admin' | 'doctor' | 'nurse';
 
 export interface ReportRecord {
-  report_id: number;
-  patient_id?: number;
+  report_id: string | number;
+  patient_id?: string | number;
   patient_name?: string;
   generated_by: string;
-  report_type: 'Patient Summary' | 'Medical Summary' | 'Appointment Summary' | 'Admission Report' | 'Operational Report';
+  generated_by_id?: string;
+  report_type: string;
   summary: string;
   created_at: string;
+}
+
+export interface ReportDto {
+  reportId: string;
+  patientId: string;
+  patientName?: string;
+  generatedBy: string;
+  generatedByUsername?: string;
+  reportType: string;
+  summary?: string;
+  createdAt: string;
+}
+
+export interface GenerateReportRequest {
+  patientId: string;
+  generatedBy: string;
+  reportType: string;
+  summary?: string;
 }
 
 export interface ReportFilterOptions {
@@ -40,10 +59,9 @@ export interface PatientSummary {
 
 export interface GenerateReportForm {
   report_type: string;
-  patient_id?: number;
+  patient_id: string;
   date_from?: string;
   date_to?: string;
-  include_notes: boolean;
-  include_history: boolean;
   output_format: 'PDF' | 'CSV' | 'Print Preview';
+  summary?: string;
 }

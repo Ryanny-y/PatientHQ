@@ -3,7 +3,6 @@ import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Checkbox } from '@/components/ui/checkbox';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
@@ -12,12 +11,11 @@ import type { GenerateReportForm } from '../types/report';
 
 const generateReportSchema = z.object({
   report_type: z.string().min(1, 'Report type is required'),
-  patient_id: z.number().optional(),
+  patient_id: z.string().min(1, 'Patient is required'),
   date_from: z.string().optional(),
   date_to: z.string().optional(),
-  include_notes: z.boolean(),
-  include_history: z.boolean(),
   output_format: z.enum(['PDF', 'CSV', 'Print Preview']),
+  summary: z.string().optional(),
 });
 
 type GenerateReportValues = z.infer<typeof generateReportSchema>;
@@ -25,42 +23,41 @@ type GenerateReportValues = z.infer<typeof generateReportSchema>;
 interface GenerateReportModalProps {
   open: boolean;
   onClose: () => void;
-  onSubmit: (data: GenerateReportForm) => void;
-  patients: Array<{ id: number; full_name: string }>;
+  onSubmit: (data: GenerateReportForm) => Promise<void> | void;
+  patients: Array<{ id: string; full_name: string }>;
+  isSubmitting?: boolean;
 }
 
-export const GenerateReportModal = ({ open, onClose, onSubmit, patients }: GenerateReportModalProps): ReactElement => {
+export const GenerateReportModal = ({ open, onClose, onSubmit, patients, isSubmitting = false }: GenerateReportModalProps): ReactElement => {
   const {
     register,
     handleSubmit,
     watch,
     setValue,
     reset,
-    formState: { errors, isSubmitting },
+    formState: { errors },
   } = useForm<GenerateReportValues>({
     resolver: zodResolver(generateReportSchema),
     defaultValues: {
       report_type: '',
-      patient_id: undefined,
+      patient_id: '',
       date_from: '',
       date_to: '',
-      include_notes: true,
-      include_history: true,
       output_format: 'PDF',
+      summary: '',
     },
   });
 
   const selectedPatientId = watch('patient_id');
 
-  const onFormSubmit = (values: GenerateReportValues) => {
-    onSubmit({
+  const onFormSubmit = async (values: GenerateReportValues) => {
+    await onSubmit({
       report_type: values.report_type,
       patient_id: values.patient_id,
       date_from: values.date_from,
       date_to: values.date_to,
-      include_notes: values.include_notes,
-      include_history: values.include_history,
       output_format: values.output_format,
+      summary: values.summary,
     });
     reset();
     onClose();
@@ -102,23 +99,23 @@ export const GenerateReportModal = ({ open, onClose, onSubmit, patients }: Gener
             </div>
 
             <div>
-              <Label className="text-sm font-medium text-slate-700 mb-2 block">Select Patient</Label>
+              <Label className="text-sm font-medium text-slate-700 mb-2 block">Select Patient *</Label>
               <Select
-                value={selectedPatientId ? selectedPatientId.toString() : 'none'}
-                onValueChange={(value) => setValue('patient_id', value === 'none' ? undefined : Number(value))}
+                value={selectedPatientId}
+                onValueChange={(value) => setValue('patient_id', value, { shouldValidate: true })}
               >
                 <SelectTrigger>
-                  <SelectValue placeholder="Optional patient" />
+                  <SelectValue placeholder="Choose patient" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="none">None</SelectItem>
                   {patients.map((patient) => (
-                    <SelectItem key={patient.id} value={patient.id.toString()}>
+                    <SelectItem key={patient.id} value={patient.id}>
                       {patient.full_name}
                     </SelectItem>
                   ))}
                 </SelectContent>
               </Select>
+              {errors.patient_id && <p className="text-sm text-red-600 mt-1">{errors.patient_id.message}</p>}
             </div>
           </div>
 
@@ -133,19 +130,9 @@ export const GenerateReportModal = ({ open, onClose, onSubmit, patients }: Gener
             </div>
           </div>
 
-          <div className="grid gap-4 md:grid-cols-2">
-            <div className="flex items-center gap-2">
-              <Checkbox id="include_notes" {...register('include_notes')} />
-              <Label htmlFor="include_notes" className="text-sm font-medium text-slate-700">
-                Include Notes
-              </Label>
-            </div>
-            <div className="flex items-center gap-2">
-              <Checkbox id="include_history" {...register('include_history')} />
-              <Label htmlFor="include_history" className="text-sm font-medium text-slate-700">
-                Include History
-              </Label>
-            </div>
+          <div>
+            <Label className="text-sm font-medium text-slate-700 mb-2 block">Summary</Label>
+            <Input placeholder="Optional report summary" {...register('summary')} />
           </div>
 
           <div>

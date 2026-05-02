@@ -12,7 +12,8 @@ import { refreshToken as refreshTokenService } from "../service/authService";
 
 type UserRole = "ADMIN" | "DOCTOR" | "NURSE";
 
-interface AuthUser {
+export interface AuthUser {
+  id: string;
   accessToken: string;
   username: string;
   role: UserRole;

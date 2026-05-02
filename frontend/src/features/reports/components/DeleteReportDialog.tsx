@@ -7,7 +7,7 @@ interface DeleteReportDialogProps {
   open: boolean;
   report: ReportRecord | null;
   onClose: () => void;
-  onConfirm: (reportId: number) => void;
+  onConfirm: (reportId: string | number) => void;
 }
 
 export const DeleteReportDialog = ({ open, report, onClose, onConfirm }: DeleteReportDialogProps): ReactElement => {

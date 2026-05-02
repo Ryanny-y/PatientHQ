@@ -1,13 +1,6 @@
 import { API_URL } from "../config/env";
-import { setGlobalAccessToken } from "../context/AuthContext";
+import { setGlobalAccessToken, type AuthUser } from "../context/AuthContext";
 import type { ApiResponse } from "../types/api";
-
-interface AuthUser {
-  accessToken: string;
-  username: string;
-  role: "ADMIN" | "DOCTOR" | "NURSE";
-  permissions: string[];
-}
 
 type AuthResponseType = ApiResponse<AuthUser>;
 
