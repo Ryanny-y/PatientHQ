@@ -12,16 +12,14 @@ import {
   Edit,
   Printer,
   FileText,
-  Archive,
   User,
 } from "lucide-react";
 import { type ReactElement } from "react";
-import type { MedicalRecord, UserRole } from "../types/medicalRecord";
+import type { MedicalRecord } from "../types/medicalRecord";
 import { StatusBadge } from "./StatusBadge";
 
 interface MedicalRecordCardListMobileProps {
   records: MedicalRecord[];
-  userRole: UserRole;
   onViewRecord: (record: MedicalRecord) => void;
   onEditRecord: (record: MedicalRecord) => void;
   onPrintRecord: (record: MedicalRecord) => void;
@@ -31,16 +29,11 @@ interface MedicalRecordCardListMobileProps {
 
 export const MedicalRecordCardListMobile = ({
   records,
-  userRole,
   onViewRecord,
   onEditRecord,
   onPrintRecord,
   onGenerateReport,
-  onArchiveRecord,
 }: MedicalRecordCardListMobileProps): ReactElement => {
-  const canEdit = userRole === "admin" || userRole === "doctor";
-  const canArchive = userRole === "admin";
-
   const truncateText = (text: string, maxLength: number = 80) => {
     return text.length > maxLength
       ? `${text.substring(0, maxLength)}...`
@@ -51,21 +44,21 @@ export const MedicalRecordCardListMobile = ({
     <div className="space-y-4">
       {records.map((record) => (
         <Card
-          key={record.record_id}
+          key={record.recordId}
           className="rounded-xl border-slate-200 shadow-sm"
         >
           <CardHeader className="pb-3">
             <div className="flex items-start justify-between">
               <div>
                 <div className="font-semibold text-slate-900">
-                  Record #{record.record_id}
+                  Record #{record.recordId}
                 </div>
                 <div className="text-sm text-slate-500 mt-1">
-                  {new Date(record.created_at).toLocaleDateString()}
+                  {new Date(record.createdAt).toLocaleDateString()}
                 </div>
               </div>
               <div className="flex items-center gap-2">
-                <StatusBadge status={record.patient_status || "Active"} />
+                <StatusBadge status={record.patientStatus || "Active"} />
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
                     <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
@@ -77,12 +70,10 @@ export const MedicalRecordCardListMobile = ({
                       <Eye className="mr-2 h-4 w-4" />
                       View Record
                     </DropdownMenuItem>
-                    {canEdit && (
-                      <DropdownMenuItem onClick={() => onEditRecord(record)}>
-                        <Edit className="mr-2 h-4 w-4" />
-                        Edit Record
-                      </DropdownMenuItem>
-                    )}
+                    <DropdownMenuItem onClick={() => onEditRecord(record)}>
+                      <Edit className="mr-2 h-4 w-4" />
+                      Edit Record
+                    </DropdownMenuItem>
                     <DropdownMenuItem onClick={() => onPrintRecord(record)}>
                       <Printer className="mr-2 h-4 w-4" />
                       Print Summary
@@ -91,15 +82,6 @@ export const MedicalRecordCardListMobile = ({
                       <FileText className="mr-2 h-4 w-4" />
                       Generate Report
                     </DropdownMenuItem>
-                    {canArchive && (
-                      <DropdownMenuItem
-                        onClick={() => onArchiveRecord(record)}
-                        className="text-orange-600 focus:text-orange-600"
-                      >
-                        <Archive className="mr-2 h-4 w-4" />
-                        Archive Record
-                      </DropdownMenuItem>
-                    )}
                   </DropdownMenuContent>
                 </DropdownMenu>
               </div>
@@ -111,10 +93,10 @@ export const MedicalRecordCardListMobile = ({
                 <User className="h-4 w-4 text-slate-400 mt-0.5 shrink-0" />
                 <div>
                   <div className="font-medium text-slate-900">
-                    {record.patient_name}
+                    {record.patientName}
                   </div>
                   <div className="text-sm text-slate-500">
-                    Patient ID: {record.patient_id}
+                    Patient ID: {record.patientId}
                   </div>
                 </div>
               </div>
@@ -123,7 +105,7 @@ export const MedicalRecordCardListMobile = ({
                 <User className="h-4 w-4 text-slate-400 mt-0.5 shrink-0" />
                 <div>
                   <div className="font-medium text-slate-700">
-                    {record.doctor_name}
+                    {record.doctorName}
                   </div>
                   <div className="text-sm text-slate-500">
                     Attending Physician

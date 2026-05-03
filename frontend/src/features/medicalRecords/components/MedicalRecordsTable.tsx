@@ -19,15 +19,13 @@ import {
   Edit,
   Printer,
   FileText,
-  Archive,
 } from "lucide-react";
 import { type ReactElement } from "react";
-import type { MedicalRecord, UserRole } from "../types/medicalRecord";
+import type { MedicalRecord } from "../types/medicalRecord";
 import { StatusBadge } from "./StatusBadge";
 
 interface MedicalRecordsTableProps {
   records: MedicalRecord[];
-  userRole: UserRole;
   onViewRecord: (record: MedicalRecord) => void;
   onEditRecord: (record: MedicalRecord) => void;
   onPrintRecord: (record: MedicalRecord) => void;
@@ -37,16 +35,11 @@ interface MedicalRecordsTableProps {
 
 export const MedicalRecordsTable = ({
   records,
-  userRole,
   onViewRecord,
   onEditRecord,
   onPrintRecord,
   onGenerateReport,
-  onArchiveRecord,
 }: MedicalRecordsTableProps): ReactElement => {
-  const canEdit = userRole === "admin" || userRole === "doctor";
-  const canArchive = userRole === "admin";
-
   const truncateText = (text: string, maxLength: number = 50) => {
     return text.length > maxLength
       ? `${text.substring(0, maxLength)}...`
@@ -87,24 +80,24 @@ export const MedicalRecordsTable = ({
         <TableBody>
           {records.map((record) => (
             <TableRow
-              key={record.record_id}
+              key={record.recordId}
               className="hover:bg-slate-50/50 transition-colors"
             >
               <TableCell className="font-medium text-slate-900">
-                #{record.record_id}
+                #{record.recordId.slice(-8)}
               </TableCell>
               <TableCell>
                 <div>
                   <div className="font-medium text-slate-900">
-                    {record.patient_name}
+                    {record.patientName || "Unknown Patient"}
                   </div>
                   <div className="text-sm text-slate-500">
-                    ID: {record.patient_id}
+                    ID: {record.patientId}
                   </div>
                 </div>
               </TableCell>
               <TableCell className="text-slate-700">
-                {record.doctor_name}
+                {record.doctorName || "Unknown Doctor"}
               </TableCell>
               <TableCell>
                 <div title={record.diagnosis} className="max-w-50">
@@ -117,17 +110,17 @@ export const MedicalRecordsTable = ({
                 </div>
               </TableCell>
               <TableCell className="text-slate-600">
-                <div>{new Date(record.created_at).toLocaleDateString()}</div>
-                {record.last_updated &&
-                  record.last_updated !== record.created_at && (
+                <div>{new Date(record.createdAt).toLocaleDateString()}</div>
+                {record.lastUpdated &&
+                  record.lastUpdated !== record.createdAt && (
                     <div className="text-xs text-slate-400">
                       Updated:{" "}
-                      {new Date(record.last_updated).toLocaleDateString()}
+                      {new Date(record.lastUpdated).toLocaleDateString()}
                     </div>
                   )}
               </TableCell>
               <TableCell>
-                <StatusBadge status={record.patient_status || "Active"} />
+                <StatusBadge status={record.patientStatus || "Active"} />
               </TableCell>
               <TableCell>
                 <DropdownMenu>
@@ -141,12 +134,10 @@ export const MedicalRecordsTable = ({
                       <Eye className="mr-2 h-4 w-4" />
                       View Record
                     </DropdownMenuItem>
-                    {canEdit && (
-                      <DropdownMenuItem onClick={() => onEditRecord(record)}>
-                        <Edit className="mr-2 h-4 w-4" />
-                        Edit Record
-                      </DropdownMenuItem>
-                    )}
+                    <DropdownMenuItem onClick={() => onEditRecord(record)}>
+                      <Edit className="mr-2 h-4 w-4" />
+                      Edit Record
+                    </DropdownMenuItem>
                     <DropdownMenuItem onClick={() => onPrintRecord(record)}>
                       <Printer className="mr-2 h-4 w-4" />
                       Print Summary
@@ -155,15 +146,6 @@ export const MedicalRecordsTable = ({
                       <FileText className="mr-2 h-4 w-4" />
                       Generate Report
                     </DropdownMenuItem>
-                    {canArchive && (
-                      <DropdownMenuItem
-                        onClick={() => onArchiveRecord(record)}
-                        className="text-orange-600 focus:text-orange-600"
-                      >
-                        <Archive className="mr-2 h-4 w-4" />
-                        Archive Record
-                      </DropdownMenuItem>
-                    )}
                   </DropdownMenuContent>
                 </DropdownMenu>
               </TableCell>

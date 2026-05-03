@@ -42,7 +42,7 @@ export const ViewMedicalRecordDrawer = ({
         <SheetHeader className="pb-6">
           <div className="flex items-center justify-between">
             <SheetTitle className="text-xl font-semibold text-slate-900">
-              Medical Record #{record.record_id}
+              Medical Record #{record.recordId}
             </SheetTitle>
             <div className="flex gap-2">
               <Button
@@ -79,7 +79,7 @@ export const ViewMedicalRecordDrawer = ({
                     Patient ID
                   </label>
                   <div className="text-sm text-slate-900 mt-1">
-                    #{record.patient_id}
+                    #{record.patientId}
                   </div>
                 </div>
                 <div>
@@ -87,7 +87,7 @@ export const ViewMedicalRecordDrawer = ({
                     Full Name
                   </label>
                   <div className="text-sm text-slate-900 mt-1">
-                    {record.patient_name}
+                    {record.patientName}
                   </div>
                 </div>
                 <div>
@@ -95,7 +95,7 @@ export const ViewMedicalRecordDrawer = ({
                     Status
                   </label>
                   <div className="mt-1">
-                    <StatusBadge status={record.patient_status || "Active"} />
+                    <StatusBadge status={record.patientStatus || "Active"} />
                   </div>
                 </div>
                 <div>
@@ -103,7 +103,7 @@ export const ViewMedicalRecordDrawer = ({
                     Doctor
                   </label>
                   <div className="text-sm text-slate-900 mt-1">
-                    {record.doctor_name}
+                    {record.doctorName}
                   </div>
                 </div>
               </div>
@@ -121,7 +121,7 @@ export const ViewMedicalRecordDrawer = ({
                     Record ID
                   </label>
                   <div className="text-lg font-semibold text-slate-900 mt-1">
-                    #{record.record_id}
+                    #{record.recordId}
                   </div>
                 </div>
 
@@ -171,18 +171,18 @@ export const ViewMedicalRecordDrawer = ({
                   <div className="flex items-center gap-2">
                     <Calendar className="h-4 w-4" />
                     Created:{" "}
-                    {new Date(record.created_at).toLocaleDateString("en-US", {
+                    {new Date(record.createdAt).toLocaleDateString("en-US", {
                       year: "numeric",
                       month: "long",
                       day: "numeric",
                     })}
                   </div>
-                  {record.last_updated &&
-                    record.last_updated !== record.created_at && (
+                  {record.lastUpdated &&
+                    record.lastUpdated !== record.createdAt && (
                       <div className="flex items-center gap-2">
                         <Clock className="h-4 w-4" />
                         Updated:{" "}
-                        {new Date(record.last_updated).toLocaleDateString(
+                        {new Date(record.lastUpdated).toLocaleDateString(
                           "en-US",
                           {
                             year: "numeric",
@@ -211,11 +211,11 @@ export const ViewMedicalRecordDrawer = ({
                       Appointment Completed
                     </div>
                     <div className="text-sm text-slate-500">
-                      {record.appointment_summary ||
+                      {record.appointmentSummary ||
                         "Patient consultation completed"}
                     </div>
                     <div className="text-xs text-slate-400 mt-1">
-                      {new Date(record.created_at).toLocaleDateString()}
+                      {new Date(record.createdAt).toLocaleDateString()}
                     </div>
                   </div>
                 </div>
@@ -232,7 +232,7 @@ export const ViewMedicalRecordDrawer = ({
                       Medical record documented in system
                     </div>
                     <div className="text-xs text-slate-400 mt-1">
-                      {new Date(record.created_at).toLocaleDateString()}
+                      {new Date(record.createdAt).toLocaleDateString()}
                     </div>
                   </div>
                 </div>

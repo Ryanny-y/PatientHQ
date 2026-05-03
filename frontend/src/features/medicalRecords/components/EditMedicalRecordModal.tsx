@@ -22,7 +22,7 @@ interface EditMedicalRecordModalProps {
   record: MedicalRecord | null;
   open: boolean;
   onClose: () => void;
-  onSubmit: (recordId: number, data: Partial<MedicalRecord>) => void;
+  onSubmit: (recordId: string, data: Partial<MedicalRecord>) => void;
 }
 
 export const EditMedicalRecordModal = ({
@@ -60,7 +60,7 @@ export const EditMedicalRecordModal = ({
 
   const onFormSubmit = (data: EditMedicalRecordFormValues) => {
     if (record) {
-      onSubmit(record.record_id, data);
+      onSubmit(record.recordId, data);
       onClose();
     }
   };
@@ -77,7 +77,7 @@ export const EditMedicalRecordModal = ({
       <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto p-6">
         <DialogHeader>
           <DialogTitle className="text-xl font-semibold text-slate-900">
-            Edit Medical Record #{record.record_id}
+            Edit Medical Record #{record.recordId}
           </DialogTitle>
         </DialogHeader>
 
@@ -88,20 +88,20 @@ export const EditMedicalRecordModal = ({
             <div className="grid grid-cols-2 gap-4 text-sm">
               <div>
                 <span className="text-slate-600">Record ID:</span>
-                <div className="font-medium text-slate-900">#{record.record_id}</div>
+                <div className="font-medium text-slate-900">#{record.recordId}</div>
               </div>
               <div>
                 <span className="text-slate-600">Patient:</span>
-                <div className="font-medium text-slate-900">{record.patient_name}</div>
+                <div className="font-medium text-slate-900">{record.patientName}</div>
               </div>
               <div>
                 <span className="text-slate-600">Doctor:</span>
-                <div className="font-medium text-slate-900">{record.doctor_name}</div>
+                <div className="font-medium text-slate-900">{record.doctorName}</div>
               </div>
               <div>
                 <span className="text-slate-600">Created:</span>
                 <div className="font-medium text-slate-900">
-                  {new Date(record.created_at).toLocaleDateString()}
+                  {new Date(record.createdAt).toLocaleDateString()}
                 </div>
               </div>
             </div>

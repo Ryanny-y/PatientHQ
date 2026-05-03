@@ -22,8 +22,8 @@ import { type ReactElement } from "react";
 import type { MedicalRecordFormData } from "../types/medicalRecord";
 
 const medicalRecordSchema = z.object({
-  patient_id: z.number().min(1, "Patient is required"),
-  doctor_id: z.number().min(1, "Doctor is required"),
+  patientId: z.string().min(1, "Patient is required"),
+  doctorId: z.string().min(1, "Doctor is required"),
   diagnosis: z.string().min(1, "Diagnosis is required"),
   treatment: z.string().min(1, "Treatment is required"),
   prescription: z.string().optional(),
@@ -37,15 +37,16 @@ interface MedicalRecordFormModalProps {
   onClose: () => void;
   onSubmit: (data: MedicalRecordFormData) => void;
   patients: Array<{
-    id: number;
-    name: string;
-    age: number;
-    gender: string;
+    patientId: string;
+    fullName: string;
     status: string;
   }>;
-  doctors: Array<{ id: number; name: string; specialty: string }>;
-  userRole: "admin" | "doctor" | "nurse";
-  currentUserId?: number;
+  doctors: Array<{
+    doctorId: string;
+    fullName: string;
+    specialization: string;
+  }>;
+  currentUserId?: string;
 }
 
 export const MedicalRecordFormModal = ({
@@ -54,7 +55,6 @@ export const MedicalRecordFormModal = ({
   onSubmit,
   patients,
   doctors,
-  userRole,
   currentUserId,
 }: MedicalRecordFormModalProps): ReactElement => {
   const {
@@ -67,8 +67,8 @@ export const MedicalRecordFormModal = ({
   } = useForm<MedicalRecordFormValues>({
     resolver: zodResolver(medicalRecordSchema),
     defaultValues: {
-      patient_id: 0,
-      doctor_id: userRole === "doctor" && currentUserId ? currentUserId : 0,
+      patientId: "",
+      doctorId: currentUserId ? currentUserId : "",
       diagnosis: "",
       treatment: "",
       prescription: "",
@@ -76,13 +76,13 @@ export const MedicalRecordFormModal = ({
     },
   });
 
-  const selectedPatientId = watch("patient_id");
-  const selectedPatient = patients.find((p) => p.id === selectedPatientId);
+  const selectedPatientId = watch("patientId");
+  const selectedPatient = patients.find((p) => p.patientId === selectedPatientId);
 
   const onFormSubmit = (data: MedicalRecordFormValues) => {
     const formData: MedicalRecordFormData = {
-      patient_id: data.patient_id,
-      doctor_id: data.doctor_id,
+      patientId: data.patientId,
+      doctorId: data.doctorId,
       diagnosis: data.diagnosis,
       treatment: data.treatment,
       prescription: data.prescription || "",
@@ -116,11 +116,11 @@ export const MedicalRecordFormModal = ({
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <Label htmlFor="patient_id">Select Patient *</Label>
+                <Label htmlFor="patientId">Select Patient *</Label>
                 <Select
-                  value={selectedPatientId?.toString() || ""}
+                  value={selectedPatientId || ""}
                   onValueChange={(value) =>
-                    setValue("patient_id", parseInt(value))
+                    setValue("patientId", value)
                   }
                 >
                   <SelectTrigger>
@@ -129,44 +129,43 @@ export const MedicalRecordFormModal = ({
                   <SelectContent>
                     {patients.map((patient) => (
                       <SelectItem
-                        key={patient.id}
-                        value={patient.id.toString()}
+                        key={patient.patientId}
+                        value={patient.patientId}
                       >
-                        {patient.name} (ID: {patient.id})
+                        {patient.fullName} (ID: {patient.patientId.slice(-8)})
                       </SelectItem>
                     ))}
                   </SelectContent>
                 </Select>
-                {errors.patient_id && (
+                {errors.patientId && (
                   <p className="text-sm text-red-600 mt-1">
-                    {errors.patient_id.message}
+                    {errors.patientId.message}
                   </p>
                 )}
               </div>
 
               <div>
-                <Label htmlFor="doctor_id">Attending Doctor *</Label>
+                <Label htmlFor="doctorId">Attending Doctor *</Label>
                 <Select
-                  value={watch("doctor_id")?.toString() || ""}
+                  value={watch("doctorId") || ""}
                   onValueChange={(value) =>
-                    setValue("doctor_id", parseInt(value))
+                    setValue("doctorId", value)
                   }
-                  disabled={userRole === "doctor"}
                 >
                   <SelectTrigger>
                     <SelectValue placeholder="Choose a doctor" />
                   </SelectTrigger>
                   <SelectContent>
                     {doctors.map((doctor) => (
-                      <SelectItem key={doctor.id} value={doctor.id.toString()}>
-                        {doctor.name} - {doctor.specialty}
+                      <SelectItem key={doctor.doctorId} value={doctor.doctorId}>
+                        {doctor.fullName} - {doctor.specialization}
                       </SelectItem>
                     ))}
                   </SelectContent>
                 </Select>
-                {errors.doctor_id && (
+                {errors.doctorId && (
                   <p className="text-sm text-red-600 mt-1">
-                    {errors.doctor_id.message}
+                    {errors.doctorId.message}
                   </p>
                 )}
               </div>
@@ -181,19 +180,7 @@ export const MedicalRecordFormModal = ({
                   <div>
                     <span className="text-slate-600">Name:</span>
                     <div className="font-medium text-slate-900">
-                      {selectedPatient.name}
-                    </div>
-                  </div>
-                  <div>
-                    <span className="text-slate-600">Age:</span>
-                    <div className="font-medium text-slate-900">
-                      {selectedPatient.age}
-                    </div>
-                  </div>
-                  <div>
-                    <span className="text-slate-600">Gender:</span>
-                    <div className="font-medium text-slate-900">
-                      {selectedPatient.gender}
+                      {selectedPatient.fullName}
                     </div>
                   </div>
                   <div>

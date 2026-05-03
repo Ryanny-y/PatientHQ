@@ -1,22 +1,22 @@
 export interface MedicalRecord {
-  record_id: number;
-  patient_id: number;
-  patient_name: string;
-  doctor_id: number;
-  doctor_name: string;
+  recordId: string;
+  patientId: string;
+  doctorId: string;
   diagnosis: string;
   treatment: string;
   prescription: string;
   notes: string;
-  created_at: string;
-  last_updated?: string;
-  patient_status?: 'Active' | 'Inactive' | 'Discharged';
-  appointment_summary?: string;
+  createdAt: string;
+  lastUpdated?: string;
+  patientName?: string;
+  doctorName?: string;
+  patientStatus?: 'Active' | 'Inactive' | 'Discharged';
+  appointmentSummary?: string;
 }
 
 export interface MedicalRecordFormData {
-  patient_id: number;
-  doctor_id: number;
+  patientId: string;
+  doctorId: string;
   diagnosis: string;
   treatment: string;
   prescription: string;

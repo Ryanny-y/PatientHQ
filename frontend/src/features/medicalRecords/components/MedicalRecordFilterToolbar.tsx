@@ -16,7 +16,7 @@ interface MedicalRecordFilterToolbarProps {
   filters: FilterOptions;
   onFiltersChange: (filters: FilterOptions) => void;
   onRefresh: () => void;
-  doctors: Array<{ id: number; name: string }>;
+  doctors: Array<{ doctorId: string; fullName: string }>;
 }
 
 export const MedicalRecordFilterToolbar = ({
@@ -106,8 +106,8 @@ export const MedicalRecordFilterToolbar = ({
             <SelectContent>
               <SelectItem value="all">All Doctors</SelectItem>
               {doctors.map((doctor) => (
-                <SelectItem key={doctor.id} value={doctor.id.toString()}>
-                  {doctor.name}
+                <SelectItem key={doctor.doctorId} value={doctor.doctorId}>
+                  {doctor.fullName}
                 </SelectItem>
               ))}
             </SelectContent>
