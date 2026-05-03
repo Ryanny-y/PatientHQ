@@ -29,7 +29,7 @@ export interface MedicalRecordStats {
   totalRecords: number;
   newThisWeek: number;
   activePatients: number;
-  pendingFollowups: number;
+  totalDoctors: number;
 }
 
 export interface FilterOptions {

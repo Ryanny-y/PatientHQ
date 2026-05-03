@@ -1,39 +1,42 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { FileText, Calendar, Users, Clock } from "lucide-react";
+import { Calendar, FileText, Stethoscope, Users } from "lucide-react";
 import { type ReactElement } from "react";
 import type { MedicalRecordStats } from "../types/medicalRecord";
 
 interface MedicalRecordStatsCardsProps {
-  stats: MedicalRecordStats;
+  meta: MedicalRecordStats | undefined;
 }
 
-export const MedicalRecordStatsCards = ({ stats }: MedicalRecordStatsCardsProps): ReactElement => {
+const formatNumber = (value: number | undefined): string =>
+  value?.toLocaleString() ?? "0";
+
+export const MedicalRecordStatsCards = ({ meta }: MedicalRecordStatsCardsProps): ReactElement => {
   const cards = [
     {
       title: "Total Records",
-      value: stats.totalRecords.toLocaleString(),
+      value: formatNumber(meta?.totalRecords),
       icon: FileText,
       color: "text-blue-600",
       bgColor: "bg-blue-50",
     },
     {
       title: "New This Week",
-      value: stats.newThisWeek.toString(),
+      value: formatNumber(meta?.newThisWeek),
       icon: Calendar,
       color: "text-green-600",
       bgColor: "bg-green-50",
     },
     {
       title: "Active Patients",
-      value: stats.activePatients.toLocaleString(),
+      value: formatNumber(meta?.activePatients),
       icon: Users,
       color: "text-purple-600",
       bgColor: "bg-purple-50",
     },
     {
-      title: "Pending Follow-ups",
-      value: stats.pendingFollowups.toString(),
-      icon: Clock,
+      title: "Total Doctors",
+      value: formatNumber(meta?.totalDoctors),
+      icon: Stethoscope,
       color: "text-orange-600",
       bgColor: "bg-orange-50",
     },

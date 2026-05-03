@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useMedicalRecordMutation } from "./useMedicalRecordMutation";
-import { useMedicalRecordQuery } from "./useMedicalRecordQuery";
+import { useMedicalRecordMetaQuery, useMedicalRecordQuery } from "./useMedicalRecordQuery";
 import { usePatientQuery } from "@/features/patients/hooks/usePatientQuery";
 import { useDoctorsQuery } from "@/features/doctorAccounts/hooks/useDoctorsQuery";
 import { useToast } from "@/shared/hooks/useToast";
@@ -51,13 +51,14 @@ export const useMedicalRecords = () => {
     })) || [];
 
   const mutations = useMedicalRecordMutation();
+  const { data: meta } = useMedicalRecordMetaQuery();
 
   const handleCreateRecord = async (data: MedicalRecordFormData) => {
     try {
       await mutations.createMedicalRecord.mutateAsync(data);
       toast("Medical record has been successfully created.", "success");
       setModalMode(null);
-    } catch (error) {
+    } catch {
       toast("Failed to create medical record.", "error");
     }
   };
@@ -68,7 +69,7 @@ export const useMedicalRecords = () => {
       toast("Medical record has been successfully updated.", "success");
       setModalMode(null);
       setSelectedRecord(null);
-    } catch (error) {
+    } catch {
       toast("Failed to update medical record.", "error");
     }
   };
@@ -77,7 +78,7 @@ export const useMedicalRecords = () => {
     try {
       await mutations.deleteMedicalRecord.mutateAsync(id);
       toast("Medical record has been successfully deleted.", "success");
-    } catch (error) {
+    } catch {
       toast("Failed to delete medical record.", "error");
     }
   };
@@ -103,6 +104,7 @@ export const useMedicalRecords = () => {
 
   return {
     // Data
+    meta,
     records: recordsData?.data?.content || [],
     totalRecords: recordsData?.data?.totalElements || 0,
     totalPages: recordsData?.data?.totalPages || 0,

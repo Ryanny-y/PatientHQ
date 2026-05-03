@@ -23,6 +23,13 @@ export const useMedicalRecordByIdQuery = (id: string) => {
   });
 };
 
+export const useMedicalRecordMetaQuery = () => {
+  return useQuery({
+    queryKey: ["medicalRecordsMeta"],
+    queryFn: () => medicalRecordService.getMedicalRecordsMeta(),
+  });
+};
+
 export const useMedicalRecordsByPatientQuery = (patientId: string) => {
   return useQuery({
     queryKey: ["medicalRecords", "patient", patientId],

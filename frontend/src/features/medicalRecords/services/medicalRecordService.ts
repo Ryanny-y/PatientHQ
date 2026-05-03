@@ -3,6 +3,7 @@ import type { ApiResponse, PageResponse } from "@/shared/types/api";
 import type {
   MedicalRecord,
   MedicalRecordFormData,
+  MedicalRecordStats,
 } from "../types/medicalRecord";
 
 export const medicalRecordService = {
@@ -28,6 +29,9 @@ export const medicalRecordService = {
 
   getMedicalRecordById: (id: string) =>
     fetchWithAuth<ApiResponse<MedicalRecord>>(`medical-records/${id}`),
+
+  getMedicalRecordsMeta: () =>
+    fetchWithAuth<ApiResponse<MedicalRecordStats>>("medical-records/meta"),
 
   getMedicalRecordsByPatientId: (patientId: string) =>
     fetchWithAuth<ApiResponse<MedicalRecord[]>>(`medical-records/patient/${patientId}`),

@@ -21,6 +21,7 @@ const MedicalRecordsPage = (): ReactElement => {
   const [currentUserId] = useState<string>("1"); // Mock current user ID
 
   const {
+    meta,
     records,
     totalRecords,
     currentPage,
@@ -51,7 +52,7 @@ const MedicalRecordsPage = (): ReactElement => {
 
   // Filter and sort records (client-side filtering for now)
   const filteredRecords = useMemo(() => {
-    let filtered = records.filter((record) => {
+    const filtered = records.filter((record) => {
       // Search filter
       if (filters.search) {
         const searchLower = filters.search.toLowerCase();
@@ -128,14 +129,6 @@ const MedicalRecordsPage = (): ReactElement => {
     handleDeleteRecord(record.recordId);
   };
 
-  // Mock stats - in real app would come from API
-  const mockStats = {
-    totalRecords: totalRecords,
-    newThisWeek: 5,
-    activePatients: 120,
-    pendingFollowups: 8,
-  };
-
   return (
     <div className="space-y-6">
       {/* Page Header */}
@@ -159,7 +152,7 @@ const MedicalRecordsPage = (): ReactElement => {
       </div>
 
       {/* Stats Cards */}
-      <MedicalRecordStatsCards stats={mockStats} />
+      <MedicalRecordStatsCards meta={meta?.data} />
 
       {/* Filter Toolbar */}
       <MedicalRecordFilterToolbar

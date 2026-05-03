@@ -4,8 +4,10 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 export const useMedicalRecordMutation = () => {
   const queryClient = useQueryClient();
 
-  const invalidate = () =>
+  const invalidate = () => {
     queryClient.invalidateQueries({ queryKey: ["medicalRecords"] });
+    queryClient.invalidateQueries({ queryKey: ["medicalRecordsMeta"] });
+  };
 
   const createMedicalRecord = useMutation({
     mutationFn: medicalRecordService.createMedicalRecord,
