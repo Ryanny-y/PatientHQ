@@ -7,5 +7,6 @@ import org.mapstruct.ReportingPolicy;
 
 @Mapper(componentModel = "spring", unmappedSourcePolicy = ReportingPolicy.IGNORE)
 public interface PatientMapper {
+
     PatientDto toDto(Patient patient);
 }

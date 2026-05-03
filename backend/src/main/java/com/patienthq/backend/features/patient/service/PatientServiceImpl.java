@@ -1,5 +1,6 @@
 package com.patienthq.backend.features.patient.service;
 
+import com.patienthq.backend.features.data_integrity.service.PatientIntegrityService;
 import com.patienthq.backend.features.patient.PatientMapper;
 import com.patienthq.backend.features.patient.dto.PatientDto;
 import com.patienthq.backend.features.patient.dto.PatientMetadataDto;
@@ -27,6 +28,7 @@ public class PatientServiceImpl implements PatientService {
 
     private final PatientRepository patientRepository;
     private final PatientMapper patientMapper;
+    private final PatientIntegrityService patientIntegrityService;
 
     @Override
     @Transactional
@@ -158,7 +160,9 @@ public class PatientServiceImpl implements PatientService {
             patient.setStatus(request.getStatus());
         }
 
-        return patientRepository.save(patient);
+        Patient savedPatient = patientRepository.save(patient);
+        patientIntegrityService.markPending(id);
+        return savedPatient;
     }
 
     @Override

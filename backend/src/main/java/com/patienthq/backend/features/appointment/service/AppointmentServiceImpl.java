@@ -9,6 +9,7 @@ import com.patienthq.backend.features.appointment.exception.AppointmentNotFoundE
 import com.patienthq.backend.features.appointment.model.Appointment;
 import com.patienthq.backend.features.appointment.model.AppointmentStatus;
 import com.patienthq.backend.features.appointment.repository.AppointmentRepository;
+import com.patienthq.backend.features.data_integrity.service.PatientIntegrityService;
 import com.patienthq.backend.features.doctor.model.Doctor;
 import com.patienthq.backend.features.doctor.repository.DoctorRepository;
 import com.patienthq.backend.features.patient.model.Patient;
@@ -34,6 +35,7 @@ public class AppointmentServiceImpl implements AppointmentService {
     private final PatientRepository patientRepository;
     private final DoctorRepository doctorRepository;
     private final AppointmentMapper appointmentMapper;
+    private final PatientIntegrityService patientIntegrityService;
 
     @Override
     @Transactional
@@ -56,7 +58,9 @@ public class AppointmentServiceImpl implements AppointmentService {
                 .notes(request.getNotes())
                 .build();
 
-        return appointmentMapper.toDto(appointmentRepository.save(appointment));
+        Appointment saved = appointmentRepository.save(appointment);
+        patientIntegrityService.markPending(request.getPatientId());
+        return appointmentMapper.toDto(saved);
     }
 
     @Override
@@ -86,7 +90,9 @@ public class AppointmentServiceImpl implements AppointmentService {
         if (request.getStatus() != null) appointment.setStatus(request.getStatus());
         if (request.getNotes() != null) appointment.setNotes(request.getNotes());
 
-        return appointmentMapper.toDto(appointmentRepository.save(appointment));
+        Appointment saved = appointmentRepository.save(appointment);
+        patientIntegrityService.markPending(appointment.getPatient().getPatientId());
+        return appointmentMapper.toDto(saved);
     }
 
     @Override
@@ -94,7 +100,9 @@ public class AppointmentServiceImpl implements AppointmentService {
     public void deleteAppointment(UUID id) {
         Appointment appointment = appointmentRepository.findById(id)
                 .orElseThrow(() -> new AppointmentNotFoundException(id));
+        UUID patientId = appointment.getPatient().getPatientId();
         appointmentRepository.delete(appointment);
+        patientIntegrityService.markPending(patientId);
     }
 
     @Override

@@ -1,5 +1,6 @@
 package com.patienthq.backend.features.vital_signs.service;
 
+import com.patienthq.backend.features.data_integrity.service.PatientIntegrityService;
 import com.patienthq.backend.features.nurse.model.Nurse;
 import com.patienthq.backend.features.nurse.service.NurseService;
 import com.patienthq.backend.features.patient.model.Patient;
@@ -22,6 +23,7 @@ public class VitalSignsServiceImpl implements VitalSignsService {
     private final VitalSignsRepository vitalSignsRepository;
     private final PatientService patientService;
     private final NurseService nurseService;
+    private final PatientIntegrityService patientIntegrityService;
 
     @Override
     @Transactional(readOnly = true)
@@ -53,6 +55,8 @@ public class VitalSignsServiceImpl implements VitalSignsService {
                 .notes(request.getNotes())
                 .build();
 
-        return vitalSignsRepository.save(vitalSign);
+        VitalSign saved = vitalSignsRepository.save(vitalSign);
+        patientIntegrityService.markPending(request.getPatientId());
+        return saved;
     }
 }
