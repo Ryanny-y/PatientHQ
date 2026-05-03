@@ -13,7 +13,6 @@ import com.patienthq.backend.features.report.model.Report;
 import com.patienthq.backend.features.report.model.ReportType;
 import com.patienthq.backend.features.report.repository.ReportRepository;
 import com.patienthq.backend.features.user.model.User;
-import com.patienthq.backend.features.user.repository.UserRepository;
 import com.patienthq.backend.features.user.service.UserService;
 import com.patienthq.backend.shared.exceptions.AppException;
 import lombok.RequiredArgsConstructor;

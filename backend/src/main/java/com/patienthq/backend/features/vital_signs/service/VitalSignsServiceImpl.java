@@ -4,7 +4,6 @@ import com.patienthq.backend.features.nurse.model.Nurse;
 import com.patienthq.backend.features.nurse.service.NurseService;
 import com.patienthq.backend.features.patient.model.Patient;
 import com.patienthq.backend.features.patient.service.PatientService;
-import com.patienthq.backend.features.vital_signs.dto.VitalSignsDto;
 import com.patienthq.backend.features.vital_signs.dto.request.CreateVitalSignsRequest;
 import com.patienthq.backend.features.vital_signs.model.VitalSign;
 import com.patienthq.backend.features.vital_signs.repository.VitalSignsRepository;

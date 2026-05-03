@@ -1,6 +1,5 @@
 package com.patienthq.backend.features.user.service;
 
-import com.patienthq.backend.features.user.dto.PermissionDto;
 import com.patienthq.backend.features.user.dto.request.CreatePermissionRequest;
 import com.patienthq.backend.features.user.dto.request.UpdatePermissionRequest;
 import com.patienthq.backend.features.user.model.Permission;

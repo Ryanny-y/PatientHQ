@@ -5,7 +5,6 @@ import com.patienthq.backend.features.auth.dto.response.LoginResponse;
 import com.patienthq.backend.features.auth.dto.response.RefreshResponse;
 import com.patienthq.backend.features.auth.service.AuthService;
 import com.patienthq.backend.features.user.model.Permission;
-import com.patienthq.backend.features.user.service.PermissionService;
 import com.patienthq.backend.features.user.service.UserService;
 import com.patienthq.backend.features.user.model.User;
 import com.patienthq.backend.shared.response.ApiResponse;
@@ -20,7 +19,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 import jakarta.validation.Valid;
 
-import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -33,7 +31,6 @@ public class AuthController {
     private final AuthService authService;
     private final JwtService jwtService;
     private final UserService userService;
-    private final PermissionService permissionService;
 
     @PostMapping("/login")
     public ResponseEntity<ApiResponse<LoginResponse>> login (

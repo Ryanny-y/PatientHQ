@@ -1,6 +1,5 @@
 package com.patienthq.backend.features.doctor;
 
-import com.patienthq.backend.features.admin.dto.AdminDto;
 import com.patienthq.backend.features.doctor.dto.DoctorDto;
 import com.patienthq.backend.features.doctor.dto.DoctorMetadataDto;
 import com.patienthq.backend.features.doctor.dto.request.CreateDoctorRequest;
@@ -19,7 +18,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/v1/doctors")

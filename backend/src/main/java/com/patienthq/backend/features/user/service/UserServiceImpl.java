@@ -1,6 +1,5 @@
 package com.patienthq.backend.features.user.service;
 
-import com.patienthq.backend.features.user.mapper.UserMapper;
 import com.patienthq.backend.features.user.dto.request.UpdateUserRequest;
 import com.patienthq.backend.features.user.exceptions.UserNotFoundException;
 import com.patienthq.backend.features.user.model.Role;
