@@ -30,7 +30,7 @@ public class DataIntegrityController {
         );
     }
 
-    @GetMapping("/verify")
+    @PostMapping("/verify")
     public ResponseEntity<ApiResponse<IntegrityVerificationDto>> verifyIntegrity(@PathVariable UUID patientId) {
         IntegrityVerificationDto verification = patientIntegrityService.verifyIntegrity(patientId);
         return ResponseEntity.ok(
@@ -42,7 +42,7 @@ public class DataIntegrityController {
         );
     }
 
-    @PostMapping
+    @PostMapping("/recompute")
     public ResponseEntity<ApiResponse<DataIntegrityDto>> recomputeIntegrity(@PathVariable UUID patientId) {
         DataIntegrityDto integrity = patientIntegrityService.recomputeIntegrity(patientId);
         return ResponseEntity.status(HttpStatus.CREATED).body(

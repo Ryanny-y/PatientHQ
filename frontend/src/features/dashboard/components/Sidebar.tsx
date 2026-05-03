@@ -50,6 +50,7 @@ const navItems: NavItem[] = [
     label: "Dashboard",
     icon: LayoutDashboard,
     path: "/dashboard",
+    permission: "DASHBOARD_VIEW",
   },
   {
     type: "group",
@@ -59,7 +60,7 @@ const navItems: NavItem[] = [
       { label: "Doctor Accounts", icon: Stethoscope, path: "/users/doctors" },
       { label: "Nurse Accounts", icon: HeartPulse, path: "/users/nurses" },
     ],
-    permission: "USER_VIEW",
+    permission: "USER_MANAGEMENT_VIEW",
   },
   {
     type: "group",
@@ -76,7 +77,7 @@ const navItems: NavItem[] = [
     label: "Medical Records",
     icon: FileText,
     path: "/records",
-    permission: "MEDICAL_RECORDS_VIEW",
+    permission: "MEDICAL_RECORD_VIEW",
   },
   {
     type: "link",
@@ -113,7 +114,7 @@ const navItems: NavItem[] = [
     label: "Roles & Permissions",
     icon: Settings,
     path: "/roles-permissions",
-    permission: "ROLE_VIEW"
+    permission: "ROLE_MANAGEMENT_VIEW"
   },
 ];
 

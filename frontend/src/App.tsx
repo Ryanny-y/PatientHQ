@@ -16,6 +16,7 @@ import AppointmentsPage from "./features/appointments/pages/AppointmentsPage";
 import ReportsHistoryPage from "./features/reports/ReportsHistoryPage";
 import AuditLogsPage from "./features/auditLogs/components/AuditLogsPage";
 import RolesPermissionsPage from "./features/rolesPermissions/RolesPermissionsPage";
+import DataIntegrityPage from "./features/dataIntegrity/DataIntegrityPage";
 import { Toaster } from "sonner";
 import UnauthorizedState from "./features/auditLogs/components/UnauthorizedState";
 import { hasPermission } from "./shared/security/permissions";
@@ -47,12 +48,20 @@ const AppRoutes = (): ReactElement => (
       }
     >
       <Route index element={<Navigate to="dashboard" replace />} />
-      <Route path="dashboard" element={<DashboardHome />} />
+
+      <Route
+        path="dashboard"
+        element={
+          <ProtectedRoute permission="DASHBOARD_VIEW">
+            <DashboardHome />
+          </ProtectedRoute>
+        }
+      />
       <Route path="users">
         <Route
           path="admins"
           element={
-            <ProtectedRoute permission="USER_VIEW">
+            <ProtectedRoute permission="USER_MANAGEMENT_VIEW">
               <AdminAccountsPage />
             </ProtectedRoute>
           }
@@ -60,7 +69,7 @@ const AppRoutes = (): ReactElement => (
         <Route
           path="doctors"
           element={
-            <ProtectedRoute permission="USER_VIEW">
+            <ProtectedRoute permission="USER_MANAGEMENT_VIEW">
               <DoctorAccountsPage />
             </ProtectedRoute>
           }
@@ -68,7 +77,7 @@ const AppRoutes = (): ReactElement => (
         <Route
           path="nurses"
           element={
-            <ProtectedRoute permission="USER_VIEW">
+            <ProtectedRoute permission="USER_MANAGEMENT_VIEW">
               <NurseAccountsPage />
             </ProtectedRoute>
           }
@@ -83,6 +92,7 @@ const AppRoutes = (): ReactElement => (
       <Route path="appointments" element={<AppointmentsPage />} />
       <Route path="reports" element={<ReportsHistoryPage />} />
       <Route path="audit" element={<AuditLogsPage />} />
+      <Route path="integrity" element={<DataIntegrityPage />} />
       <Route path="roles-permissions" element={<RolesPermissionsPage />} />
     </Route>
     <Route path="*" element={<Navigate to="/login" replace />} />

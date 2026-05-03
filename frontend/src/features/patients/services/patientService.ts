@@ -44,7 +44,7 @@ export const patientService = {
 
   updatePatient: (id: string, values: editPatientFormValues) =>
     fetchWithAuth<ApiResponse<Patient>>(`patients/${id}`, {
-      method: "PUT",
+      method: "PATCH",
       body: JSON.stringify(values),
     }),
 

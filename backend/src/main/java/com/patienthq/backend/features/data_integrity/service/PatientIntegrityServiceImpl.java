@@ -38,12 +38,17 @@ public class PatientIntegrityServiceImpl implements PatientIntegrityService {
     @Override
     @Transactional(readOnly = true)
     public DataIntegrityDto getIntegrity(UUID patientId) {
-        Patient patient = patientRepository.findById(patientId)
-                .orElseThrow(() -> new AppException(HttpStatus.NOT_FOUND, "Patient not found with id: " + patientId));
-
         DataIntegrity dataIntegrity = dataIntegrityRepository.findByPatientId(patientId)
-                .orElseThrow(() -> new AppException(HttpStatus.NOT_FOUND, "Data integrity record not found for patient: " + patientId));
+                .orElse(null);
 
+        if (dataIntegrity == null) {
+            return DataIntegrityDto.builder()
+                    .patientId(patientId)
+                    .status(IntegrityStatus.PENDING)
+                    .hashValue(null)
+                    .lastChecked(null)
+                    .build();
+        }
         return dataIntegrityMapper.toDto(dataIntegrity);
     }
 
@@ -154,12 +159,12 @@ public class PatientIntegrityServiceImpl implements PatientIntegrityService {
 
     private Map<String, Object> fetchPatientData(UUID patientId) {
         String sql = """
-            SELECT patient_id, full_name, date_of_birth, gender, contact_number,
-                   email, address, blood_type, allergies, emergency_contact_name,
-                   emergency_contact_number, status, created_at
-            FROM patients
-            WHERE patient_id = ?
-        """;
+                    SELECT patient_id, full_name, date_of_birth, gender, contact_number,
+                           email, address, blood_type, allergies, emergency_contact_name,
+                           emergency_contact_number, status, created_at
+                    FROM patients
+                    WHERE patient_id = ?
+                """;
 
         return jdbcTemplate.query(sql, rs -> {
             if (rs.next()) {
@@ -185,12 +190,12 @@ public class PatientIntegrityServiceImpl implements PatientIntegrityService {
 
     private List<Map<String, Object>> fetchMedicalRecords(UUID patientId) {
         String sql = """
-            SELECT record_id, patient_id, doctor_id, diagnosis, treatment,
-                   prescription, notes, created_at
-            FROM medical_records
-            WHERE patient_id = ?
-            ORDER BY created_at, record_id
-        """;
+                    SELECT record_id, patient_id, doctor_id, diagnosis, treatment,
+                           prescription, notes, created_at
+                    FROM medical_records
+                    WHERE patient_id = ?
+                    ORDER BY created_at, record_id
+                """;
 
         return jdbcTemplate.query(sql, (rs, rowNum) -> {
             Map<String, Object> record = new LinkedHashMap<>();
@@ -208,13 +213,12 @@ public class PatientIntegrityServiceImpl implements PatientIntegrityService {
 
     private List<Map<String, Object>> fetchVitalSigns(UUID patientId) {
         String sql = """
-            SELECT vital_id, patient_id, recorded_by, temperature, heart_rate,
-                   respiratory_rate, oxygen_saturation, blood_pressure, weight,
-                   height, notes, recorded_at
-            FROM vital_signs
-            WHERE patient_id = ?
-            ORDER BY recorded_at, vital_id
-        """;
+                    SELECT vital_id, patient_id, recorded_by, temperature, heart_rate,
+                           respiratory_rate, oxygen_saturation, blood_pressure, notes, recorded_at
+                    FROM vital_signs
+                    WHERE patient_id = ?
+                    ORDER BY recorded_at
+                """;
 
         return jdbcTemplate.query(sql, (rs, rowNum) -> {
             Map<String, Object> vital = new LinkedHashMap<>();
@@ -226,8 +230,6 @@ public class PatientIntegrityServiceImpl implements PatientIntegrityService {
             vital.put("respiratory_rate", rs.getObject("respiratory_rate"));
             vital.put("oxygen_saturation", rs.getBigDecimal("oxygen_saturation") != null ? rs.getBigDecimal("oxygen_saturation").toString() : null);
             vital.put("blood_pressure", rs.getString("blood_pressure"));
-            vital.put("weight", rs.getBigDecimal("weight") != null ? rs.getBigDecimal("weight").toString() : null);
-            vital.put("height", rs.getBigDecimal("height") != null ? rs.getBigDecimal("height").toString() : null);
             vital.put("notes", rs.getString("notes"));
             vital.put("recorded_at", rs.getTimestamp("recorded_at") != null ? rs.getTimestamp("recorded_at").toString() : null);
             return vital;
@@ -236,12 +238,12 @@ public class PatientIntegrityServiceImpl implements PatientIntegrityService {
 
     private List<Map<String, Object>> fetchAppointments(UUID patientId) {
         String sql = """
-            SELECT appointment_id, patient_id, doctor_id, appointment_date,
-                   reason, status, notes, created_at
-            FROM appointments
-            WHERE patient_id = ?
-            ORDER BY created_at, appointment_id
-        """;
+                    SELECT appointment_id, patient_id, doctor_id, appointment_date,
+                           reason, status, notes, created_at
+                    FROM appointments
+                    WHERE patient_id = ?
+                    ORDER BY created_at, appointment_id
+                """;
 
         return jdbcTemplate.query(sql, (rs, rowNum) -> {
             Map<String, Object> appointment = new LinkedHashMap<>();
