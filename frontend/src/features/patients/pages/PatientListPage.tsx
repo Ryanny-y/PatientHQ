@@ -13,7 +13,7 @@ import EditPatientModal from "@/features/patients/components/EditPatientModal";
 import PatientHistoryModal from "@/features/patients/components/PatientHistoryModal";
 import { AssignDoctorModal } from "@/features/patients/components/AssignDoctorModal";
 
-import type { Patient } from "@/features/patients/types/patient";
+import type { Patient, editPatientFormValues } from "@/features/patients/types/patient";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 
@@ -54,16 +54,14 @@ const PatientListPage = (): ReactElement => {
   } = usePatients();
 
   // ---------- actions ----------
-  const handleSaveEdit = async (data: Partial<Patient>) => {
+  const handleSaveEdit = async (values: editPatientFormValues): Promise<void> => {
     if (!selectedPatient) return;
-
-    const res = await updatePatient({
-      id: selectedPatient.patientId,
-      ...data,
-    });
-
-    if (res?.success) {
-      toast.success("Patient updated successfully");
+    try {
+      await updatePatient({ id: String(selectedPatient.patientId), values });
+      toast.success('Patient updated successfully');
+      closeModal();
+    } catch {
+      toast.error('Failed to update patient');
     }
   };
 

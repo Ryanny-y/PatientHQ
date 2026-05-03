@@ -52,6 +52,5 @@ public class UpdatePatientRequest {
     )
     private String emergencyContactNumber;
 
-    @Size(max = 50)
     private PatientStatus status;
 }

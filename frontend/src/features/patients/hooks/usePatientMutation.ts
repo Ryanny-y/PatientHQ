@@ -13,7 +13,7 @@ export const usePatientMutation = () => {
   });
 
   const updatePatient = useMutation({
-    mutationFn: ({ id, values }: any) =>
+    mutationFn: ({ id, values }: { id: string; values: Parameters<typeof patientService.updatePatient>[1] }) =>
       patientService.updatePatient(id, values),
     onSuccess: invalidate,
   });
