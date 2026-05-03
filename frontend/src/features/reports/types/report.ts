@@ -8,6 +8,7 @@ export interface ReportRecord {
   generated_by_id?: string;
   report_type: string;
   summary: string;
+  notes: string;
   created_at: string;
 }
 
@@ -18,7 +19,8 @@ export interface ReportDto {
   generatedBy: string;
   generatedByUsername?: string;
   reportType: string;
-  summary?: string;
+  summary: string;
+  notes?: string;
   createdAt: string;
 }
 
@@ -26,7 +28,7 @@ export interface GenerateReportRequest {
   patientId: string;
   generatedBy: string;
   reportType: string;
-  summary?: string;
+  notes?: string;
 }
 
 export interface ReportFilterOptions {
@@ -62,6 +64,5 @@ export interface GenerateReportForm {
   patient_id: string;
   date_from?: string;
   date_to?: string;
-  output_format: 'PDF' | 'CSV' | 'Print Preview';
-  summary?: string;
+  notes?: string;
 }

@@ -48,7 +48,7 @@ export const ReportsTable = ({
               <TableCell className="text-slate-700">{report.report_type}</TableCell>
               <TableCell className="text-slate-700">{report.generated_by}</TableCell>
               <TableCell className="text-slate-600">{new Date(report.created_at).toLocaleDateString()}</TableCell>
-              <TableCell className="max-w-65 text-slate-600">{report.summary}</TableCell>
+              <TableCell className="max-w-65 text-slate-600 overflow-hidden truncate">{report.summary}</TableCell>
               <TableCell>
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
@@ -60,14 +60,6 @@ export const ReportsTable = ({
                     <DropdownMenuItem onClick={() => onView(report)}>
                       <Eye className="mr-2 h-4 w-4" />
                       View Report
-                    </DropdownMenuItem>
-                    <DropdownMenuItem onClick={() => onDownload(report)}>
-                      <Download className="mr-2 h-4 w-4" />
-                      Download PDF
-                    </DropdownMenuItem>
-                    <DropdownMenuItem onClick={() => onPrint(report)}>
-                      <Printer className="mr-2 h-4 w-4" />
-                      Print
                     </DropdownMenuItem>
                     <DropdownMenuItem onClick={() => onRegenerate(report)}>
                       <Repeat className="mr-2 h-4 w-4" />

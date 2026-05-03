@@ -54,8 +54,7 @@ export const ReportPreviewModal = ({ open, onClose, report, onDownload, onPrint 
             Confidential summary for authorized clinical review.
           </div>
           <div className="prose prose-slate max-w-none text-sm leading-7">
-            <p>{report.summary}</p>
-            <p>Review the historical patient data and operational insights captured in this report. All sensitive records remain protected under audit controls.</p>
+            <p className='whitespace-pre-line'>{report.summary}</p>
           </div>
         </div>
 
@@ -68,14 +67,6 @@ export const ReportPreviewModal = ({ open, onClose, report, onDownload, onPrint 
 
         <DialogFooter className="mt-4 gap-2">
           <Button variant="outline" onClick={onClose}>Close</Button>
-          <Button onClick={() => onDownload(report)}>
-            <Download className="h-4 w-4 mr-2" />
-            Download
-          </Button>
-          <Button onClick={() => onPrint(report)}>
-            <Printer className="h-4 w-4 mr-2" />
-            Print
-          </Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>

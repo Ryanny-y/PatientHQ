@@ -14,8 +14,7 @@ const generateReportSchema = z.object({
   patient_id: z.string().min(1, 'Patient is required'),
   date_from: z.string().optional(),
   date_to: z.string().optional(),
-  output_format: z.enum(['PDF', 'CSV', 'Print Preview']),
-  summary: z.string().optional(),
+  notes: z.string().optional(),
 });
 
 type GenerateReportValues = z.infer<typeof generateReportSchema>;
@@ -43,21 +42,19 @@ export const GenerateReportModal = ({ open, onClose, onSubmit, patients, isSubmi
       patient_id: '',
       date_from: '',
       date_to: '',
-      output_format: 'PDF',
-      summary: '',
+      notes: '',
     },
   });
 
   const selectedPatientId = watch('patient_id');
 
-  const onFormSubmit = async (values: GenerateReportValues) => {
+  const onFormSubmit = async (values: GenerateReportValues): Promise<void> => {
     await onSubmit({
       report_type: values.report_type,
       patient_id: values.patient_id,
       date_from: values.date_from,
       date_to: values.date_to,
-      output_format: values.output_format,
-      summary: values.summary,
+      notes: values.notes,
     });
     reset();
     onClose();
@@ -88,11 +85,9 @@ export const GenerateReportModal = ({ open, onClose, onSubmit, patients, isSubmi
                   <SelectValue placeholder="Choose report type" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="Patient Summary">Patient Summary</SelectItem>
-                  <SelectItem value="Medical Summary">Medical Summary</SelectItem>
-                  <SelectItem value="Appointment Summary">Appointment Summary</SelectItem>
-                  <SelectItem value="Admission Report">Admission Report</SelectItem>
-                  <SelectItem value="Operational Report">Operational Report</SelectItem>
+                  <SelectItem value="PATIENT_SUMMARY">Patient Summary</SelectItem>
+                  <SelectItem value="MEDICAL_SUMMARY">Medical Summary</SelectItem>
+                  <SelectItem value="APPOINTMENT_SUMMARY">Appointment Summary</SelectItem>
                 </SelectContent>
               </Select>
               {errors.report_type && <p className="text-sm text-red-600 mt-1">{errors.report_type.message}</p>}
@@ -131,22 +126,8 @@ export const GenerateReportModal = ({ open, onClose, onSubmit, patients, isSubmi
           </div>
 
           <div>
-            <Label className="text-sm font-medium text-slate-700 mb-2 block">Summary</Label>
-            <Input placeholder="Optional report summary" {...register('summary')} />
-          </div>
-
-          <div>
-            <Label className="text-sm font-medium text-slate-700 mb-2 block">Output Format *</Label>
-            <Select value={watch('output_format')} onValueChange={(value) => setValue('output_format', value as 'PDF' | 'CSV' | 'Print Preview')}>
-              <SelectTrigger>
-                <SelectValue placeholder="Choose output format" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="PDF">PDF</SelectItem>
-                <SelectItem value="CSV">CSV</SelectItem>
-                <SelectItem value="Print Preview">Print Preview</SelectItem>
-              </SelectContent>
-            </Select>
+            <Label className="text-sm font-medium text-slate-700 mb-2 block">Notes</Label>
+            <Input placeholder="Optional report notes" {...register('notes')} />
           </div>
 
           <DialogFooter className="gap-2">

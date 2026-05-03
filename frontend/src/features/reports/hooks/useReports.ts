@@ -1,6 +1,5 @@
 import { useMemo, useState } from 'react';
 import type { GenerateReportForm, ReportDto, ReportRecord } from '../types/report';
-import { reportTypes } from '../utils/mockReportData';
 import { usePatientQuery } from '../../patients/hooks/usePatientQuery';
 import { useReportMutation } from './useReportMutation';
 import { useReportQuery } from './useReportQuery';
@@ -14,6 +13,7 @@ const mapReportDto = (report: ReportDto): ReportRecord => ({
   generated_by: report.generatedByUsername ?? report.generatedBy,
   generated_by_id: report.generatedBy,
   report_type: report.reportType,
+  notes: report.notes ?? '',
   summary: report.summary ?? '',
   created_at: report.createdAt,
 });
@@ -122,7 +122,7 @@ export const useReports = () => {
 
   const reportTypeOptions = useMemo(
     () =>
-      Array.from(new Set([...reportTypes, ...reports.map((report) => report.report_type)])).map((type) => ({
+      Array.from(new Set(reports.map((report) => report.report_type))).map((type) => ({
         label: type,
         value: type,
       })),
@@ -137,8 +137,6 @@ export const useReports = () => {
     values: GenerateReportForm,
     generatedBy: string,
   ): Promise<ReportRecord> => {
-    console.log("generaing");
-    
     const response = await mutations.generateReport.mutateAsync({
       patientId: values.patient_id,
       generatedBy,

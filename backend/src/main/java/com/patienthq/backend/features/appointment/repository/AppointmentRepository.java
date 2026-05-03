@@ -6,9 +6,11 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.UUID;
 
 @Repository
@@ -41,4 +43,13 @@ public interface AppointmentRepository extends JpaRepository<Appointment, UUID> 
 
     @Query("SELECT COUNT(a) FROM Appointment a WHERE a.status = 'COMPLETED' AND a.appointmentDate >= :startOfWeek")
     long countCompletedThisWeek(java.time.LocalDateTime startOfWeek);
+
+    @Query("""
+                SELECT a 
+                FROM Appointment a 
+                JOIN FETCH a.patient 
+                JOIN FETCH a.doctor 
+                WHERE a.patient.patientId = :patientId
+            """)
+    List<Appointment> findAppointmentsByPatientId(@Param("patientId") UUID patientId);
 }

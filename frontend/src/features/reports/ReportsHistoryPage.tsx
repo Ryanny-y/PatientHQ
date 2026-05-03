@@ -8,10 +8,6 @@ import { GenerateReportModal } from './components/GenerateReportModal';
 import { ReportPreviewModal } from './components/ReportPreviewModal';
 import { DeleteReportDialog } from './components/DeleteReportDialog';
 import { useReports } from './hooks/useReports';
-import {
-  mockHistoryEvents,
-  mockPatients,
-} from './utils/mockReportData';
 import type {
   ReportRecord,
   GenerateReportForm,
@@ -37,12 +33,12 @@ const ReportsHistoryPage = (): ReactElement => {
     updateFilter: updateReportFilter,
     generateReport,
   } = useReports();
-  const [historyEvents] = useState<HistoryEvent[]>(mockHistoryEvents);
+  const [historyEvents] = useState<HistoryEvent[]>([]);
   const [selectedReport, setSelectedReport] = useState<ReportRecord | null>(null);
   const [reportPreviewOpen, setReportPreviewOpen] = useState(false);
   const [generateModalOpen, setGenerateModalOpen] = useState(false);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
-  const [selectedPatient, setSelectedPatient] = useState<PatientSummary | null>(mockPatients[0] ?? null);
+  const [selectedPatient, setSelectedPatient] = useState<PatientSummary | null>(null);
 
   const [historyFilters, setHistoryFilters] = useState({
     search: '',
@@ -71,9 +67,7 @@ const ReportsHistoryPage = (): ReactElement => {
       .sort((a, b) => new Date(b.event_date).getTime() - new Date(a.event_date).getTime());
   }, [historyEvents, historyFilters]);
 
-  const handleGenerateReport = async (data: GenerateReportForm) => {
-    console.log("ds");
-    
+  const handleGenerateReport = async (data: GenerateReportForm): Promise<void> => {
     if (!generatedByUserId) {
       toast.error('Cannot generate report because the current user ID is missing from the login response.');
       return;
@@ -82,10 +76,6 @@ const ReportsHistoryPage = (): ReactElement => {
     try {
       const newReport = await generateReport(data, generatedByUserId);
       toast.success('Report generated successfully.');
-      if (data.output_format === 'Print Preview') {
-        setSelectedReport(newReport);
-        setReportPreviewOpen(true);
-      }
     } catch (error) {
       toast.error(error instanceof Error ? error.message : 'Failed to generate report.');
       throw error;
@@ -108,7 +98,7 @@ const ReportsHistoryPage = (): ReactElement => {
     toast.success('Export completed.');
   };
 
-  const handlePrintReport = () => {
+  const handlePrintReport = (_report: ReportRecord): void => {
     toast.success('Print preview opened for secure report review.');
   };
 
@@ -122,8 +112,7 @@ const ReportsHistoryPage = (): ReactElement => {
       {
         patient_id: String(report.patient_id),
         report_type: report.report_type,
-        output_format: 'Print Preview',
-        summary: report.summary,
+        notes: report.notes,
       },
       generatedByUserId,
     ).then((newReport) => {
@@ -135,15 +124,13 @@ const ReportsHistoryPage = (): ReactElement => {
     });
   };
 
-  const handleDeleteReport = () => {
+  const handleDeleteReport = (_reportId: string | number): void => {
     setDeleteDialogOpen(false);
     toast.warning('Delete is not available from the current reports API.');
   };
 
-  const handleSelectPatient = (patientId: number) => {
-    const patient = mockPatients.find((item) => item.patient_id === patientId) ?? selectedPatient;
-    setSelectedPatient(patient ?? null);
-    toast.success('History loaded for selected patient.');
+  const handleSelectPatient = (_patientId: number): void => {
+    // Patient history is mock-only; no-op until backend supports it
   };
 
   return (

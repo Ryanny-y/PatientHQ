@@ -31,7 +31,7 @@ export const reportService = {
         patientId: values.patientId,
         generatedBy: values.generatedBy,
         reportType: values.reportType,
-        summary: values.summary || null,
+        notes: values.notes || null,
       }),
     }),
 };

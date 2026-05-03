@@ -31,7 +31,8 @@ public class Report {
     private User generatedBy;
 
     @Column(name = "report_type", length = 100)
-    private String reportType;
+    @Enumerated(EnumType.STRING)
+    private ReportType reportType;
 
     @Column(name = "summary", columnDefinition = "TEXT")
     private String summary;
