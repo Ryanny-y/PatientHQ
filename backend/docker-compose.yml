@@ -1,3 +1,5 @@
+name: 'patientHQ'
+
 services:
   postgres:
     image: postgres:16
@@ -9,6 +11,8 @@ services:
       POSTGRES_PASSWORD: postgres
     ports:
       - "5435:5432"
+    volumes:
+      - postgres_data_patient-hq:/var/lib/postgresql/data
 
   adminer:
     image: adminer
@@ -18,3 +22,6 @@ services:
       - "7070:8080"
     depends_on:
       - postgres
+
+volumes:
+  postgres_data_patient-hq:
