@@ -16,11 +16,14 @@ interface AdminCardListMobileProps {
   onResetPassword: (admin: AdminAccount) => void;
   onToggleStatus: (admin: AdminAccount) => void;
   onDelete: (admin: AdminAccount) => void;
+  canUpdate?: boolean;
+  canDelete?: boolean;
 }
 
 const AdminCardListMobile = ({
   admins, currentUsername,
   onView, onEdit, onResetPassword, onToggleStatus, onDelete,
+  canUpdate = false, canDelete = false,
 }: AdminCardListMobileProps): ReactElement => (
   <div className="space-y-3">
     {admins.length === 0 && (
@@ -57,27 +60,33 @@ const AdminCardListMobile = ({
               <DropdownMenuItem onClick={() => onView(admin)}>
                 <Eye className="h-3.5 w-3.5" /> View Details
               </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => onEdit(admin)}>
-                <Pencil className="h-3.5 w-3.5" /> Edit Account
-              </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => onResetPassword(admin)}>
-                <KeyRound className="h-3.5 w-3.5" /> Reset Password
-              </DropdownMenuItem>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem onClick={() => onToggleStatus(admin)}>
-                {admin.isActive
-                  ? <><PowerOff className="h-3.5 w-3.5 text-amber-500" /> Deactivate</>
-                  : <><Power className="h-3.5 w-3.5 text-emerald-500" /> Activate</>
-                }
-              </DropdownMenuItem>
-              <DropdownMenuItem
-                onClick={() => onDelete(admin)}
-                disabled={admin.username === currentUsername}
-                className="text-red-600 focus:text-red-700 focus:bg-red-50"
-              >
-                <Trash2 className="h-3.5 w-3.5" />
-                {admin.username === currentUsername ? 'Cannot delete self' : 'Delete'}
-              </DropdownMenuItem>
+              {canUpdate && (
+                <>
+                  <DropdownMenuItem onClick={() => onEdit(admin)}>
+                    <Pencil className="h-3.5 w-3.5" /> Edit Account
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => onResetPassword(admin)}>
+                    <KeyRound className="h-3.5 w-3.5" /> Reset Password
+                  </DropdownMenuItem>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem onClick={() => onToggleStatus(admin)}>
+                    {admin.isActive
+                      ? <><PowerOff className="h-3.5 w-3.5 text-amber-500" /> Deactivate</>
+                      : <><Power className="h-3.5 w-3.5 text-emerald-500" /> Activate</>
+                    }
+                  </DropdownMenuItem>
+                </>
+              )}
+              {canDelete && (
+                <DropdownMenuItem
+                  onClick={() => onDelete(admin)}
+                  disabled={admin.username === currentUsername}
+                  className="text-red-600 focus:text-red-700 focus:bg-red-50"
+                >
+                  <Trash2 className="h-3.5 w-3.5" />
+                  {admin.username === currentUsername ? 'Cannot delete self' : 'Delete'}
+                </DropdownMenuItem>
+              )}
             </DropdownMenuContent>
           </DropdownMenu>
         </div>

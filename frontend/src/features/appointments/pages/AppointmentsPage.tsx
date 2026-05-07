@@ -20,10 +20,14 @@ import type {
   UpdateAppointmentFormValues,
 } from "../types/appointment";
 import { toast } from "sonner";
+import { PERMISSIONS, usePermissions } from "@/shared/security/permissions";
 
 const AppointmentsPage = (): ReactElement => {
   const { user } = useAuth();
   const userRole = (user?.role || 'ADMIN').toLowerCase() as 'admin' | 'doctor' | 'nurse';
+  const { can } = usePermissions();
+  const canCreateAppointments = can(PERMISSIONS.APPOINTMENT_CREATE);
+  const canUpdateAppointments = can(PERMISSIONS.APPOINTMENT_UPDATE);
 
   const [viewMode, setViewMode] = useState<'table' | 'calendar'>('table');
   const [viewDrawerOpen, setViewDrawerOpen] = useState(false);
@@ -138,8 +142,6 @@ const AppointmentsPage = (): ReactElement => {
     }
   };
 
-  const canCreateAppointments = userRole === "admin" || userRole === "doctor";
-
   return (
     <div className="space-y-6">
       {/* Page Header */}
@@ -198,6 +200,7 @@ const AppointmentsPage = (): ReactElement => {
                 setSelectedAppointment(appointment);
                 setCancelDialogOpen(true);
               }}
+              canUpdateAppointment={canUpdateAppointments}
             />
           </div>
 
@@ -214,6 +217,7 @@ const AppointmentsPage = (): ReactElement => {
                 setSelectedAppointment(appointment);
                 setCancelDialogOpen(true);
               }}
+              canUpdateAppointment={canUpdateAppointments}
             />
           </div>
 
@@ -259,27 +263,33 @@ const AppointmentsPage = (): ReactElement => {
         onEdit={handleEditAppointment}
       />
 
-      <AppointmentFormModal
-        open={formModalOpen}
-        onClose={() => setFormModalOpen(false)}
-        onSubmit={handleSubmitAppointment}
-        patients={patients}
-        doctors={doctors}
-      />
+      {canCreateAppointments && (
+        <AppointmentFormModal
+          open={formModalOpen}
+          onClose={() => setFormModalOpen(false)}
+          onSubmit={handleSubmitAppointment}
+          patients={patients}
+          doctors={doctors}
+        />
+      )}
 
-      <RescheduleAppointmentModal
-        appointment={selectedAppointment}
-        open={rescheduleModalOpen}
-        onClose={() => setRescheduleModalOpen(false)}
-        onSubmit={handleRescheduleAppointment}
-      />
+      {canUpdateAppointments && (
+        <RescheduleAppointmentModal
+          appointment={selectedAppointment}
+          open={rescheduleModalOpen}
+          onClose={() => setRescheduleModalOpen(false)}
+          onSubmit={handleRescheduleAppointment}
+        />
+      )}
 
-      <CancelAppointmentDialog
-        appointment={selectedAppointment}
-        open={cancelDialogOpen}
-        onClose={() => setCancelDialogOpen(false)}
-        onConfirm={handleCancelAppointment}
-      />
+      {canUpdateAppointments && (
+        <CancelAppointmentDialog
+          appointment={selectedAppointment}
+          open={cancelDialogOpen}
+          onClose={() => setCancelDialogOpen(false)}
+          onConfirm={handleCancelAppointment}
+        />
+      )}
     </div>
   );
 };

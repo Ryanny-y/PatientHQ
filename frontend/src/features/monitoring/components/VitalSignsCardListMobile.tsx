@@ -11,12 +11,13 @@ interface VitalSignsCardListMobileProps {
   onView: (v: VitalSigns) => void;
   onEdit: (v: VitalSigns) => void;
   onDelete: (v: VitalSigns) => void;
+  canModify?: boolean;
 }
 
 const fmt = (val: number | null, unit: string): string =>
   val !== null && val !== undefined ? `${val} ${unit}` : '—';
 
-const VitalSignsCardListMobile = ({ vitalSigns, onView, onEdit, onDelete }: VitalSignsCardListMobileProps): ReactElement => (
+const VitalSignsCardListMobile = ({ vitalSigns, onView, onEdit, onDelete, canModify = false }: VitalSignsCardListMobileProps): ReactElement => (
   <div className="space-y-4">
     {vitalSigns.length === 0 ? (
       <div className="rounded-3xl border border-slate-200 bg-white p-8 text-center text-sm text-slate-400">
@@ -38,8 +39,8 @@ const VitalSignsCardListMobile = ({ vitalSigns, onView, onEdit, onDelete }: Vita
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end">
                 <DropdownMenuItem onClick={() => onView(v)}>View Details</DropdownMenuItem>
-                <DropdownMenuItem onClick={() => onEdit(v)}>Edit</DropdownMenuItem>
-                <DropdownMenuItem onClick={() => onDelete(v)} className="text-red-600">Delete</DropdownMenuItem>
+                {canModify && <DropdownMenuItem onClick={() => onEdit(v)}>Edit</DropdownMenuItem>}
+                {canModify && <DropdownMenuItem onClick={() => onDelete(v)} className="text-red-600">Delete</DropdownMenuItem>}
               </DropdownMenuContent>
             </DropdownMenu>
           </div>

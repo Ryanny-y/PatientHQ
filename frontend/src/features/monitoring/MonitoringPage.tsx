@@ -14,9 +14,12 @@ import {
   DeleteVitalSignsDialog,
 } from './components/VitalSignsModals';
 import type { addVitalSignsFormValues } from './types/vitalSigns';
+import { PERMISSIONS, usePermissions } from '@/shared/security/permissions';
 
 const MonitoringPage = (): ReactElement => {
   const { toasts, toast, dismiss } = useToast();
+  const { can } = usePermissions();
+  const canCreateVitals = can(PERMISSIONS.VITAL_SIGNS_CREATE);
 
   const {
     data,
@@ -80,10 +83,12 @@ const MonitoringPage = (): ReactElement => {
             Track and manage patient vital signs and health measurements.
           </p>
         </div>
-        <Button onClick={() => openModal('add')}>
-          <Plus className="mr-2 h-4 w-4" />
-          Record Vitals
-        </Button>
+        {canCreateVitals && (
+          <Button onClick={() => openModal('add')}>
+            <Plus className="mr-2 h-4 w-4" />
+            Record Vitals
+          </Button>
+        )}
       </div>
 
       <VitalSignsStatsCards meta={meta?.data} />
@@ -110,6 +115,7 @@ const MonitoringPage = (): ReactElement => {
               onView={(v) => openModal('view', v)}
               onEdit={(v) => openModal('edit', v)}
               onDelete={(v) => openModal('delete', v)}
+              canModify={false}
             />
           </div>
           <div className="lg:hidden">
@@ -118,6 +124,7 @@ const MonitoringPage = (): ReactElement => {
               onView={(v) => openModal('view', v)}
               onEdit={(v) => openModal('edit', v)}
               onDelete={(v) => openModal('delete', v)}
+              canModify={false}
             />
           </div>
         </>
@@ -144,13 +151,15 @@ const MonitoringPage = (): ReactElement => {
         onOpenChange={(open) => { if (!open) closeModal(); }}
         vital={selectedVital}
       />
-      <VitalSignsFormModal
-        open={modalMode === 'add' || modalMode === 'edit'}
-        onOpenChange={(open) => { if (!open) closeModal(); }}
-        vital={modalMode === 'edit' ? selectedVital : null}
-        patients={patients}
-        onSubmit={handleSubmit}
-      />
+      {canCreateVitals && (
+        <VitalSignsFormModal
+          open={modalMode === 'add' || modalMode === 'edit'}
+          onOpenChange={(open) => { if (!open) closeModal(); }}
+          vital={modalMode === 'edit' ? selectedVital : null}
+          patients={patients}
+          onSubmit={handleSubmit}
+        />
+      )}
       <DeleteVitalSignsDialog
         open={modalMode === 'delete'}
         onOpenChange={(open) => { if (!open) closeModal(); }}

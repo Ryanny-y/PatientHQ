@@ -13,6 +13,7 @@ interface ReportsTableProps {
   onPrint: (report: ReportRecord) => void;
   onRegenerate: (report: ReportRecord) => void;
   onDelete: (report: ReportRecord) => void;
+  canGenerateReports?: boolean;
 }
 
 export const ReportsTable = ({
@@ -23,6 +24,7 @@ export const ReportsTable = ({
   onPrint,
   onRegenerate,
   onDelete,
+  canGenerateReports = false,
 }: ReportsTableProps): ReactElement => {
   const canDelete = userRole === 'admin';
 
@@ -61,10 +63,12 @@ export const ReportsTable = ({
                       <Eye className="mr-2 h-4 w-4" />
                       View Report
                     </DropdownMenuItem>
-                    <DropdownMenuItem onClick={() => onRegenerate(report)}>
-                      <Repeat className="mr-2 h-4 w-4" />
-                      Regenerate
-                    </DropdownMenuItem>
+                    {canGenerateReports && (
+                      <DropdownMenuItem onClick={() => onRegenerate(report)}>
+                        <Repeat className="mr-2 h-4 w-4" />
+                        Regenerate
+                      </DropdownMenuItem>
+                    )}
                     {canDelete && (
                       <DropdownMenuItem onClick={() => onDelete(report)} className="text-red-600 focus:text-red-600">
                         <Trash2 className="mr-2 h-4 w-4" />

@@ -31,6 +31,8 @@ interface MedicalRecordsTableProps {
   onPrintRecord: (record: MedicalRecord) => void;
   onGenerateReport: (record: MedicalRecord) => void;
   onArchiveRecord: (record: MedicalRecord) => void;
+  canEditRecord?: boolean;
+  canGenerateReport?: boolean;
 }
 
 export const MedicalRecordsTable = ({
@@ -39,6 +41,8 @@ export const MedicalRecordsTable = ({
   onEditRecord,
   onPrintRecord,
   onGenerateReport,
+  canEditRecord = false,
+  canGenerateReport = false,
 }: MedicalRecordsTableProps): ReactElement => {
   const truncateText = (text: string, maxLength: number = 50) => {
     return text.length > maxLength
@@ -134,18 +138,22 @@ export const MedicalRecordsTable = ({
                       <Eye className="mr-2 h-4 w-4" />
                       View Record
                     </DropdownMenuItem>
-                    <DropdownMenuItem onClick={() => onEditRecord(record)}>
-                      <Edit className="mr-2 h-4 w-4" />
-                      Edit Record
-                    </DropdownMenuItem>
+                    {canEditRecord && (
+                      <DropdownMenuItem onClick={() => onEditRecord(record)}>
+                        <Edit className="mr-2 h-4 w-4" />
+                        Edit Record
+                      </DropdownMenuItem>
+                    )}
                     <DropdownMenuItem onClick={() => onPrintRecord(record)}>
                       <Printer className="mr-2 h-4 w-4" />
                       Print Summary
                     </DropdownMenuItem>
-                    <DropdownMenuItem onClick={() => onGenerateReport(record)}>
-                      <FileText className="mr-2 h-4 w-4" />
-                      Generate Report
-                    </DropdownMenuItem>
+                    {canGenerateReport && (
+                      <DropdownMenuItem onClick={() => onGenerateReport(record)}>
+                        <FileText className="mr-2 h-4 w-4" />
+                        Generate Report
+                      </DropdownMenuItem>
+                    )}
                   </DropdownMenuContent>
                 </DropdownMenu>
               </TableCell>

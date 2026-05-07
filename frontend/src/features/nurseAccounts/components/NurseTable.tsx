@@ -21,6 +21,8 @@ interface NurseTableProps {
   onPageChange: (p: number) => void;
   totalFiltered: number;
   pageSize: number;
+  canUpdate?: boolean;
+  canDelete?: boolean;
 }
 
 const formatDate = (s: string): string =>
@@ -29,6 +31,7 @@ const formatDate = (s: string): string =>
 const NurseTable = ({
   nurses, onView, onEdit, onResetPassword, onToggleStatus, onDelete,
   page, totalPages, onPageChange, totalFiltered, pageSize,
+  canUpdate = false, canDelete = false,
 }: NurseTableProps): ReactElement => {
   const from = totalFiltered === 0 ? 0 : (page - 1) * pageSize + 1;
   const to = Math.min(page * pageSize, totalFiltered);
@@ -116,29 +119,35 @@ const NurseTable = ({
                         <DropdownMenuItem onClick={() => onView(nurse)}>
                           <Eye className="h-3.5 w-3.5" /> View Details
                         </DropdownMenuItem>
-                        <DropdownMenuItem onClick={() => onEdit(nurse)}>
-                          <Pencil className="h-3.5 w-3.5" /> Edit Account
-                        </DropdownMenuItem>
-                        <DropdownMenuItem onClick={() => onResetPassword(nurse)}>
-                          <KeyRound className="h-3.5 w-3.5" /> Reset Password
-                        </DropdownMenuItem>
-                        <DropdownMenuSeparator />
-                        <DropdownMenuItem onClick={() => onToggleStatus(nurse)}>
-                          {nurse.isActive
-                            ? <><PowerOff className="h-3.5 w-3.5 text-amber-500" /> Deactivate</>
-                            : <><Power className="h-3.5 w-3.5 text-emerald-500" /> Activate</>
-                          }
-                        </DropdownMenuItem>
-                        <DropdownMenuItem
-                          onClick={() => onDelete(nurse)}
-                          disabled={nurse.isActive && nurse.patients_monitored_today > 0}
-                          className="text-red-600 focus:text-red-700 focus:bg-red-50 disabled:opacity-40"
-                        >
-                          <Trash2 className="h-3.5 w-3.5" />
-                          {nurse.isActive && nurse.patients_monitored_today > 0
-                            ? 'Has active patients'
-                            : 'Delete Account'}
-                        </DropdownMenuItem>
+                        {canUpdate && (
+                          <>
+                            <DropdownMenuItem onClick={() => onEdit(nurse)}>
+                              <Pencil className="h-3.5 w-3.5" /> Edit Account
+                            </DropdownMenuItem>
+                            <DropdownMenuItem onClick={() => onResetPassword(nurse)}>
+                              <KeyRound className="h-3.5 w-3.5" /> Reset Password
+                            </DropdownMenuItem>
+                            <DropdownMenuSeparator />
+                            <DropdownMenuItem onClick={() => onToggleStatus(nurse)}>
+                              {nurse.isActive
+                                ? <><PowerOff className="h-3.5 w-3.5 text-amber-500" /> Deactivate</>
+                                : <><Power className="h-3.5 w-3.5 text-emerald-500" /> Activate</>
+                              }
+                            </DropdownMenuItem>
+                          </>
+                        )}
+                        {canDelete && (
+                          <DropdownMenuItem
+                            onClick={() => onDelete(nurse)}
+                            disabled={nurse.isActive && nurse.patients_monitored_today > 0}
+                            className="text-red-600 focus:text-red-700 focus:bg-red-50 disabled:opacity-40"
+                          >
+                            <Trash2 className="h-3.5 w-3.5" />
+                            {nurse.isActive && nurse.patients_monitored_today > 0
+                              ? 'Has active patients'
+                              : 'Delete Account'}
+                          </DropdownMenuItem>
+                        )}
                       </DropdownMenuContent>
                     </DropdownMenu>
                   </td>

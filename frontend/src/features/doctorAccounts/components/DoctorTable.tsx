@@ -21,6 +21,8 @@ interface DoctorTableProps {
   onPageChange: (p: number) => void;
   totalFiltered: number;
   pageSize: number;
+  canUpdate?: boolean;
+  canDelete?: boolean;
 }
 
 const formatDate = (s: string): string =>
@@ -29,6 +31,7 @@ const formatDate = (s: string): string =>
 const DoctorTable = ({
   doctors, onView, onEdit, onResetPassword, onToggleStatus, onDelete,
   page, totalPages, onPageChange, totalFiltered, pageSize,
+  canUpdate = false, canDelete = false,
 }: DoctorTableProps): ReactElement => {
   const from = totalFiltered === 0 ? 0 : (page - 1) * pageSize + 1;
   const to = Math.min(page * pageSize, totalFiltered);
@@ -125,25 +128,31 @@ const DoctorTable = ({
                         <DropdownMenuItem onClick={() => onView(doc)}>
                           <Eye className="h-3.5 w-3.5" /> View Details
                         </DropdownMenuItem>
-                        <DropdownMenuItem onClick={() => onEdit(doc)}>
-                          <Pencil className="h-3.5 w-3.5" /> Edit Account
-                        </DropdownMenuItem>
-                        <DropdownMenuItem onClick={() => onResetPassword(doc)}>
-                          <KeyRound className="h-3.5 w-3.5" /> Reset Password
-                        </DropdownMenuItem>
-                        <DropdownMenuSeparator />
-                        <DropdownMenuItem onClick={() => onToggleStatus(doc)}>
-                          {doc.isActive
-                            ? <><PowerOff className="h-3.5 w-3.5 text-amber-500" /> Deactivate</>
-                            : <><Power className="h-3.5 w-3.5 text-emerald-500" /> Activate</>
-                          }
-                        </DropdownMenuItem>
-                        <DropdownMenuItem
-                          onClick={() => onDelete(doc)}
-                          className="text-red-600 focus:text-red-700 focus:bg-red-50"
-                        >
-                          <Trash2 className="h-3.5 w-3.5" /> Delete Account
-                        </DropdownMenuItem>
+                        {canUpdate && (
+                          <>
+                            <DropdownMenuItem onClick={() => onEdit(doc)}>
+                              <Pencil className="h-3.5 w-3.5" /> Edit Account
+                            </DropdownMenuItem>
+                            <DropdownMenuItem onClick={() => onResetPassword(doc)}>
+                              <KeyRound className="h-3.5 w-3.5" /> Reset Password
+                            </DropdownMenuItem>
+                            <DropdownMenuSeparator />
+                            <DropdownMenuItem onClick={() => onToggleStatus(doc)}>
+                              {doc.isActive
+                                ? <><PowerOff className="h-3.5 w-3.5 text-amber-500" /> Deactivate</>
+                                : <><Power className="h-3.5 w-3.5 text-emerald-500" /> Activate</>
+                              }
+                            </DropdownMenuItem>
+                          </>
+                        )}
+                        {canDelete && (
+                          <DropdownMenuItem
+                            onClick={() => onDelete(doc)}
+                            className="text-red-600 focus:text-red-700 focus:bg-red-50"
+                          >
+                            <Trash2 className="h-3.5 w-3.5" /> Delete Account
+                          </DropdownMenuItem>
+                        )}
                       </DropdownMenuContent>
                     </DropdownMenu>
                   </td>

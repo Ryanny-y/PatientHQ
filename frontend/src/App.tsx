@@ -19,7 +19,7 @@ import RolesPermissionsPage from "./features/rolesPermissions/RolesPermissionsPa
 import DataIntegrityPage from "./features/dataIntegrity/DataIntegrityPage";
 import { Toaster } from "sonner";
 import UnauthorizedState from "./features/auditLogs/components/UnauthorizedState";
-import { hasPermission } from "./shared/security/permissions";
+import { hasPermission, PERMISSIONS } from "./shared/security/permissions";
 const ProtectedRoute = ({
   children,
   permission,
@@ -29,11 +29,15 @@ const ProtectedRoute = ({
 }): ReactElement => {
   const { user } = useAuth();
 
+  if (!user) {
+    return <Navigate to="/login" replace />;
+  }
+
   if (permission && !hasPermission(user, permission)) {
     return <UnauthorizedState />;
   }
 
-  return user ? <>{children}</> : <Navigate to="/login" replace />;
+  return <>{children}</>;
 };
 
 const AppRoutes = (): ReactElement => (
@@ -52,7 +56,7 @@ const AppRoutes = (): ReactElement => (
       <Route
         path="dashboard"
         element={
-          <ProtectedRoute permission="DASHBOARD_VIEW">
+          <ProtectedRoute permission={PERMISSIONS.DASHBOARD_VIEW}>
             <DashboardHome />
           </ProtectedRoute>
         }
@@ -61,7 +65,7 @@ const AppRoutes = (): ReactElement => (
         <Route
           path="admins"
           element={
-            <ProtectedRoute permission="USER_MANAGEMENT_VIEW">
+            <ProtectedRoute permission={PERMISSIONS.USER_MANAGEMENT_VIEW}>
               <AdminAccountsPage />
             </ProtectedRoute>
           }
@@ -69,7 +73,7 @@ const AppRoutes = (): ReactElement => (
         <Route
           path="doctors"
           element={
-            <ProtectedRoute permission="USER_MANAGEMENT_VIEW">
+            <ProtectedRoute permission={PERMISSIONS.USER_MANAGEMENT_VIEW}>
               <DoctorAccountsPage />
             </ProtectedRoute>
           }
@@ -77,23 +81,23 @@ const AppRoutes = (): ReactElement => (
         <Route
           path="nurses"
           element={
-            <ProtectedRoute permission="USER_MANAGEMENT_VIEW">
+            <ProtectedRoute permission={PERMISSIONS.USER_MANAGEMENT_VIEW}>
               <NurseAccountsPage />
             </ProtectedRoute>
           }
         />
       </Route>
 
-      <Route path="patients" element={<PatientListPage />} />
-      <Route path="patients/register" element={<RegisterPatientPage />} />
-      <Route path="patients/assign" element={<AssignDoctorPage />} />
-      <Route path="records" element={<MedicalRecordsPage />} />
-      <Route path="monitoring" element={<MonitoringPage />} />
-      <Route path="appointments" element={<AppointmentsPage />} />
-      <Route path="reports" element={<ReportsHistoryPage />} />
-      <Route path="audit" element={<AuditLogsPage />} />
-      <Route path="integrity" element={<DataIntegrityPage />} />
-      <Route path="roles-permissions" element={<RolesPermissionsPage />} />
+      <Route path="patients" element={<ProtectedRoute permission={PERMISSIONS.PATIENT_VIEW}><PatientListPage /></ProtectedRoute>} />
+      <Route path="patients/register" element={<ProtectedRoute permission={PERMISSIONS.PATIENT_CREATE}><RegisterPatientPage /></ProtectedRoute>} />
+      <Route path="patients/assign" element={<ProtectedRoute permission={PERMISSIONS.DOCTOR_ASSIGNMENT_ASSIGN}><AssignDoctorPage /></ProtectedRoute>} />
+      <Route path="records" element={<ProtectedRoute permission={PERMISSIONS.MEDICAL_RECORD_VIEW}><MedicalRecordsPage /></ProtectedRoute>} />
+      <Route path="monitoring" element={<ProtectedRoute permission={PERMISSIONS.VITAL_SIGNS_VIEW}><MonitoringPage /></ProtectedRoute>} />
+      <Route path="appointments" element={<ProtectedRoute permission={PERMISSIONS.APPOINTMENT_VIEW}><AppointmentsPage /></ProtectedRoute>} />
+      <Route path="reports" element={<ProtectedRoute permission={PERMISSIONS.REPORT_VIEW}><ReportsHistoryPage /></ProtectedRoute>} />
+      <Route path="audit" element={<ProtectedRoute permission={PERMISSIONS.AUDIT_LOG_VIEW}><AuditLogsPage /></ProtectedRoute>} />
+      <Route path="integrity" element={<ProtectedRoute permission={PERMISSIONS.DATA_INTEGRITY_VIEW}><DataIntegrityPage /></ProtectedRoute>} />
+      <Route path="roles-permissions" element={<ProtectedRoute permission={PERMISSIONS.ROLE_MANAGEMENT_VIEW}><RolesPermissionsPage /></ProtectedRoute>} />
     </Route>
     <Route path="*" element={<Navigate to="/login" replace />} />
   </Routes>

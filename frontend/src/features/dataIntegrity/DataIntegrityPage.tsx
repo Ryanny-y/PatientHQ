@@ -2,7 +2,7 @@ import { type ReactElement } from 'react';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Search } from 'lucide-react';
-import { useAuth } from '@/shared/context/AuthContext';
+import { PERMISSIONS, usePermissions } from '@/shared/security/permissions';
 import { useDataIntegrity } from './hooks/useDataIntegrity';
 import { DataIntegrityStatsCards } from './components/DataIntegrityStatsCards';
 import { DataIntegrityTable } from './components/DataIntegrityTable';
@@ -11,8 +11,8 @@ import type { IntegrityStatus } from './types/dataIntegrity';
 import { toast } from 'sonner';
 
 const DataIntegrityPage = (): ReactElement => {
-  const { user } = useAuth();
-  const canRecompute = user?.role === 'ADMIN';
+  const { can } = usePermissions();
+  const canVerify = can(PERMISSIONS.DATA_INTEGRITY_VERIFY);
 
   const {
     patients,
@@ -111,7 +111,8 @@ const DataIntegrityPage = (): ReactElement => {
           recomputingIds={recomputingIds}
           onVerify={handleVerify}
           onRecompute={handleRecompute}
-          canRecompute={canRecompute}
+          canVerify={canVerify}
+          canRecompute={canVerify}
         />
       )}
 

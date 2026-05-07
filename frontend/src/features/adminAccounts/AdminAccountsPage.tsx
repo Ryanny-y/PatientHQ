@@ -16,9 +16,14 @@ import type {
   editAdminFormValues,
 } from "@/features/adminAccounts/types/adminAccount";
 import { toast } from "sonner";
+import { PERMISSIONS, usePermissions } from "@/shared/security/permissions";
 
 const AdminAccountsPage = (): ReactElement => {
   const { user } = useAuth();
+  const { can } = usePermissions();
+  const canCreate = can(PERMISSIONS.USER_MANAGEMENT_CREATE);
+  const canUpdate = can(PERMISSIONS.USER_MANAGEMENT_UPDATE);
+  const canDelete = can(PERMISSIONS.USER_MANAGEMENT_DELETE);
   const {
     metaData,
     data: accounts,
@@ -159,14 +164,16 @@ const AdminAccountsPage = (): ReactElement => {
             <Download className="h-3.5 w-3.5" />
             Export
           </Button>
-          <Button
-            size="sm"
-            onClick={() => openModal("add")}
-            className="gap-1.5"
-          >
-            <UserPlus className="h-3.5 w-3.5" />
-            Add Admin
-          </Button>
+          {canCreate && (
+            <Button
+              size="sm"
+              onClick={() => openModal("add")}
+              className="gap-1.5"
+            >
+              <UserPlus className="h-3.5 w-3.5" />
+              Add Admin
+            </Button>
+          )}
         </div>
       </div>
 
@@ -205,6 +212,8 @@ const AdminAccountsPage = (): ReactElement => {
           onPageChange={setPage}
           totalFiltered={totalCount}
           pageSize={pageSize}
+          canUpdate={canUpdate}
+          canDelete={canDelete}
         />
       </div>
 
@@ -218,6 +227,8 @@ const AdminAccountsPage = (): ReactElement => {
           onResetPassword={(a) => openModal("reset-password", a)}
           onToggleStatus={(a) => handleToggleStatus(a.adminId, a.isActive)}
           onDelete={(a) => openModal("delete", a)}
+          canUpdate={canUpdate}
+          canDelete={canDelete}
         />
       </div>
 
@@ -232,34 +243,42 @@ const AdminAccountsPage = (): ReactElement => {
         }}
       />
 
-      <AdminFormModal
-        mode="add"
-        open={modalMode === "add"}
-        onClose={closeModal}
-        onSubmitAdd={handleCreate}
-      />
+      {canCreate && (
+        <AdminFormModal
+          mode="add"
+          open={modalMode === "add"}
+          onClose={closeModal}
+          onSubmitAdd={handleCreate}
+        />
+      )}
 
-      <AdminFormModal
-        mode="edit"
-        admin={selectedAdmin}
-        open={modalMode === "edit"}
-        onClose={closeModal}
-        onSubmitEdit={handleUpdate}
-      />
+      {canUpdate && (
+        <AdminFormModal
+          mode="edit"
+          admin={selectedAdmin}
+          open={modalMode === "edit"}
+          onClose={closeModal}
+          onSubmitEdit={handleUpdate}
+        />
+      )}
 
-      <ResetPasswordModal
-        admin={selectedAdmin}
-        open={modalMode === "reset-password"}
-        onClose={closeModal}
-        onSubmit={handleResetPassword}
-      />
+      {canUpdate && (
+        <ResetPasswordModal
+          admin={selectedAdmin}
+          open={modalMode === "reset-password"}
+          onClose={closeModal}
+          onSubmit={handleResetPassword}
+        />
+      )}
 
-      <DeleteConfirmDialog
-        admin={selectedAdmin}
-        open={modalMode === "delete"}
-        onClose={closeModal}
-        onConfirm={handleDelete}
-      />
+      {canDelete && (
+        <DeleteConfirmDialog
+          admin={selectedAdmin}
+          open={modalMode === "delete"}
+          onClose={closeModal}
+          onConfirm={handleDelete}
+        />
+      )}
     </div>
   );
 };

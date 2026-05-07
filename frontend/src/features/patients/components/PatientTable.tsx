@@ -36,6 +36,10 @@ interface PatientTableProps {
   onEditPatient: (patient: Patient) => void;
   onViewHistory: (patient: Patient) => void;
   onAssignDoctor: (patient: Patient) => void;
+  canEditPatient?: boolean;
+  canViewHistory?: boolean;
+  canAssignDoctor?: boolean;
+  canCreateRecord?: boolean;
 }
 
 const PatientTable = ({
@@ -44,6 +48,10 @@ const PatientTable = ({
   onEditPatient,
   onViewHistory,
   onAssignDoctor,
+  canEditPatient = false,
+  canViewHistory = false,
+  canAssignDoctor = false,
+  canCreateRecord = false,
 }: PatientTableProps): ReactElement => {
   return (
     <div className="bg-white rounded-xl border border-slate-100 shadow-sm overflow-hidden">
@@ -117,29 +125,37 @@ const PatientTable = ({
                           <Eye className="mr-2 h-4 w-4" />
                           View Profile
                         </DropdownMenuItem>
-                        <DropdownMenuItem
-                          onClick={() => onEditPatient(patient)}
-                        >
-                          <Edit className="mr-2 h-4 w-4" />
-                          Edit Patient
-                        </DropdownMenuItem>
-                        <DropdownMenuItem
-                          onClick={() => onViewHistory(patient)}
-                        >
-                          <History className="mr-2 h-4 w-4" />
-                          View History
-                        </DropdownMenuItem>
-                        <DropdownMenuSeparator />
-                        <DropdownMenuItem
-                          onClick={() => onAssignDoctor(patient)}
-                        >
-                          <UserPlus className="mr-2 h-4 w-4" />
-                          Assign Doctor
-                        </DropdownMenuItem>
-                        <DropdownMenuItem>
-                          <FileText className="mr-2 h-4 w-4" />
-                          Create Record
-                        </DropdownMenuItem>
+                        {canEditPatient && (
+                          <DropdownMenuItem
+                            onClick={() => onEditPatient(patient)}
+                          >
+                            <Edit className="mr-2 h-4 w-4" />
+                            Edit Patient
+                          </DropdownMenuItem>
+                        )}
+                        {canViewHistory && (
+                          <DropdownMenuItem
+                            onClick={() => onViewHistory(patient)}
+                          >
+                            <History className="mr-2 h-4 w-4" />
+                            View History
+                          </DropdownMenuItem>
+                        )}
+                        {(canAssignDoctor || canCreateRecord) && <DropdownMenuSeparator />}
+                        {canAssignDoctor && (
+                          <DropdownMenuItem
+                            onClick={() => onAssignDoctor(patient)}
+                          >
+                            <UserPlus className="mr-2 h-4 w-4" />
+                            Assign Doctor
+                          </DropdownMenuItem>
+                        )}
+                        {canCreateRecord && (
+                          <DropdownMenuItem>
+                            <FileText className="mr-2 h-4 w-4" />
+                            Create Record
+                          </DropdownMenuItem>
+                        )}
                       </DropdownMenuContent>
                     </DropdownMenu>
                   </TableCell>

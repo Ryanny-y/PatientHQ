@@ -7,11 +7,15 @@ import { AddRoleModal } from './components/AddRoleModal.tsx';
 import { AddPermissionModal } from './components/AddPermissionModal.tsx';
 import type { Role } from './types/roles.ts';
 import { PermissionsList } from './components/PermissionsList.tsx';
+import { PERMISSIONS, usePermissions } from '@/shared/security/permissions';
 
 const RolesPermissionsPage = () => {
   const [selectedRole, setSelectedRole] = useState<Role | null>(null);
   const [showAddRole, setShowAddRole] = useState(false);
   const [showAddPermission, setShowAddPermission] = useState(false);
+  const { can } = usePermissions();
+  const canCreateRole = can(PERMISSIONS.ROLE_MANAGEMENT_CREATE);
+  const canCreatePermission = can(PERMISSIONS.PERMISSION_MANAGEMENT_CREATE);
 
   return (
     <div className="container mx-auto p-6">
@@ -21,8 +25,8 @@ const RolesPermissionsPage = () => {
           <p className="text-gray-600">Manage user roles, access rights, and security permissions.</p>
         </div>
         <div className="flex gap-2">
-          <Button onClick={() => setShowAddRole(true)}>+ Add Role</Button>
-          <Button onClick={() => setShowAddPermission(true)}>+ Add Permission</Button>
+          {canCreateRole && <Button onClick={() => setShowAddRole(true)}>+ Add Role</Button>}
+          {canCreatePermission && <Button onClick={() => setShowAddPermission(true)}>+ Add Permission</Button>}
         </div>
       </div>
       <SummaryCards />
@@ -33,8 +37,8 @@ const RolesPermissionsPage = () => {
       <div className="mt-6">
         <PermissionsList />
       </div>
-      {showAddRole && <AddRoleModal onClose={() => setShowAddRole(false)} onRoleCreated={setSelectedRole} />}
-      {showAddPermission && <AddPermissionModal onClose={() => setShowAddPermission(false)} />}
+      {canCreateRole && showAddRole && <AddRoleModal onClose={() => setShowAddRole(false)} onRoleCreated={setSelectedRole} />}
+      {canCreatePermission && showAddPermission && <AddPermissionModal onClose={() => setShowAddPermission(false)} />}
     </div>
   );
 };

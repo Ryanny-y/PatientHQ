@@ -18,6 +18,9 @@ interface PatientCardListProps {
   onEditPatient: (patient: Patient) => void;
   onViewHistory: (patient: Patient) => void;
   onAssignDoctor: (patient: Patient) => void;
+  canEditPatient?: boolean;
+  canViewHistory?: boolean;
+  canAssignDoctor?: boolean;
 }
 
 const PatientCardList = ({
@@ -26,6 +29,9 @@ const PatientCardList = ({
   onEditPatient,
   onViewHistory,
   onAssignDoctor,
+  canEditPatient = false,
+  canViewHistory = false,
+  canAssignDoctor = false,
 }: PatientCardListProps): ReactElement => {
   if (patients.length === 0) {
     return (
@@ -60,19 +66,25 @@ const PatientCardList = ({
                   <Eye className="mr-2 h-4 w-4" />
                   View Profile
                 </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => onEditPatient(patient)}>
-                  <Edit className="mr-2 h-4 w-4" />
-                  Edit Patient
-                </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => onViewHistory(patient)}>
-                  <History className="mr-2 h-4 w-4" />
-                  View History
-                </DropdownMenuItem>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem onClick={() => onAssignDoctor(patient)}>
-                  <UserPlus className="mr-2 h-4 w-4" />
-                  Assign Doctor
-                </DropdownMenuItem>
+                {canEditPatient && (
+                  <DropdownMenuItem onClick={() => onEditPatient(patient)}>
+                    <Edit className="mr-2 h-4 w-4" />
+                    Edit Patient
+                  </DropdownMenuItem>
+                )}
+                {canViewHistory && (
+                  <DropdownMenuItem onClick={() => onViewHistory(patient)}>
+                    <History className="mr-2 h-4 w-4" />
+                    View History
+                  </DropdownMenuItem>
+                )}
+                {canAssignDoctor && <DropdownMenuSeparator />}
+                {canAssignDoctor && (
+                  <DropdownMenuItem onClick={() => onAssignDoctor(patient)}>
+                    <UserPlus className="mr-2 h-4 w-4" />
+                    Assign Doctor
+                  </DropdownMenuItem>
+                )}
               </DropdownMenuContent>
             </DropdownMenu>
           </div>

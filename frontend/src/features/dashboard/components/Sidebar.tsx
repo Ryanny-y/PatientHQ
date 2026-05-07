@@ -18,20 +18,21 @@ import {
   X,
 } from "lucide-react";
 import { cn } from "@/shared/utils/cn";
-import { hasPermission } from "@/shared/security/permissions";
+import { hasPermission, PERMISSIONS, type PermissionName } from "@/shared/security/permissions";
 import { useAuth } from "@/shared/context/AuthContext";
 
 interface NavChild {
   label: string;
   icon: React.ElementType;
   path: string;
+  permission?: PermissionName;
 }
 
 interface NavGroup {
   type: "group";
   label: string;
   children: NavChild[];
-  permission?: string;
+  permission?: PermissionName;
 }
 
 interface NavLink {
@@ -39,7 +40,7 @@ interface NavLink {
   label: string;
   icon: React.ElementType;
   path: string;
-  permission?: string;
+  permission?: PermissionName;
 }
 
 type NavItem = NavLink | NavGroup;
@@ -50,7 +51,7 @@ const navItems: NavItem[] = [
     label: "Dashboard",
     icon: LayoutDashboard,
     path: "/dashboard",
-    permission: "DASHBOARD_VIEW",
+    permission: PERMISSIONS.DASHBOARD_VIEW,
   },
   {
     type: "group",
@@ -60,53 +61,53 @@ const navItems: NavItem[] = [
       { label: "Doctor Accounts", icon: Stethoscope, path: "/users/doctors" },
       { label: "Nurse Accounts", icon: HeartPulse, path: "/users/nurses" },
     ],
-    permission: "USER_MANAGEMENT_VIEW",
+    permission: PERMISSIONS.USER_MANAGEMENT_VIEW,
   },
   {
     type: "group",
     label: "Patients",
     children: [
-      { label: "Patient List", icon: ClipboardList, path: "/patients" },
-      { label: "Register Patient", icon: UserPlus, path: "/patients/register" },
-      { label: "Assign Doctor", icon: UserCheck, path: "/patients/assign" },
+      { label: "Patient List", icon: ClipboardList, path: "/patients", permission: PERMISSIONS.PATIENT_VIEW },
+      { label: "Register Patient", icon: UserPlus, path: "/patients/register", permission: PERMISSIONS.PATIENT_CREATE },
+      { label: "Assign Doctor", icon: UserCheck, path: "/patients/assign", permission: PERMISSIONS.DOCTOR_ASSIGNMENT_ASSIGN },
     ],
-    permission: "PATIENT_VIEW",
+    permission: PERMISSIONS.PATIENT_VIEW,
   },
   {
     type: "link",
     label: "Medical Records",
     icon: FileText,
     path: "/records",
-    permission: "MEDICAL_RECORD_VIEW",
+    permission: PERMISSIONS.MEDICAL_RECORD_VIEW,
   },
   {
     type: "link",
     label: "Monitoring",
     icon: Activity,
     path: "/monitoring",
-    permission: "VITAL_SIGNS_VIEW",
+    permission: PERMISSIONS.VITAL_SIGNS_VIEW,
   },
   {
     type: "link",
     label: "Appointments",
     icon: CalendarDays,
     path: "/appointments",
-    permission: "APPOINTMENT_VIEW",
+    permission: PERMISSIONS.APPOINTMENT_VIEW,
   },
   {
     type: "link",
     label: "Reports & History",
     icon: BarChart3,
     path: "/reports",
-    permission: "REPORT_VIEW",
+    permission: PERMISSIONS.REPORT_VIEW,
   },
-  { type: "link", label: "Audit Logs", icon: ScrollText, path: "/audit", permission: "AUDIT_LOG_VIEW" },
+  { type: "link", label: "Audit Logs", icon: ScrollText, path: "/audit", permission: PERMISSIONS.AUDIT_LOG_VIEW },
   {
     type: "link",
     label: "Data Integrity",
     icon: ShieldCheck,
     path: "/integrity",
-    permission: "DATA_INTEGRITY_VIEW",
+    permission: PERMISSIONS.DATA_INTEGRITY_VIEW,
   },
   // { type: "link", label: "System Settings", icon: Settings, path: "/settings" },
   {
@@ -114,7 +115,7 @@ const navItems: NavItem[] = [
     label: "Roles & Permissions",
     icon: Settings,
     path: "/roles-permissions",
-    permission: "ROLE_MANAGEMENT_VIEW"
+    permission: PERMISSIONS.ROLE_MANAGEMENT_VIEW
   },
 ];
 
@@ -176,7 +177,9 @@ const SidebarContent = ({
                 <p className="px-3 mb-1.5 text-[10px] font-semibold text-slate-400 uppercase tracking-widest">
                   {item.label}
                 </p>
-                {item.children.map((child) => {
+                {item.children
+                  .filter((child) => !child.permission || hasPermission(user, child.permission))
+                  .map((child) => {
                   const Icon = child.icon;
                   const isActive = activePath === child.path;
                   return (

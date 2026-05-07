@@ -15,8 +15,13 @@ import type {
   editNurseFormValues,
 } from "@/features/nurseAccounts/types/nurseAccount";
 import { toast } from "sonner";
+import { PERMISSIONS, usePermissions } from "@/shared/security/permissions";
 
 const NurseAccountsPage = (): ReactElement => {
+  const { can } = usePermissions();
+  const canCreate = can(PERMISSIONS.USER_MANAGEMENT_CREATE);
+  const canUpdate = can(PERMISSIONS.USER_MANAGEMENT_UPDATE);
+  const canDelete = can(PERMISSIONS.USER_MANAGEMENT_DELETE);
   const {
     metaData,
     data: nurses,
@@ -159,14 +164,16 @@ const NurseAccountsPage = (): ReactElement => {
             <Download className="h-3.5 w-3.5" />
             Export
           </Button>
-          <Button
-            size="sm"
-            onClick={() => openModal("add")}
-            className="gap-1.5 bg-violet-600 hover:bg-violet-700"
-          >
-            <UserPlus className="h-3.5 w-3.5" />
-            Add Nurse
-          </Button>
+          {canCreate && (
+            <Button
+              size="sm"
+              onClick={() => openModal("add")}
+              className="gap-1.5 bg-violet-600 hover:bg-violet-700"
+            >
+              <UserPlus className="h-3.5 w-3.5" />
+              Add Nurse
+            </Button>
+          )}
         </div>
       </div>
 
@@ -207,6 +214,8 @@ const NurseAccountsPage = (): ReactElement => {
           onPageChange={setPage}
           totalFiltered={totalCount}
           pageSize={pageSize}
+          canUpdate={canUpdate}
+          canDelete={canDelete}
         />
       </div>
 
@@ -219,6 +228,8 @@ const NurseAccountsPage = (): ReactElement => {
           onResetPassword={(n) => openModal("reset-password", n)}
           onToggleStatus={(n) => handleToggleStatus(n.nurseId, n.isActive)}
           onDelete={(n) => openModal("delete", n)}
+          canUpdate={canUpdate}
+          canDelete={canDelete}
         />
       </div>
 
@@ -233,34 +244,42 @@ const NurseAccountsPage = (): ReactElement => {
         }}
       />
 
-      <NurseFormModal
-        mode="add"
-        open={modalMode === "add"}
-        onClose={closeModal}
-        onSubmitAdd={handleCreate}
-      />
+      {canCreate && (
+        <NurseFormModal
+          mode="add"
+          open={modalMode === "add"}
+          onClose={closeModal}
+          onSubmitAdd={handleCreate}
+        />
+      )}
 
-      <NurseFormModal
-        mode="edit"
-        nurse={selectedNurse}
-        open={modalMode === "edit"}
-        onClose={closeModal}
-        onSubmitEdit={handleUpdate}
-      />
+      {canUpdate && (
+        <NurseFormModal
+          mode="edit"
+          nurse={selectedNurse}
+          open={modalMode === "edit"}
+          onClose={closeModal}
+          onSubmitEdit={handleUpdate}
+        />
+      )}
 
-      <NurseResetPasswordModal
-        nurse={selectedNurse}
-        open={modalMode === "reset-password"}
-        onClose={closeModal}
-        onSubmit={handleResetPassword}
-      />
+      {canUpdate && (
+        <NurseResetPasswordModal
+          nurse={selectedNurse}
+          open={modalMode === "reset-password"}
+          onClose={closeModal}
+          onSubmit={handleResetPassword}
+        />
+      )}
 
-      <NurseDeleteConfirmDialog
-        nurse={selectedNurse}
-        open={modalMode === "delete"}
-        onClose={closeModal}
-        onConfirm={handleDelete}
-      />
+      {canDelete && (
+        <NurseDeleteConfirmDialog
+          nurse={selectedNurse}
+          open={modalMode === "delete"}
+          onClose={closeModal}
+          onConfirm={handleDelete}
+        />
+      )}
     </div>
   );
 };

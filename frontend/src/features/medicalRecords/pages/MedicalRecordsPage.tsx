@@ -14,11 +14,16 @@ import type {
   MedicalRecord,
   FilterOptions,
 } from "../types/medicalRecord";
+import { PERMISSIONS, usePermissions } from "@/shared/security/permissions";
 
 const PAGE_SIZE = 10;
 
 const MedicalRecordsPage = (): ReactElement => {
   const [currentUserId] = useState<string>("1"); // Mock current user ID
+  const { can } = usePermissions();
+  const canCreateRecord = can(PERMISSIONS.MEDICAL_RECORD_CREATE);
+  const canEditRecord = can(PERMISSIONS.MEDICAL_RECORD_UPDATE);
+  const canGenerateReport = can(PERMISSIONS.REPORT_GENERATE);
 
   const {
     meta,
@@ -144,10 +149,12 @@ const MedicalRecordsPage = (): ReactElement => {
             <Download className="h-4 w-4 mr-2" />
             Export
           </Button>
-            <Button onClick={handleAddRecord}>
-              <Plus className="h-4 w-4 mr-2" />
-              Add Record
-            </Button>
+            {canCreateRecord && (
+              <Button onClick={handleAddRecord}>
+                <Plus className="h-4 w-4 mr-2" />
+                Add Record
+              </Button>
+            )}
         </div>
       </div>
 
@@ -171,6 +178,8 @@ const MedicalRecordsPage = (): ReactElement => {
           onPrintRecord={handlePrintRecord}
           onGenerateReport={handleGenerateReport}
           onArchiveRecord={handleArchiveRecord}
+          canEditRecord={canEditRecord}
+          canGenerateReport={canGenerateReport}
         />
       </div>
 
@@ -221,21 +230,25 @@ const MedicalRecordsPage = (): ReactElement => {
         onGenerateReport={handleGenerateReport}
       />
 
-      <MedicalRecordFormModal
-        open={modalMode === 'add'}
-        onClose={() => setModalMode(null)}
-        onSubmit={handleCreateRecord}
-        patients={patients}
-        doctors={doctors}
-        currentUserId={currentUserId}
-      />
+      {canCreateRecord && (
+        <MedicalRecordFormModal
+          open={modalMode === 'add'}
+          onClose={() => setModalMode(null)}
+          onSubmit={handleCreateRecord}
+          patients={patients}
+          doctors={doctors}
+          currentUserId={currentUserId}
+        />
+      )}
 
-      <EditMedicalRecordModal
-        record={selectedRecord}
-        open={modalMode === 'edit'}
-        onClose={() => setModalMode(null)}
-        onSubmit={(recordId, data) => handleUpdateRecord(recordId, data)}
-      />
+      {canEditRecord && (
+        <EditMedicalRecordModal
+          record={selectedRecord}
+          open={modalMode === 'edit'}
+          onClose={() => setModalMode(null)}
+          onSubmit={(recordId, data) => handleUpdateRecord(recordId, data)}
+        />
+      )}
     </div>
   );
 };

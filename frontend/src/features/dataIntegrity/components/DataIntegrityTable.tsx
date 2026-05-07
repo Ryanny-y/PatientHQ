@@ -13,6 +13,7 @@ interface DataIntegrityTableProps {
   recomputingIds: Set<string>;
   onVerify: (patientId: string) => void;
   onRecompute: (patientId: string) => void;
+  canVerify?: boolean;
   canRecompute: boolean;
 }
 
@@ -23,6 +24,7 @@ export const DataIntegrityTable = ({
   recomputingIds,
   onVerify,
   onRecompute,
+  canVerify = false,
   canRecompute,
 }: DataIntegrityTableProps): ReactElement => (
   <div className="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
@@ -58,19 +60,21 @@ export const DataIntegrityTable = ({
               </TableCell>
               <TableCell>
                 <div className="flex items-center gap-2">
-                  <Button
-                    size="sm"
-                    variant="outline"
-                    onClick={() => onVerify(patient.patientId)}
-                    disabled={isVerifying || isRecomputing}
-                  >
-                    {isVerifying ? (
-                      <RefreshCw className="h-3.5 w-3.5 mr-1.5 animate-spin" />
-                    ) : (
-                      <ShieldCheck className="h-3.5 w-3.5 mr-1.5" />
-                    )}
-                    {isVerifying ? 'Verifying...' : 'Verify'}
-                  </Button>
+                  {canVerify && (
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      onClick={() => onVerify(patient.patientId)}
+                      disabled={isVerifying || isRecomputing}
+                    >
+                      {isVerifying ? (
+                        <RefreshCw className="h-3.5 w-3.5 mr-1.5 animate-spin" />
+                      ) : (
+                        <ShieldCheck className="h-3.5 w-3.5 mr-1.5" />
+                      )}
+                      {isVerifying ? 'Verifying...' : 'Verify'}
+                    </Button>
+                  )}
                   {canRecompute && (
                     <Button
                       size="sm"

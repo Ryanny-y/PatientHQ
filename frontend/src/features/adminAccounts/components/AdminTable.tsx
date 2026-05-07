@@ -33,6 +33,8 @@ interface AdminTableProps {
   onPageChange: (p: number) => void;
   totalFiltered: number;
   pageSize: number;
+  canUpdate?: boolean;
+  canDelete?: boolean;
 }
 
 const formatDate = (dateStr: string): string =>
@@ -55,6 +57,8 @@ const AdminTable = ({
   onPageChange,
   totalFiltered,
   pageSize,
+  canUpdate = false,
+  canDelete = false,
 }: AdminTableProps): ReactElement => {
   const from = (page - 1) * pageSize + 1;
   const to = Math.min(page * pageSize, totalFiltered);
@@ -171,38 +175,44 @@ const AdminTable = ({
                         <DropdownMenuItem onClick={() => onView(admin)}>
                           <Eye className="h-3.5 w-3.5" /> View Details
                         </DropdownMenuItem>
-                        <DropdownMenuItem onClick={() => onEdit(admin)}>
-                          <Pencil className="h-3.5 w-3.5" /> Edit Account
-                        </DropdownMenuItem>
-                        <DropdownMenuItem
-                          onClick={() => onResetPassword(admin)}
-                        >
-                          <KeyRound className="h-3.5 w-3.5" /> Reset Password
-                        </DropdownMenuItem>
-                        <DropdownMenuSeparator />
-                        <DropdownMenuItem onClick={() => onToggleStatus(admin)}>
-                          {admin.isActive ? (
-                            <>
-                              <PowerOff className="h-3.5 w-3.5 text-amber-500" />{" "}
-                              Deactivate
-                            </>
-                          ) : (
-                            <>
-                              <Power className="h-3.5 w-3.5 text-emerald-500" />{" "}
-                              Activate
-                            </>
-                          )}
-                        </DropdownMenuItem>
-                        <DropdownMenuItem
-                          onClick={() => onDelete(admin)}
-                          disabled={admin.username === currentUsername}
-                          className="text-red-600 focus:text-red-700 focus:bg-red-50"
-                        >
-                          <Trash2 className="h-3.5 w-3.5" />
-                          {admin.username === currentUsername
-                            ? "Cannot delete self"
-                            : "Delete Account"}
-                        </DropdownMenuItem>
+                        {canUpdate && (
+                          <>
+                            <DropdownMenuItem onClick={() => onEdit(admin)}>
+                              <Pencil className="h-3.5 w-3.5" /> Edit Account
+                            </DropdownMenuItem>
+                            <DropdownMenuItem
+                              onClick={() => onResetPassword(admin)}
+                            >
+                              <KeyRound className="h-3.5 w-3.5" /> Reset Password
+                            </DropdownMenuItem>
+                            <DropdownMenuSeparator />
+                            <DropdownMenuItem onClick={() => onToggleStatus(admin)}>
+                              {admin.isActive ? (
+                                <>
+                                  <PowerOff className="h-3.5 w-3.5 text-amber-500" />{" "}
+                                  Deactivate
+                                </>
+                              ) : (
+                                <>
+                                  <Power className="h-3.5 w-3.5 text-emerald-500" />{" "}
+                                  Activate
+                                </>
+                              )}
+                            </DropdownMenuItem>
+                          </>
+                        )}
+                        {canDelete && (
+                          <DropdownMenuItem
+                            onClick={() => onDelete(admin)}
+                            disabled={admin.username === currentUsername}
+                            className="text-red-600 focus:text-red-700 focus:bg-red-50"
+                          >
+                            <Trash2 className="h-3.5 w-3.5" />
+                            {admin.username === currentUsername
+                              ? "Cannot delete self"
+                              : "Delete Account"}
+                          </DropdownMenuItem>
+                        )}
                       </DropdownMenuContent>
                     </DropdownMenu>
                   </td>

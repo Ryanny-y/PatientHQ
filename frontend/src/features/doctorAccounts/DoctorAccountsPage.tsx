@@ -15,8 +15,13 @@ import type {
   editDoctorFormValues,
 } from "@/features/doctorAccounts/types/doctorAccount";
 import { toast } from "sonner";
+import { PERMISSIONS, usePermissions } from "@/shared/security/permissions";
 
 const DoctorAccountsPage = (): ReactElement => {
+  const { can } = usePermissions();
+  const canCreate = can(PERMISSIONS.USER_MANAGEMENT_CREATE);
+  const canUpdate = can(PERMISSIONS.USER_MANAGEMENT_UPDATE);
+  const canDelete = can(PERMISSIONS.USER_MANAGEMENT_DELETE);
   const {
     data: accounts,
     totalCount,
@@ -163,14 +168,16 @@ const DoctorAccountsPage = (): ReactElement => {
             <Download className="h-3.5 w-3.5" />
             Export
           </Button>
-          <Button
-            size="sm"
-            onClick={() => openModal("add")}
-            className="gap-1.5 bg-emerald-600 hover:bg-emerald-700"
-          >
-            <UserPlus className="h-3.5 w-3.5" />
-            Add Doctor
-          </Button>
+          {canCreate && (
+            <Button
+              size="sm"
+              onClick={() => openModal("add")}
+              className="gap-1.5 bg-emerald-600 hover:bg-emerald-700"
+            >
+              <UserPlus className="h-3.5 w-3.5" />
+              Add Doctor
+            </Button>
+          )}
         </div>
       </div>
 
@@ -208,6 +215,8 @@ const DoctorAccountsPage = (): ReactElement => {
           onPageChange={setPage}
           totalFiltered={totalCount}
           pageSize={pageSize}
+          canUpdate={canUpdate}
+          canDelete={canDelete}
         />
       </div>
 
@@ -220,6 +229,8 @@ const DoctorAccountsPage = (): ReactElement => {
           onResetPassword={(d) => openModal("reset-password", d)}
           onToggleStatus={(d) => handleToggleStatus(d.doctorId, d.isActive)}
           onDelete={(d) => openModal("delete", d)}
+          canUpdate={canUpdate}
+          canDelete={canDelete}
         />
       </div>
 
@@ -234,34 +245,42 @@ const DoctorAccountsPage = (): ReactElement => {
         }}
       />
 
-      <DoctorFormModal
-        mode="add"
-        open={modalMode === "add"}
-        onClose={closeModal}
-        onSubmitAdd={handleCreate}
-      />
+      {canCreate && (
+        <DoctorFormModal
+          mode="add"
+          open={modalMode === "add"}
+          onClose={closeModal}
+          onSubmitAdd={handleCreate}
+        />
+      )}
 
-      <DoctorFormModal
-        mode="edit"
-        doctor={selectedDoctor}
-        open={modalMode === "edit"}
-        onClose={closeModal}
-        onSubmitEdit={handleUpdate}
-      />
+      {canUpdate && (
+        <DoctorFormModal
+          mode="edit"
+          doctor={selectedDoctor}
+          open={modalMode === "edit"}
+          onClose={closeModal}
+          onSubmitEdit={handleUpdate}
+        />
+      )}
 
-      <DoctorResetPasswordModal
-        doctor={selectedDoctor}
-        open={modalMode === "reset-password"}
-        onClose={closeModal}
-        onSubmit={handleResetPassword}
-      />
+      {canUpdate && (
+        <DoctorResetPasswordModal
+          doctor={selectedDoctor}
+          open={modalMode === "reset-password"}
+          onClose={closeModal}
+          onSubmit={handleResetPassword}
+        />
+      )}
 
-      <DoctorDeleteConfirmDialog
-        doctor={selectedDoctor}
-        open={modalMode === "delete"}
-        onClose={closeModal}
-        onConfirm={handleDelete}
-      />
+      {canDelete && (
+        <DoctorDeleteConfirmDialog
+          doctor={selectedDoctor}
+          open={modalMode === "delete"}
+          onClose={closeModal}
+          onConfirm={handleDelete}
+        />
+      )}
     </div>
   );
 };

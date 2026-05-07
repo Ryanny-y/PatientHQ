@@ -16,11 +16,15 @@ import type {
   UserRole,
 } from './types/report';
 import { toast } from 'sonner';
+import { PERMISSIONS, usePermissions } from '@/shared/security/permissions';
 
 const ReportsHistoryPage = (): ReactElement => {
   const [activeTab, setActiveTab] = useState<'reports' | 'history' | 'analytics'>('reports');
   const { user } = useAuth();
   const userRole = ((user?.role ?? 'ADMIN').toLowerCase() as UserRole);
+  const { can } = usePermissions();
+  const canGenerateReports = can(PERMISSIONS.REPORT_GENERATE);
+  const canViewHistory = can(PERMISSIONS.PATIENT_HISTORY_VIEW);
   const {
     reports,
     filteredReports,
@@ -141,16 +145,18 @@ const ReportsHistoryPage = (): ReactElement => {
           <p className="mt-2 max-w-2xl text-slate-600">Generate operational reports and review patient historical timelines.</p>
         </div>
         <div className="flex flex-wrap items-center gap-3">
-          <Button variant="outline" onClick={() => setGenerateModalOpen(true)}>
-            <FilePlus className="h-4 w-4 mr-2" />
-            Generate Report
-          </Button>
+          {canGenerateReports && (
+            <Button variant="outline" onClick={() => setGenerateModalOpen(true)}>
+              <FilePlus className="h-4 w-4 mr-2" />
+              Generate Report
+            </Button>
+          )}
         </div>
       </div>
 
       <div className="rounded-3xl border border-slate-200 bg-white p-3 shadow-sm">
         <div className="flex flex-wrap items-center gap-2">
-          {(['reports', 'history'] as const).map((tab) => (
+          {(['reports', ...(canViewHistory ? ['history'] as const : [])] as const).map((tab) => (
             <Button
               key={tab}
               variant={activeTab === tab ? 'default' : 'outline'}
@@ -180,6 +186,7 @@ const ReportsHistoryPage = (): ReactElement => {
           onGeneratedByChange={(value) => updateReportFilter('generatedBy', value)}
           onSortChange={(value) => updateReportFilter('sortBy', value)}
           onOpenGenerate={() => setGenerateModalOpen(true)}
+          canGenerateReports={canGenerateReports}
           onView={handleViewReport}
           onDownload={handleDownloadReport}
           onPrint={handlePrintReport}
@@ -191,7 +198,7 @@ const ReportsHistoryPage = (): ReactElement => {
         />
       )}
 
-      {activeTab === 'history' && (
+      {canViewHistory && activeTab === 'history' && (
         <HistoryTab
           events={historyEvents}
           filteredEvents={filteredHistory}
@@ -206,13 +213,15 @@ const ReportsHistoryPage = (): ReactElement => {
         />
       )}
 
-      <GenerateReportModal
-        open={generateModalOpen}
-        onClose={() => setGenerateModalOpen(false)}
-        onSubmit={handleGenerateReport}
-        patients={patientOptions}
-        isSubmitting={isGenerating}
-      />
+      {canGenerateReports && (
+        <GenerateReportModal
+          open={generateModalOpen}
+          onClose={() => setGenerateModalOpen(false)}
+          onSubmit={handleGenerateReport}
+          patients={patientOptions}
+          isSubmitting={isGenerating}
+        />
+      )}
 
       <ReportPreviewModal
         open={reportPreviewOpen}

@@ -14,12 +14,13 @@ interface VitalSignsTableProps {
   onView: (v: VitalSigns) => void;
   onEdit: (v: VitalSigns) => void;
   onDelete: (v: VitalSigns) => void;
+  canModify?: boolean;
 }
 
 const fmt = (val: number | null, unit: string): string =>
   val !== null && val !== undefined ? `${val} ${unit}` : '—';
 
-const VitalSignsTable = ({ vitalSigns, onView, onEdit, onDelete }: VitalSignsTableProps): ReactElement => (
+const VitalSignsTable = ({ vitalSigns, onView, onEdit, onDelete, canModify = false }: VitalSignsTableProps): ReactElement => (
   <div className="overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-sm">
     <Table className="min-w-full">
       <TableHeader>
@@ -66,10 +67,12 @@ const VitalSignsTable = ({ vitalSigns, onView, onEdit, onDelete }: VitalSignsTab
                   </DropdownMenuTrigger>
                   <DropdownMenuContent align="end">
                     <DropdownMenuItem onClick={() => onView(v)}>View Details</DropdownMenuItem>
-                    <DropdownMenuItem onClick={() => onEdit(v)}>Edit</DropdownMenuItem>
-                    <DropdownMenuItem onClick={() => onDelete(v)} className="text-red-600">
-                      Delete
-                    </DropdownMenuItem>
+                    {canModify && <DropdownMenuItem onClick={() => onEdit(v)}>Edit</DropdownMenuItem>}
+                    {canModify && (
+                      <DropdownMenuItem onClick={() => onDelete(v)} className="text-red-600">
+                        Delete
+                      </DropdownMenuItem>
+                    )}
                   </DropdownMenuContent>
                 </DropdownMenu>
               </TableCell>

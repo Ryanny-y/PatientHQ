@@ -15,6 +15,7 @@ interface AppointmentCardListMobileProps {
   onCompleteAppointment: (appointment: Appointment) => void;
   onRescheduleAppointment: (appointment: Appointment) => void;
   onCancelAppointment: (appointment: Appointment) => void;
+  canUpdateAppointment?: boolean;
 }
 
 export const AppointmentCardListMobile = ({
@@ -26,8 +27,9 @@ export const AppointmentCardListMobile = ({
   onCompleteAppointment,
   onRescheduleAppointment,
   onCancelAppointment,
+  canUpdateAppointment,
 }: AppointmentCardListMobileProps): ReactElement => {
-  const canEdit = userRole === 'admin' || userRole === 'doctor';
+  const canEdit = canUpdateAppointment ?? (userRole === 'admin' || userRole === 'doctor');
 
   const truncateText = (text: string | null | undefined, maxLength: number = 60) => {
     if (!text) return '';
@@ -66,25 +68,25 @@ export const AppointmentCardListMobile = ({
                         Edit
                       </DropdownMenuItem>
                     )}
-                    {appointment.status === 'PENDING' && (
+                    {canEdit && appointment.status === 'PENDING' && (
                       <DropdownMenuItem onClick={() => onConfirmAppointment(appointment)}>
                         <CheckCircle className="mr-2 h-4 w-4" />
                         Confirm
                       </DropdownMenuItem>
                     )}
-                    {appointment.status === 'CONFIRMED' && (
+                    {canEdit && appointment.status === 'CONFIRMED' && (
                       <DropdownMenuItem onClick={() => onCompleteAppointment(appointment)}>
                         <Clock className="mr-2 h-4 w-4" />
                         Mark Completed
                       </DropdownMenuItem>
                     )}
-                    {appointment.status !== 'COMPLETED' && appointment.status !== 'CANCELLED' && (
+                    {canEdit && appointment.status !== 'COMPLETED' && appointment.status !== 'CANCELLED' && (
                       <DropdownMenuItem onClick={() => onRescheduleAppointment(appointment)}>
                         <Clock className="mr-2 h-4 w-4" />
                         Reschedule
                       </DropdownMenuItem>
                     )}
-                    {appointment.status !== 'COMPLETED' && appointment.status !== 'CANCELLED' && (
+                    {canEdit && appointment.status !== 'COMPLETED' && appointment.status !== 'CANCELLED' && (
                       <DropdownMenuItem
                         onClick={() => onCancelAppointment(appointment)}
                         className="text-red-600 focus:text-red-600"

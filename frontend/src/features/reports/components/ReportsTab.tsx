@@ -28,6 +28,7 @@ interface ReportsTabProps {
   onGeneratedByChange: (value: string) => void;
   onSortChange: (value: 'newest' | 'oldest') => void;
   onOpenGenerate: () => void;
+  canGenerateReports?: boolean;
   onView: (report: ReportRecord) => void;
   onDownload: (report: ReportRecord) => void;
   onPrint: (report: ReportRecord) => void;
@@ -50,6 +51,7 @@ export const ReportsTab = ({
   onGeneratedByChange,
   onSortChange,
   onOpenGenerate,
+  canGenerateReports = false,
   onView,
   onDownload,
   onPrint,
@@ -91,11 +93,11 @@ export const ReportsTab = ({
       ]}
       selectedSort={filters.sortBy}
       onSortChange={onSortChange}
-      actions={
+      actions={canGenerateReports ? (
         <Button variant="secondary" onClick={onOpenGenerate}>
           Generate Report
         </Button>
-      }
+      ) : undefined}
     />
 
     <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
@@ -115,6 +117,7 @@ export const ReportsTab = ({
         onPrint={onPrint}
         onRegenerate={onRegenerate}
         onDelete={onDelete}
+        canGenerateReports={canGenerateReports}
       />
     </div>
 

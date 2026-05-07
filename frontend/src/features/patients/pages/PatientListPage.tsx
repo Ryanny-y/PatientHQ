@@ -13,12 +13,19 @@ import EditPatientModal from "@/features/patients/components/EditPatientModal";
 import PatientHistoryModal from "@/features/patients/components/PatientHistoryModal";
 import { AssignDoctorModal } from "@/features/patients/components/AssignDoctorModal";
 
-import type { Patient, editPatientFormValues } from "@/features/patients/types/patient";
+import type { editPatientFormValues } from "@/features/patients/types/patient";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
+import { PERMISSIONS, usePermissions } from "@/shared/security/permissions";
 
 const PatientListPage = (): ReactElement => {
   const navigate = useNavigate();
+  const { can } = usePermissions();
+  const canCreatePatient = can(PERMISSIONS.PATIENT_CREATE);
+  const canEditPatient = can(PERMISSIONS.PATIENT_UPDATE);
+  const canAssignDoctor = can(PERMISSIONS.DOCTOR_ASSIGNMENT_ASSIGN);
+  const canViewHistory = can(PERMISSIONS.PATIENT_HISTORY_VIEW);
+  const canCreateRecord = can(PERMISSIONS.MEDICAL_RECORD_CREATE);
 
   const {
     metaData,
@@ -91,10 +98,12 @@ const PatientListPage = (): ReactElement => {
             <Download className="h-4 w-4 mr-2" />
             Export
           </Button>
-          <Button onClick={() => navigate("/patients/register")}>
-            <UserPlus className="h-4 w-4 mr-2" />
-            Register Patient
-          </Button>
+          {canCreatePatient && (
+            <Button onClick={() => navigate("/patients/register")}>
+              <UserPlus className="h-4 w-4 mr-2" />
+              Register Patient
+            </Button>
+          )}
         </div>
       </div>
 
@@ -126,6 +135,10 @@ const PatientListPage = (): ReactElement => {
           onEditPatient={(p) => openModal("edit", p)}
           onViewHistory={(p) => openModal("history", p)}
           onAssignDoctor={(p) => openModal("assign", p)}
+          canEditPatient={canEditPatient}
+          canViewHistory={canViewHistory}
+          canAssignDoctor={canAssignDoctor}
+          canCreateRecord={canCreateRecord}
         />
       </div>
 
@@ -137,6 +150,9 @@ const PatientListPage = (): ReactElement => {
           onEditPatient={(p) => openModal("edit", p)}
           onViewHistory={(p) => openModal("history", p)}
           onAssignDoctor={(p) => openModal("assign", p)}
+          canEditPatient={canEditPatient}
+          canViewHistory={canViewHistory}
+          canAssignDoctor={canAssignDoctor}
         />
       </div>
 
@@ -148,28 +164,34 @@ const PatientListPage = (): ReactElement => {
       />
 
       {/* Edit */}
-      <EditPatientModal
-        patient={selectedPatient}
-        open={modalMode === "edit"}
-        onClose={closeModal}
-        onSave={handleSaveEdit}
-      />
+      {canEditPatient && (
+        <EditPatientModal
+          patient={selectedPatient}
+          open={modalMode === "edit"}
+          onClose={closeModal}
+          onSave={handleSaveEdit}
+        />
+      )}
 
       {/* History */}
-      <PatientHistoryModal
-        patient={selectedPatient}
-        open={modalMode === "history"}
-        onClose={closeModal}
-      />
+      {canViewHistory && (
+        <PatientHistoryModal
+          patient={selectedPatient}
+          open={modalMode === "history"}
+          onClose={closeModal}
+        />
+      )}
 
       {/* Assign Doctor */}
-      <AssignDoctorModal
-        patient={selectedPatient}
-        doctors={doctors}
-        open={modalMode === "assign"}
-        onClose={closeModal}
-        onAssign={handleAssignDoctor}
-      />
+      {canAssignDoctor && (
+        <AssignDoctorModal
+          patient={selectedPatient}
+          doctors={doctors}
+          open={modalMode === "assign"}
+          onClose={closeModal}
+          onAssign={handleAssignDoctor}
+        />
+      )}
     </div>
   );
 };
