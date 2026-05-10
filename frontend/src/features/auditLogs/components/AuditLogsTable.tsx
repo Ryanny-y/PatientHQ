@@ -1,8 +1,8 @@
 import { type ReactElement } from 'react';
-import { MoreHorizontal, Eye, Flag, Download } from 'lucide-react';
+import { MoreHorizontal, Eye, Flag } from 'lucide-react';
 import {
   DropdownMenu, DropdownMenuTrigger, DropdownMenuContent,
-  DropdownMenuItem, DropdownMenuSeparator,
+  DropdownMenuItem,
 } from '@/components/ui/dropdown-menu';
 import { Button } from '@/components/ui/button';
 import SeverityBadge from '@/features/auditLogs/components/SeverityBadge';
@@ -12,7 +12,6 @@ interface AuditLogsTableProps {
   logs: AuditLog[];
   onViewDetails: (log: AuditLog) => void;
   onFlagEvent: (log: AuditLog) => void;
-  onExportEntry: (log: AuditLog) => void;
   page: number;
   totalPages: number;
   onPageChange: (p: number) => void;
@@ -33,7 +32,6 @@ const AuditLogsTable = ({
   logs,
   onViewDetails,
   onFlagEvent,
-  onExportEntry,
   page,
   totalPages,
   onPageChange,
@@ -134,10 +132,6 @@ const AuditLogsTable = ({
                         </DropdownMenuItem>
                         <DropdownMenuItem onClick={() => onFlagEvent(log)}>
                           <Flag className="h-3.5 w-3.5" /> Flag Event
-                        </DropdownMenuItem>
-                        <DropdownMenuSeparator />
-                        <DropdownMenuItem onClick={() => onExportEntry(log)}>
-                          <Download className="h-3.5 w-3.5" /> Export Entry
                         </DropdownMenuItem>
                       </DropdownMenuContent>
                     </DropdownMenu>

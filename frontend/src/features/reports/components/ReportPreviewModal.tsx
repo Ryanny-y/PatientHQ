@@ -1,7 +1,7 @@
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
-import { Download, Printer, ShieldCheck } from 'lucide-react';
+import { ShieldCheck } from 'lucide-react';
 import { type ReactElement } from 'react';
 import type { ReportRecord } from '../types/report';
 
@@ -9,11 +9,9 @@ interface ReportPreviewModalProps {
   open: boolean;
   onClose: () => void;
   report: ReportRecord | null;
-  onDownload: (report: ReportRecord) => void;
-  onPrint: (report: ReportRecord) => void;
 }
 
-export const ReportPreviewModal = ({ open, onClose, report, onDownload, onPrint }: ReportPreviewModalProps): ReactElement => {
+export const ReportPreviewModal = ({ open, onClose, report }: ReportPreviewModalProps): ReactElement => {
   if (!report) return <></>;
 
   return (
@@ -25,7 +23,7 @@ export const ReportPreviewModal = ({ open, onClose, report, onDownload, onPrint 
               <div className="text-xs uppercase tracking-[0.2em] text-slate-500">Hospital Confidential</div>
               <DialogTitle className="text-2xl font-semibold text-slate-900">{report.report_type}</DialogTitle>
               <DialogDescription className="text-sm text-slate-500">
-                Preview the generated report summary before exporting or printing for authorized review.
+                Preview the generated report summary for authorized review.
               </DialogDescription>
             </div>
             <div className="rounded-2xl bg-slate-50 px-4 py-2 text-sm font-medium text-slate-700">
@@ -61,7 +59,7 @@ export const ReportPreviewModal = ({ open, onClose, report, onDownload, onPrint 
         <Separator className="my-6" />
 
         <div className="space-y-3 text-sm text-slate-600">
-          <p>This report is generated for secure clinical review and may be printed or exported only by authorized staff.</p>
+          <p>This report is generated for secure clinical review by authorized staff.</p>
           <p>Footer signature block indicates final approval by clinical operations leadership.</p>
         </div>
 

@@ -1,43 +1,48 @@
 import { type ReactElement } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { BarChart3, PieChart, TrendingUp } from 'lucide-react';
+import type { AuditLog } from '@/features/auditLogs/types/auditLog';
 
-const AuditChartsSection = (): ReactElement => {
-  // Mock data for charts
-  const roleData = [
-    { role: 'Admin', count: 45, color: 'bg-blue-500' },
-    { role: 'Doctor', count: 120, color: 'bg-green-500' },
-    { role: 'Nurse', count: 85, color: 'bg-purple-500' },
-  ];
+interface AuditChartsSectionProps {
+  logs: AuditLog[];
+}
 
-  const severityData = [
-    { severity: 'Info', count: 180, color: 'bg-blue-500' },
-    { severity: 'Warning', count: 45, color: 'bg-amber-500' },
-    { severity: 'Critical', count: 15, color: 'bg-red-500' },
-  ];
+const countBy = (logs: AuditLog[], getKey: (log: AuditLog) => string): Array<{ label: string; count: number }> => {
+  const counts = new Map<string, number>();
+  logs.forEach((log) => counts.set(getKey(log), (counts.get(getKey(log)) ?? 0) + 1));
+  return Array.from(counts.entries()).map(([label, count]) => ({ label, count }));
+};
 
-  const dailyData = [
-    { day: 'Mon', count: 25 },
-    { day: 'Tue', count: 32 },
-    { day: 'Wed', count: 28 },
-    { day: 'Thu', count: 35 },
-    { day: 'Fri', count: 42 },
-    { day: 'Sat', count: 18 },
-    { day: 'Sun', count: 20 },
-  ];
+const getDayLabel = (date: string): string =>
+  new Date(date).toLocaleDateString('en-US', { weekday: 'short' });
 
-  const actionsData = [
-    { action: 'Login Success', count: 85 },
-    { action: 'View Records', count: 65 },
-    { action: 'Update Records', count: 45 },
-    { action: 'Create Records', count: 25 },
-    { action: 'Delete Records', count: 10 },
-  ];
+const AuditChartsSection = ({ logs }: AuditChartsSectionProps): ReactElement => {
+  const roleData = countBy(logs, (log) => log.role)
+    .map((item, index) => ({
+      role: item.label,
+      count: item.count,
+      color: ['bg-blue-500', 'bg-green-500', 'bg-purple-500'][index % 3],
+    }));
 
-  const maxRole = Math.max(...roleData.map(d => d.count));
-  const maxSeverity = Math.max(...severityData.map(d => d.count));
-  const maxDaily = Math.max(...dailyData.map(d => d.count));
-  const maxActions = Math.max(...actionsData.map(d => d.count));
+  const severityData = countBy(logs, (log) => log.severity)
+    .map((item) => ({
+      severity: item.label,
+      count: item.count,
+      color: item.label === 'Critical' ? 'bg-red-500' : item.label === 'Warning' ? 'bg-amber-500' : 'bg-blue-500',
+    }));
+
+  const dailyData = countBy(logs, (log) => getDayLabel(log.created_at))
+    .map((item) => ({ day: item.label, count: item.count }));
+
+  const actionsData = countBy(logs, (log) => log.action.replace(/_/g, ' '))
+    .sort((a, b) => b.count - a.count)
+    .slice(0, 5)
+    .map((item) => ({ action: item.label, count: item.count }));
+
+  const maxRole = Math.max(1, ...roleData.map(d => d.count));
+  const maxSeverity = Math.max(1, ...severityData.map(d => d.count));
+  const maxDaily = Math.max(1, ...dailyData.map(d => d.count));
+  const maxActions = Math.max(1, ...actionsData.map(d => d.count));
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
@@ -63,6 +68,7 @@ const AuditChartsSection = (): ReactElement => {
                 <span className="text-sm font-medium text-slate-900 w-8">{item.count}</span>
               </div>
             ))}
+            {roleData.length === 0 && <p className="text-sm text-slate-500">No role activity in the current results.</p>}
           </div>
         </CardContent>
       </Card>
@@ -86,6 +92,7 @@ const AuditChartsSection = (): ReactElement => {
                 <span className="text-xs text-slate-500">{item.day}</span>
               </div>
             ))}
+            {dailyData.length === 0 && <p className="text-sm text-slate-500">No activity in the current results.</p>}
           </div>
         </CardContent>
       </Card>
@@ -113,6 +120,7 @@ const AuditChartsSection = (): ReactElement => {
                 </div>
               </div>
             ))}
+            {severityData.length === 0 && <p className="text-sm text-slate-500">No severity data in the current results.</p>}
           </div>
         </CardContent>
       </Card>
@@ -139,6 +147,7 @@ const AuditChartsSection = (): ReactElement => {
                 <span className="text-sm font-medium text-slate-900 w-8">{item.count}</span>
               </div>
             ))}
+            {actionsData.length === 0 && <p className="text-sm text-slate-500">No actions in the current results.</p>}
           </div>
         </CardContent>
       </Card>

@@ -1,7 +1,9 @@
 package com.patienthq.backend.shared.security.config;
 
 import com.patienthq.backend.shared.security.jwt.JwtAuthFilter;
+import com.patienthq.backend.features.audit_log.AuditRequestFilter;
 import lombok.RequiredArgsConstructor;
+import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -29,6 +31,7 @@ public class SecurityConfig {
     private final UserDetailsService userDetailsService;
     private final CorsConfigurationSource corsConfigurationSource;
     private final JwtAuthFilter jwtAuthFilter;
+    private final AuditRequestFilter auditRequestFilter;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -47,6 +50,7 @@ public class SecurityConfig {
                         session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authenticationProvider(authenticationProvider())
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
+                .addFilterAfter(auditRequestFilter, JwtAuthFilter.class)
                 .build();
     }
 
@@ -71,5 +75,12 @@ public class SecurityConfig {
     @Bean
     public WebSecurityCustomizer webSecurityCustomizer() {
         return web -> web.ignoring().requestMatchers("/favicon.ico");
+    }
+
+    @Bean
+    public FilterRegistrationBean<AuditRequestFilter> auditRequestFilterRegistration(AuditRequestFilter filter) {
+        FilterRegistrationBean<AuditRequestFilter> registration = new FilterRegistrationBean<>(filter);
+        registration.setEnabled(false);
+        return registration;
     }
 }

@@ -1,5 +1,5 @@
 import { type ReactElement } from "react";
-import { UserPlus, Download } from "lucide-react";
+import { UserPlus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 import { usePatients } from "@/features/patients/hooks/usePatients";
@@ -94,10 +94,6 @@ const PatientListPage = (): ReactElement => {
         </div>
 
         <div className="flex gap-2">
-          <Button variant="outline">
-            <Download className="h-4 w-4 mr-2" />
-            Export
-          </Button>
           {canCreatePatient && (
             <Button onClick={() => navigate("/patients/register")}>
               <UserPlus className="h-4 w-4 mr-2" />

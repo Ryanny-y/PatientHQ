@@ -1,7 +1,7 @@
 import { useState, useMemo, type ReactElement } from "react";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/shared/hooks/useToast";
-import { Plus, Download } from "lucide-react";
+import { Plus } from "lucide-react";
 import { MedicalRecordStatsCards } from "../components/MedicalRecordStatsCards";
 import { MedicalRecordFilterToolbar } from "../components/MedicalRecordFilterToolbar";
 import { MedicalRecordsTable } from "../components/MedicalRecordsTable";
@@ -204,10 +204,6 @@ const MedicalRecordsPage = (): ReactElement => {
           </p>
         </div>
         <div className="flex gap-3">
-          <Button variant="outline">
-            <Download className="h-4 w-4 mr-2" />
-            Export
-          </Button>
             {canCreateRecord && (
               <Button onClick={handleAddRecord}>
                 <Plus className="h-4 w-4 mr-2" />

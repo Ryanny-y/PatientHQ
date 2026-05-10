@@ -1,5 +1,5 @@
 import { type ReactElement } from "react";
-import { UserPlus, Download, ShieldCheck } from "lucide-react";
+import { UserPlus, ShieldCheck } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/shared/context/AuthContext";
 import { useAdminAccounts } from "@/features/adminAccounts/hooks/useAdminAccounts";
@@ -157,14 +157,6 @@ const AdminAccountsPage = (): ReactElement => {
           </p>
         </div>
         <div className="flex items-center gap-2 shrink-0">
-          <Button
-            variant="outline"
-            size="sm"
-            className="hidden sm:flex gap-1.5"
-          >
-            <Download className="h-3.5 w-3.5" />
-            Export
-          </Button>
           {canCreate && (
             <Button
               size="sm"

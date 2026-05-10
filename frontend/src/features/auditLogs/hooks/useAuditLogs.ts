@@ -1,5 +1,5 @@
-import { useState, useMemo } from 'react';
-import { mockAuditLogs } from '@/features/auditLogs/utils/mockAuditData';
+import { useState } from 'react';
+import { useAuditLogMetaQuery, useAuditLogQuery } from '@/features/auditLogs/hooks/useAuditLogQuery';
 import type {
   AuditLog,
   modalMode,
@@ -47,37 +47,15 @@ interface useAuditLogsReturn {
   closeModal: () => void;
   // actions
   refreshLogs: () => void;
-  exportLogs: () => void;
-  flagEvent: (logId: number) => void;
+  flagEvent: (logId: string) => void;
 }
 
 const PAGE_SIZE = 10;
 
-// Helper to check if date is today
-const isToday = (dateStr: string): boolean => {
-  const today = new Date();
-  const logDate = new Date(dateStr);
-  return logDate.toDateString() === today.toDateString();
-};
-
-// Helper to check if date is in range
-const isInDateRange = (dateStr: string, range: DateRange): boolean => {
-  if (!range.from && !range.to) return true;
-  const logDate = new Date(dateStr);
-  if (range.from && logDate < range.from) return false;
-  if (range.to && logDate > range.to) return false;
-  return true;
-};
-
-// Get unique active users today
-const getActiveUsersToday = (logs: AuditLog[]): number => {
-  const todayLogs = logs.filter(log => isToday(log.created_at));
-  const uniqueUsers = new Set(todayLogs.map(log => log.user_id));
-  return uniqueUsers.size;
-};
+const toDateParam = (date: Date | undefined): string | undefined =>
+  date ? date.toISOString().split('T')[0] : undefined;
 
 export const useAuditLogs = (): useAuditLogsReturn => {
-  const [logs] = useState<AuditLog[]>(mockAuditLogs);
   const [search, setSearch] = useState('');
   const [dateRange, setDateRange] = useState<DateRange>({ from: undefined, to: undefined });
   const [roleFilter, setRoleFilter] = useState<roleFilter>('All');
@@ -90,6 +68,21 @@ export const useAuditLogs = (): useAuditLogsReturn => {
   const [modalMode, setModalMode] = useState<modalMode>(null);
   const [selectedLog, setSelectedLog] = useState<AuditLog | null>(null);
 
+  const { data, refetch } = useAuditLogQuery({
+    page: page - 1,
+    size: PAGE_SIZE,
+    search: search.trim() || undefined,
+    role: roleFilter === 'All' ? undefined : roleFilter,
+    entityType: entityTypeFilter === 'All' ? undefined : entityTypeFilter,
+    severity: severityFilter === 'All' ? undefined : severityFilter,
+    ipAddress: ipSearch.trim() || undefined,
+    dateFrom: toDateParam(dateRange.from),
+    dateTo: toDateParam(dateRange.to),
+    sort: sortOption === 'newest' ? 'createdAt,desc' : 'createdAt,asc',
+    autoRefresh,
+  });
+  const { data: metaData, refetch: refetchMeta } = useAuditLogMetaQuery(autoRefresh);
+
   // Reset to page 1 whenever filters change
   const handleSetSearch = (v: string): void => { setSearch(v); setPage(1); };
   const handleSetDateRange = (v: DateRange): void => { setDateRange(v); setPage(1); };
@@ -99,63 +92,10 @@ export const useAuditLogs = (): useAuditLogsReturn => {
   const handleSetIpSearch = (v: string): void => { setIpSearch(v); setPage(1); };
   const handleSetSort = (v: sortOption): void => { setSortOption(v); setPage(1); };
 
-  const filtered = useMemo(() => {
-    let result = [...logs];
-
-    // Search filter
-    if (search.trim()) {
-      const q = search.toLowerCase();
-      result = result.filter(
-        (log) =>
-          log.username.toLowerCase().includes(q) ||
-          log.action.toLowerCase().includes(q) ||
-          log.entity_type.toLowerCase().includes(q) ||
-          log.description.toLowerCase().includes(q) ||
-          String(log.log_id).includes(q)
-      );
-    }
-
-    // Date range filter
-    result = result.filter(log => isInDateRange(log.created_at, dateRange));
-
-    // Role filter
-    if (roleFilter !== 'All') {
-      result = result.filter(log => log.role === roleFilter);
-    }
-
-    // Entity type filter
-    if (entityTypeFilter !== 'All') {
-      result = result.filter(log => log.entity_type === entityTypeFilter);
-    }
-
-    // Severity filter
-    if (severityFilter !== 'All') {
-      result = result.filter(log => log.severity === severityFilter);
-    }
-
-    // IP search
-    if (ipSearch.trim()) {
-      result = result.filter(log => log.ip_address.includes(ipSearch.trim()));
-    }
-
-    // Sort
-    result.sort((a, b) => {
-      if (sortOption === 'newest') return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
-      if (sortOption === 'oldest') return new Date(a.created_at).getTime() - new Date(b.created_at).getTime();
-      return 0;
-    });
-
-    return result;
-  }, [logs, search, dateRange, roleFilter, entityTypeFilter, severityFilter, ipSearch, sortOption]);
-
-  const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
-  const paginated = filtered.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
-
-  // Stats calculations
-  const totalLogsToday = logs.filter(log => isToday(log.created_at)).length;
-  const failedLoginAttempts = logs.filter(log => isToday(log.created_at) && log.action === 'LOGIN_FAILED').length;
-  const criticalActions = logs.filter(log => isToday(log.created_at) && log.severity === 'Critical').length;
-  const activeUsersToday = getActiveUsersToday(logs);
+  const logs = data?.data?.content ?? [];
+  const totalFiltered = data?.data?.totalElements ?? 0;
+  const totalPages = data?.data?.totalPages ?? 1;
+  const meta = metaData?.data;
 
   const openModal = (mode: modalMode, log?: AuditLog): void => {
     setSelectedLog(log ?? null);
@@ -168,28 +108,23 @@ export const useAuditLogs = (): useAuditLogsReturn => {
   };
 
   const refreshLogs = (): void => {
-    // In real app, fetch new data
-    console.log('Refreshing logs...');
+    refetch();
+    refetchMeta();
   };
 
-  const exportLogs = (): void => {
-    // In real app, trigger export
-    console.log('Exporting logs...');
-  };
-
-  const flagEvent = (logId: number): void => {
+  const flagEvent = (logId: string): void => {
     // In real app, flag the event
     console.log('Flagging event:', logId);
   };
 
   return {
     // data
-    filtered: paginated,
-    allFilteredCount: filtered.length,
-    totalLogsToday,
-    failedLoginAttempts,
-    criticalActions,
-    activeUsersToday,
+    filtered: logs,
+    allFilteredCount: totalFiltered,
+    totalLogsToday: meta?.totalLogsToday ?? 0,
+    failedLoginAttempts: meta?.failedLoginAttempts ?? 0,
+    criticalActions: meta?.criticalActions ?? 0,
+    activeUsersToday: meta?.activeUsersToday ?? 0,
     // pagination
     page,
     pageSize: PAGE_SIZE,
@@ -219,7 +154,6 @@ export const useAuditLogs = (): useAuditLogsReturn => {
     closeModal,
     // actions
     refreshLogs,
-    exportLogs,
     flagEvent,
   };
 };

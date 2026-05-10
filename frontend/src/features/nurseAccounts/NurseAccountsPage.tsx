@@ -1,5 +1,5 @@
 import { type ReactElement } from "react";
-import { UserPlus, Download, HeartPulse } from "lucide-react";
+import { UserPlus, HeartPulse } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useNurseAccounts } from "@/features/nurseAccounts/hooks/useNurseAccounts";
 import NurseStatsCards from "@/features/nurseAccounts/components/NurseStatsCards";
@@ -157,14 +157,6 @@ const NurseAccountsPage = (): ReactElement => {
           </p>
         </div>
         <div className="flex items-center gap-2 shrink-0">
-          <Button
-            variant="outline"
-            size="sm"
-            className="hidden sm:flex gap-1.5"
-          >
-            <Download className="h-3.5 w-3.5" />
-            Export
-          </Button>
           {canCreate && (
             <Button
               size="sm"

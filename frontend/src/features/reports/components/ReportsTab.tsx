@@ -30,8 +30,6 @@ interface ReportsTabProps {
   onOpenGenerate: () => void;
   canGenerateReports?: boolean;
   onView: (report: ReportRecord) => void;
-  onDownload: (report: ReportRecord) => void;
-  onPrint: (report: ReportRecord) => void;
   onRegenerate: (report: ReportRecord) => void;
   onDelete: (report: ReportRecord) => void;
 }
@@ -53,8 +51,6 @@ export const ReportsTab = ({
   onOpenGenerate,
   canGenerateReports = false,
   onView,
-  onDownload,
-  onPrint,
   onRegenerate,
   onDelete,
 }: ReportsTabProps): ReactElement => (
@@ -103,7 +99,6 @@ export const ReportsTab = ({
     <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
       <div className="text-slate-600 text-sm">Showing {filteredReports.length} of {reports.length} records</div>
       <div className="flex flex-wrap gap-2">
-        <Button variant="outline" size="sm">Export Data</Button>
         <Button variant="outline" size="sm">Print</Button>
       </div>
     </div>
@@ -113,8 +108,6 @@ export const ReportsTab = ({
         reports={filteredReports}
         userRole={userRole}
         onView={onView}
-        onDownload={onDownload}
-        onPrint={onPrint}
         onRegenerate={onRegenerate}
         onDelete={onDelete}
         canGenerateReports={canGenerateReports}
@@ -135,7 +128,6 @@ export const ReportsTab = ({
             <div className="text-sm text-slate-600">{report.summary}</div>
             <div className="flex flex-wrap gap-2">
               <Button size="sm" variant="outline" onClick={() => onView(report)}>View</Button>
-              <Button size="sm" variant="outline" onClick={() => onDownload(report)}>Download</Button>
             </div>
           </CardContent>
         </Card>

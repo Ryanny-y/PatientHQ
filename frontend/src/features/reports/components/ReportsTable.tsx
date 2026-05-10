@@ -1,7 +1,7 @@
 import { Button } from '@/components/ui/button';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
-import { MoreHorizontal, Eye, Download, Printer, Repeat, Trash2 } from 'lucide-react';
+import { MoreHorizontal, Eye, Repeat, Trash2 } from 'lucide-react';
 import { type ReactElement } from 'react';
 import type { ReportRecord, UserRole } from '../types/report';
 
@@ -9,8 +9,6 @@ interface ReportsTableProps {
   reports: ReportRecord[];
   userRole: UserRole;
   onView: (report: ReportRecord) => void;
-  onDownload: (report: ReportRecord) => void;
-  onPrint: (report: ReportRecord) => void;
   onRegenerate: (report: ReportRecord) => void;
   onDelete: (report: ReportRecord) => void;
   canGenerateReports?: boolean;
@@ -20,8 +18,6 @@ export const ReportsTable = ({
   reports,
   userRole,
   onView,
-  onDownload,
-  onPrint,
   onRegenerate,
   onDelete,
   canGenerateReports = false,

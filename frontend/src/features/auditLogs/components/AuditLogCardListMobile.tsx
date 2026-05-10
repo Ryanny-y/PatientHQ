@@ -1,8 +1,8 @@
 import { type ReactElement } from 'react';
-import { MoreHorizontal, Eye, Flag, Download } from 'lucide-react';
+import { MoreHorizontal, Eye, Flag } from 'lucide-react';
 import {
   DropdownMenu, DropdownMenuTrigger, DropdownMenuContent,
-  DropdownMenuItem, DropdownMenuSeparator,
+  DropdownMenuItem,
 } from '@/components/ui/dropdown-menu';
 import { Button } from '@/components/ui/button';
 import SeverityBadge from '@/features/auditLogs/components/SeverityBadge';
@@ -12,7 +12,6 @@ interface AuditLogCardListMobileProps {
   logs: AuditLog[];
   onViewDetails: (log: AuditLog) => void;
   onFlagEvent: (log: AuditLog) => void;
-  onExportEntry: (log: AuditLog) => void;
 }
 
 const formatDateTime = (dateStr: string): string =>
@@ -27,7 +26,6 @@ const AuditLogCardListMobile = ({
   logs,
   onViewDetails,
   onFlagEvent,
-  onExportEntry,
 }: AuditLogCardListMobileProps): ReactElement => (
   <div className="space-y-3">
     {logs.length === 0 && (
@@ -66,10 +64,6 @@ const AuditLogCardListMobile = ({
               </DropdownMenuItem>
               <DropdownMenuItem onClick={() => onFlagEvent(log)}>
                 <Flag className="h-3.5 w-3.5" /> Flag Event
-              </DropdownMenuItem>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem onClick={() => onExportEntry(log)}>
-                <Download className="h-3.5 w-3.5" /> Export Entry
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>

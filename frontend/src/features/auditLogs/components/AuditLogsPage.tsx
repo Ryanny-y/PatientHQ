@@ -1,5 +1,5 @@
 import { type ReactElement } from 'react';
-import { FileText, Download, FileBarChart, RotateCcw } from 'lucide-react';
+import { FileText, FileBarChart, RotateCcw } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/shared/hooks/useToast';
 import { useAuditLogs } from '@/features/auditLogs/hooks/useAuditLogs';
@@ -10,7 +10,6 @@ import AuditLogCardListMobile from '@/features/auditLogs/components/AuditLogCard
 import AuditDetailDrawer from '@/features/auditLogs/components/AuditDetailDrawer';
 import SecurityAlertsPanel from '@/features/auditLogs/components/SecurityAlertsPanel';
 import AuditChartsSection from '@/features/auditLogs/components/AuditChartsSection';
-import ExportLogsModal from '@/features/auditLogs/components/ExportLogsModal';
 
 const AuditLogsPage = (): ReactElement => {
   const { toast } = useToast();
@@ -20,7 +19,7 @@ const AuditLogsPage = (): ReactElement => {
     search, setSearch, dateRange, setDateRange, roleFilter, setRoleFilter,
     entityTypeFilter, setEntityTypeFilter, severityFilter, setSeverityFilter,
     ipSearch, setIpSearch, sortOption, setSortOption, autoRefresh, setAutoRefresh,
-    modalMode, selectedLog, openModal, closeModal, refreshLogs, exportLogs, flagEvent,
+    modalMode, selectedLog, openModal, closeModal, refreshLogs, flagEvent,
   } = useAuditLogs();
 
   const handleViewDetails = (log: any) => {
@@ -30,17 +29,6 @@ const AuditLogsPage = (): ReactElement => {
   const handleFlagEvent = (log: any) => {
     flagEvent(log.log_id);
     toast('Event flagged for review.', 'warning');
-  };
-
-  const handleExportEntry = () => {
-    // Export single entry
-    toast('Log entry exported successfully.');
-  };
-
-  const handleExportLogs = () => {
-    exportLogs();
-    toast('Audit logs export initiated. You will receive a download link shortly.');
-    closeModal();
   };
 
   const handleRefresh = () => {
@@ -66,10 +54,6 @@ const AuditLogsPage = (): ReactElement => {
           </p>
         </div>
         <div className="flex items-center gap-2 shrink-0">
-          <Button variant="outline" size="sm" className="hidden sm:flex gap-1.5" onClick={() => openModal('export-logs')}>
-            <Download className="h-3.5 w-3.5" />
-            Export Logs
-          </Button>
           <Button variant="outline" size="sm" className="hidden sm:flex gap-1.5" onClick={handleGenerateReport}>
             <FileBarChart className="h-3.5 w-3.5" />
             Compliance Report
@@ -121,7 +105,6 @@ const AuditLogsPage = (): ReactElement => {
               logs={filtered}
               onViewDetails={handleViewDetails}
               onFlagEvent={handleFlagEvent}
-              onExportEntry={handleExportEntry}
               page={page}
               totalPages={totalPages}
               onPageChange={setPage}
@@ -136,39 +119,24 @@ const AuditLogsPage = (): ReactElement => {
               logs={filtered}
               onViewDetails={handleViewDetails}
               onFlagEvent={handleFlagEvent}
-              onExportEntry={handleExportEntry}
             />
           </div>
         </div>
 
         {/* Sidebar - Takes 1 column on xl */}
         <div className="xl:col-span-1 space-y-6">
-          <SecurityAlertsPanel />
+          <SecurityAlertsPanel logs={filtered} />
         </div>
       </div>
 
       {/* Analytics Section */}
-      <AuditChartsSection />
+      <AuditChartsSection logs={filtered} />
 
       {/* Modals/Drawers */}
       <AuditDetailDrawer
         log={selectedLog}
         open={modalMode === 'view-details'}
         onClose={closeModal}
-      />
-
-      <ExportLogsModal
-        open={modalMode === 'export-logs'}
-        onClose={closeModal}
-        dateRange={dateRange}
-        onDateRangeChange={setDateRange}
-        roleFilter={roleFilter}
-        onRoleChange={setRoleFilter}
-        entityTypeFilter={entityTypeFilter}
-        onEntityTypeChange={setEntityTypeFilter}
-        severityFilter={severityFilter}
-        onSeverityChange={setSeverityFilter}
-        onExport={handleExportLogs}
       />
     </div>
   );

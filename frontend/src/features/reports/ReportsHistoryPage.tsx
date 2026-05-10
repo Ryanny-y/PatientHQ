@@ -42,7 +42,7 @@ const ReportsHistoryPage = (): ReactElement => {
   const [reportPreviewOpen, setReportPreviewOpen] = useState(false);
   const [generateModalOpen, setGenerateModalOpen] = useState(false);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
-  const [selectedPatient, setSelectedPatient] = useState<PatientSummary | null>(null);
+  const [selectedPatient] = useState<PatientSummary | null>(null);
 
   const [historyFilters, setHistoryFilters] = useState({
     search: '',
@@ -78,7 +78,7 @@ const ReportsHistoryPage = (): ReactElement => {
     }
 
     try {
-      const newReport = await generateReport(data, generatedByUserId);
+      await generateReport(data, generatedByUserId);
       toast.success('Report generated successfully.');
     } catch (error) {
       toast.error(error instanceof Error ? error.message : 'Failed to generate report.');
@@ -89,21 +89,6 @@ const ReportsHistoryPage = (): ReactElement => {
   const handleViewReport = (report: ReportRecord) => {
     setSelectedReport(report);
     setReportPreviewOpen(true);
-  };
-
-  const handleDownloadReport = (report: ReportRecord) => {
-    const csv = `Report ID,Patient,Type,Created At,Summary\n${report.report_id},${report.patient_name ?? 'Operational'},${report.report_type},${report.created_at},"${report.summary}"`;
-    const blob = new Blob([csv], { type: 'text/csv' });
-    const link = document.createElement('a');
-    link.href = URL.createObjectURL(blob);
-    link.download = `report_${report.report_id}.csv`;
-    link.click();
-    URL.revokeObjectURL(link.href);
-    toast.success('Export completed.');
-  };
-
-  const handlePrintReport = (_report: ReportRecord): void => {
-    toast.success('Print preview opened for secure report review.');
   };
 
   const handleRegenerateReport = (report: ReportRecord) => {
@@ -188,8 +173,6 @@ const ReportsHistoryPage = (): ReactElement => {
           onOpenGenerate={() => setGenerateModalOpen(true)}
           canGenerateReports={canGenerateReports}
           onView={handleViewReport}
-          onDownload={handleDownloadReport}
-          onPrint={handlePrintReport}
           onRegenerate={handleRegenerateReport}
           onDelete={(report) => {
             setSelectedReport(report);
@@ -227,8 +210,6 @@ const ReportsHistoryPage = (): ReactElement => {
         open={reportPreviewOpen}
         onClose={() => setReportPreviewOpen(false)}
         report={selectedReport}
-        onDownload={handleDownloadReport}
-        onPrint={handlePrintReport}
       />
 
       <DeleteReportDialog
