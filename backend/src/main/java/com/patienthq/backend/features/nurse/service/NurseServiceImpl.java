@@ -5,6 +5,7 @@ import com.patienthq.backend.features.nurse.dto.request.CreateNurseRequest;
 import com.patienthq.backend.features.nurse.dto.request.UpdateNurseRequest;
 import com.patienthq.backend.features.nurse.model.Nurse;
 import com.patienthq.backend.features.nurse.repository.NurseRepository;
+import com.patienthq.backend.features.user.dto.request.ResetPasswordRequest;
 import com.patienthq.backend.features.user.model.Role;
 import com.patienthq.backend.features.user.model.User;
 import com.patienthq.backend.features.user.repository.RoleRepository;
@@ -151,6 +152,15 @@ public class NurseServiceImpl implements NurseService {
         }
 
         return nurseRepository.save(nurse);
+    }
+
+    @Override
+    @Transactional
+    public void resetPassword(UUID id, ResetPasswordRequest request) {
+        Nurse nurse = findNurseById(id);
+        User user = nurse.getUser();
+        user.setPassword(passwordEncoder.encode(request.getNewPassword()));
+        userRepository.save(user);
     }
 
     @Override

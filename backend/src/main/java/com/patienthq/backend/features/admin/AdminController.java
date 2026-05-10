@@ -6,6 +6,7 @@ import com.patienthq.backend.features.admin.dto.AdminDto;
 import com.patienthq.backend.features.admin.dto.AdminMetadataDto;
 import com.patienthq.backend.features.admin.model.Admin;
 import com.patienthq.backend.features.admin.service.AdminService;
+import com.patienthq.backend.features.user.dto.request.ResetPasswordRequest;
 import com.patienthq.backend.shared.response.ApiResponse;
 import com.patienthq.backend.shared.response.PageResponse;
 import jakarta.validation.Valid;
@@ -103,6 +104,14 @@ public class AdminController {
                         .data(adminMapper.toDto(admin))
                         .build()
         );
+    }
+
+    @PostMapping("/{id}/reset-password")
+    public ResponseEntity<ApiResponse<Void>> resetPassword(
+            @PathVariable UUID id,
+            @Valid @RequestBody ResetPasswordRequest request) {
+        adminService.resetPassword(id, request);
+        return ResponseEntity.ok(ApiResponse.success("Admin password reset successfully.", null));
     }
 
     @DeleteMapping("/{id}")

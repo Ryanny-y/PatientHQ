@@ -6,6 +6,7 @@ import com.patienthq.backend.features.admin.dto.request.UpdateAdminRequest;
 import com.patienthq.backend.features.admin.exceptions.AdminNotFoundException;
 import com.patienthq.backend.features.admin.model.Admin;
 import com.patienthq.backend.features.admin.repository.AdminRepository;
+import com.patienthq.backend.features.user.dto.request.ResetPasswordRequest;
 import com.patienthq.backend.features.user.model.Role;
 import com.patienthq.backend.features.user.model.User;
 import com.patienthq.backend.features.user.repository.RoleRepository;
@@ -124,6 +125,15 @@ public class AdminServiceImpl implements AdminService {
 
         userRepository.save(user);
         return adminRepository.save(admin);
+    }
+
+    @Override
+    @Transactional
+    public void resetPassword(UUID adminId, ResetPasswordRequest request) {
+        Admin admin = findAdminById(adminId);
+        User user = admin.getUser();
+        user.setPassword(passwordEncoder.encode(request.getNewPassword()));
+        userRepository.save(user);
     }
 
     @Override

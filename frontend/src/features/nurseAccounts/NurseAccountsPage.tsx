@@ -14,6 +14,7 @@ import type {
   addNurseFormValues,
   editNurseFormValues,
 } from "@/features/nurseAccounts/types/nurseAccount";
+import type { resetPasswordFormValues } from "@/features/adminAccounts/types/adminAccount";
 import { toast } from "sonner";
 import { PERMISSIONS, usePermissions } from "@/shared/security/permissions";
 
@@ -84,10 +85,10 @@ const NurseAccountsPage = (): ReactElement => {
     }
   };
 
-  const handleResetPassword = async (): Promise<void> => {
+  const handleResetPassword = async (values: resetPasswordFormValues): Promise<void> => {
     try {
       if (!selectedNurse) return;
-      await resetPassword(selectedNurse.nurseId);
+      await resetPassword({ id: selectedNurse.nurseId, values });
       toast.success("Password reset successfully. Credentials updated.");
     } catch (error) {
       toast.error(

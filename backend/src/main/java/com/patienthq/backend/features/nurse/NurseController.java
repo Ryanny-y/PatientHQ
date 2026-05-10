@@ -6,6 +6,7 @@ import com.patienthq.backend.features.nurse.dto.request.CreateNurseRequest;
 import com.patienthq.backend.features.nurse.dto.request.UpdateNurseRequest;
 import com.patienthq.backend.features.nurse.model.Nurse;
 import com.patienthq.backend.features.nurse.service.NurseService;
+import com.patienthq.backend.features.user.dto.request.ResetPasswordRequest;
 import com.patienthq.backend.shared.response.ApiResponse;
 import com.patienthq.backend.shared.response.PageResponse;
 import jakarta.validation.Valid;
@@ -111,6 +112,14 @@ public class NurseController {
                         .data(nurseMapper.toDto(nurse))
                         .build()
         );
+    }
+
+    @PostMapping("/{id}/reset-password")
+    public ResponseEntity<ApiResponse<Void>> resetPassword(
+            @PathVariable UUID id,
+            @Valid @RequestBody ResetPasswordRequest request) {
+        nurseService.resetPassword(id, request);
+        return ResponseEntity.ok(ApiResponse.success("Nurse password reset successfully.", null));
     }
 
     @DeleteMapping("/{id}")

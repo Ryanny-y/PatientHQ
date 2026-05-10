@@ -16,7 +16,7 @@ interface ResetPasswordModalProps {
   admin: AdminAccount | null;
   open: boolean;
   onClose: () => void;
-  onSubmit: () => void;
+  onSubmit: (values: resetPasswordFormValues) => Promise<void>;
 }
 
 const ResetPasswordModal = ({ admin, open, onClose, onSubmit }: ResetPasswordModalProps): ReactElement => {
@@ -28,10 +28,9 @@ const ResetPasswordModal = ({ admin, open, onClose, onSubmit }: ResetPasswordMod
     resolver: zodResolver(resetPasswordSchema),
   });
 
-  const handleReset = async (): Promise<void> => {
+  const handleReset = async (values: resetPasswordFormValues): Promise<void> => {
     setIsSubmitting(true);
-    await new Promise((r) => setTimeout(r, 600));
-    onSubmit();
+    await onSubmit(values);
     reset();
     setIsSubmitting(false);
     onClose();
@@ -74,13 +73,13 @@ const ResetPasswordModal = ({ admin, open, onClose, onSubmit }: ResetPasswordMod
             </div>
           </FormField>
 
-          <FormField label="Confirm Password" error={errors.confirm_password?.message} required>
+          <FormField label="Confirm Password" error={errors.confirmPassword?.message} required>
             <div className="relative">
               <Input
                 type={showConfirm ? 'text' : 'password'}
                 placeholder="Re-enter new password"
-                className={cn('pr-9', errors.confirm_password && 'border-red-400')}
-                {...register('confirm_password')}
+                className={cn('pr-9', errors.confirmPassword && 'border-red-400')}
+                {...register('confirmPassword')}
               />
               <button type="button" tabIndex={-1} onClick={() => setShowConfirm((v) => !v)}
                 className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600">

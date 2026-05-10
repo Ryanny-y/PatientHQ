@@ -6,6 +6,7 @@ import com.patienthq.backend.features.doctor.dto.request.CreateDoctorRequest;
 import com.patienthq.backend.features.doctor.dto.request.UpdateDoctorRequest;
 import com.patienthq.backend.features.doctor.model.Doctor;
 import com.patienthq.backend.features.doctor.service.DoctorService;
+import com.patienthq.backend.features.user.dto.request.ResetPasswordRequest;
 import com.patienthq.backend.shared.response.ApiResponse;
 import com.patienthq.backend.shared.response.PageResponse;
 import jakarta.validation.Valid;
@@ -105,6 +106,14 @@ public class DoctorController {
                         .data(doctorMapper.toDto(doctor))
                         .build()
         );
+    }
+
+    @PostMapping("/{id}/reset-password")
+    public ResponseEntity<ApiResponse<Void>> resetPassword(
+            @PathVariable UUID id,
+            @Valid @RequestBody ResetPasswordRequest request) {
+        doctorService.resetPassword(id, request);
+        return ResponseEntity.ok(ApiResponse.success("Doctor password reset successfully.", null));
     }
 
     @DeleteMapping("/{id}")

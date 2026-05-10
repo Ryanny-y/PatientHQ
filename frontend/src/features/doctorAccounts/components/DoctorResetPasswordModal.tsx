@@ -16,7 +16,7 @@ interface DoctorResetPasswordModalProps {
   doctor: DoctorAccount | null;
   open: boolean;
   onClose: () => void;
-  onSubmit: () => void;
+  onSubmit: (values: resetPasswordFormValues) => Promise<void>;
 }
 
 const DoctorResetPasswordModal = ({ doctor, open, onClose, onSubmit }: DoctorResetPasswordModalProps): ReactElement => {
@@ -28,10 +28,9 @@ const DoctorResetPasswordModal = ({ doctor, open, onClose, onSubmit }: DoctorRes
     resolver: zodResolver(resetPasswordSchema),
   });
 
-  const handleReset = async (): Promise<void> => {
+  const handleReset = async (values: resetPasswordFormValues): Promise<void> => {
     setIsSubmitting(true);
-    await new Promise((r) => setTimeout(r, 600));
-    onSubmit();
+    await onSubmit(values);
     reset();
     setIsSubmitting(false);
     onClose();

@@ -16,7 +16,7 @@ interface NurseResetPasswordModalProps {
   nurse: NurseAccount | null;
   open: boolean;
   onClose: () => void;
-  onSubmit: () => void;
+  onSubmit: (values: resetPasswordFormValues) => Promise<void>;
 }
 
 const NurseResetPasswordModal = ({ nurse, open, onClose, onSubmit }: NurseResetPasswordModalProps): ReactElement => {
@@ -28,10 +28,9 @@ const NurseResetPasswordModal = ({ nurse, open, onClose, onSubmit }: NurseResetP
     resolver: zodResolver(resetPasswordSchema),
   });
 
-  const handleReset = async (): Promise<void> => {
+  const handleReset = async (values: resetPasswordFormValues): Promise<void> => {
     setIsSubmitting(true);
-    await new Promise((r) => setTimeout(r, 600));
-    onSubmit();
+    await onSubmit(values);
     reset();
     setIsSubmitting(false);
     onClose();

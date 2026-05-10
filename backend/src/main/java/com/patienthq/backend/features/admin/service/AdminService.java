@@ -4,6 +4,7 @@ import com.patienthq.backend.features.admin.dto.AdminMetadataDto;
 import com.patienthq.backend.features.admin.dto.request.CreateAdminRequest;
 import com.patienthq.backend.features.admin.dto.request.UpdateAdminRequest;
 import com.patienthq.backend.features.admin.model.Admin;
+import com.patienthq.backend.features.user.dto.request.ResetPasswordRequest;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -15,5 +16,6 @@ public interface AdminService {
     Page<Admin> getAllAdmins(Boolean isActive, String search, Pageable pageable);
     AdminMetadataDto getAdminMetadata();
     Admin updateAdmin(UUID adminId, UpdateAdminRequest request);
+    void resetPassword(UUID adminId, ResetPasswordRequest request);
     void deleteAdmin(UUID adminId);
 }

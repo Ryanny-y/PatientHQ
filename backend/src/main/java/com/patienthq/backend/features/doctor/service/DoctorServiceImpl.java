@@ -6,6 +6,7 @@ import com.patienthq.backend.features.doctor.dto.request.CreateDoctorRequest;
 import com.patienthq.backend.features.doctor.dto.request.UpdateDoctorRequest;
 import com.patienthq.backend.features.doctor.model.Doctor;
 import com.patienthq.backend.features.doctor.repository.DoctorRepository;
+import com.patienthq.backend.features.user.dto.request.ResetPasswordRequest;
 import com.patienthq.backend.features.user.model.Role;
 import com.patienthq.backend.features.user.model.User;
 import com.patienthq.backend.features.user.repository.RoleRepository;
@@ -145,6 +146,15 @@ public class DoctorServiceImpl implements DoctorService {
 
         doctor = doctorRepository.save(doctor);
         return doctor;
+    }
+
+    @Override
+    @Transactional
+    public void resetPassword(UUID id, ResetPasswordRequest request) {
+        Doctor doctor = findDoctorById(id);
+        User user = doctor.getUser();
+        user.setPassword(passwordEncoder.encode(request.getNewPassword()));
+        userRepository.save(user);
     }
 
     @Transactional

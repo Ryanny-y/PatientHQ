@@ -30,7 +30,7 @@ export const useNurseMutation = () => {
   });
 
   const resetPassword = useMutation({
-    mutationFn: nurseService.resetPassword,
+    mutationFn: ({ id, values }: any) => nurseService.resetPassword(id, values),
   });
 
   return {

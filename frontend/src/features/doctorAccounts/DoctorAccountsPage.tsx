@@ -14,6 +14,7 @@ import type {
   addDoctorFormValues,
   editDoctorFormValues,
 } from "@/features/doctorAccounts/types/doctorAccount";
+import type { resetPasswordFormValues } from "@/features/adminAccounts/types/adminAccount";
 import { toast } from "sonner";
 import { PERMISSIONS, usePermissions } from "@/shared/security/permissions";
 
@@ -84,10 +85,10 @@ const DoctorAccountsPage = (): ReactElement => {
     }
   };
 
-  const handleResetPassword = async (): Promise<void> => {
+  const handleResetPassword = async (values: resetPasswordFormValues): Promise<void> => {
     if (!selectedDoctor) return;
     try {
-      const res = await resetPassword(selectedDoctor.doctorId);
+      const res = await resetPassword({ id: selectedDoctor.doctorId, values });
       if (res.success) {
         toast.success(res.message);
       }

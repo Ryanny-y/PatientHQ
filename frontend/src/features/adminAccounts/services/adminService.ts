@@ -4,6 +4,7 @@ import type {
   AdminMetaData,
   addAdminFormValues,
   editAdminFormValues,
+  resetPasswordFormValues,
 } from "../types/adminAccount";
 import type { ApiResponse, PageResponse } from "@/shared/types/api";
 
@@ -54,6 +55,9 @@ export const adminService = {
       { method: "PATCH" },
     ),
 
-  resetPassword: (id: string) =>
-    fetchWithAuth(`admins/${id}/reset-password`, { method: "POST" }),
+  resetPassword: (id: string, values: resetPasswordFormValues) =>
+    fetchWithAuth<ApiResponse<void>>(`admins/${id}/reset-password`, {
+      method: "POST",
+      body: JSON.stringify(values),
+    }),
 };

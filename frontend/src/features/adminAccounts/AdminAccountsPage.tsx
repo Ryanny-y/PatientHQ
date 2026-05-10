@@ -14,6 +14,7 @@ import DeleteConfirmDialog from "@/features/adminAccounts/components/DeleteConfi
 import type {
   addAdminFormValues,
   editAdminFormValues,
+  resetPasswordFormValues,
 } from "@/features/adminAccounts/types/adminAccount";
 import { toast } from "sonner";
 import { PERMISSIONS, usePermissions } from "@/shared/security/permissions";
@@ -84,10 +85,10 @@ const AdminAccountsPage = (): ReactElement => {
     }
   };
 
-  const handleResetPassword = async (): Promise<void> => {
+  const handleResetPassword = async (values: resetPasswordFormValues): Promise<void> => {
     try {
       if (!selectedAdmin) return;
-      await resetPassword(selectedAdmin.adminId);
+      await resetPassword({ id: selectedAdmin.adminId, values });
       toast.success("Password reset successfully. Credentials updated.");
     } catch (error) {
       toast.error(

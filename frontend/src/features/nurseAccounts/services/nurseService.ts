@@ -1,5 +1,6 @@
 import { fetchWithAuth } from "@/shared/hooks/fetchWithAuth";
 import type { ApiResponse, PageResponse } from "@/shared/types/api";
+import type { resetPasswordFormValues } from "@/features/adminAccounts/types/adminAccount";
 import type {
   addNurseFormValues,
   editNurseFormValues,
@@ -55,6 +56,9 @@ export const nurseService = {
       method: "PATCH",
     }),
 
-  resetPassword: (id: string) =>
-    fetchWithAuth(`nurses/${id}/reset-password`, { method: "POST" }),
+  resetPassword: (id: string, values: resetPasswordFormValues) =>
+    fetchWithAuth<ApiResponse<void>>(`nurses/${id}/reset-password`, {
+      method: "POST",
+      body: JSON.stringify(values),
+    }),
 };

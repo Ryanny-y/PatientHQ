@@ -4,6 +4,7 @@ import com.patienthq.backend.features.doctor.dto.DoctorMetadataDto;
 import com.patienthq.backend.features.doctor.dto.request.CreateDoctorRequest;
 import com.patienthq.backend.features.doctor.dto.request.UpdateDoctorRequest;
 import com.patienthq.backend.features.doctor.model.Doctor;
+import com.patienthq.backend.features.user.dto.request.ResetPasswordRequest;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -19,6 +20,8 @@ public interface DoctorService {
     DoctorMetadataDto getDoctorMetadata();
 
     Doctor updateDoctor(UUID id, UpdateDoctorRequest request);
+
+    void resetPassword(UUID id, ResetPasswordRequest request);
 
     void deleteDoctor(UUID id);
 }

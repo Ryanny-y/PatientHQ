@@ -4,6 +4,7 @@ import com.patienthq.backend.features.nurse.dto.NurseMetadataDto;
 import com.patienthq.backend.features.nurse.dto.request.CreateNurseRequest;
 import com.patienthq.backend.features.nurse.dto.request.UpdateNurseRequest;
 import com.patienthq.backend.features.nurse.model.Nurse;
+import com.patienthq.backend.features.user.dto.request.ResetPasswordRequest;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -16,5 +17,6 @@ public interface NurseService {
     Nurse getNurseById(UUID id);
     Nurse getNurseByUserId(UUID userId);
     Nurse updateNurse(UUID id, UpdateNurseRequest request);
+    void resetPassword(UUID id, ResetPasswordRequest request);
     void deleteNurse(UUID id);
 }

@@ -4,6 +4,7 @@ import type {
   addDoctorFormValues,
   editDoctorFormValues,
 } from "../types/doctorAccount";
+import type { resetPasswordFormValues } from "@/features/adminAccounts/types/adminAccount";
 import type { ApiResponse, PageResponse } from "@/shared/types/api";
 
 export const doctorService = {
@@ -53,8 +54,9 @@ export const doctorService = {
       method: "PATCH",
     }),
 
-  resetPassword: (id: string) =>
+  resetPassword: (id: string, values: resetPasswordFormValues) =>
     fetchWithAuth<ApiResponse<void>>(`doctors/${id}/reset-password`, {
       method: "POST",
+      body: JSON.stringify(values),
     }),
 };

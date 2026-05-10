@@ -29,7 +29,8 @@ export const useDoctorMutations = () => {
   });
 
   const resetPassword = useMutation({
-    mutationFn: doctorService.resetPassword,
+    mutationFn: ({ id, values }: any) =>
+      doctorService.resetPassword(id, values),
   });
 
   return {
