@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { useVitalSignsMetaQuery, useVitalSignsQuery } from './useVitalSignsQuery';
 import { useVitalSignsMutation } from './useVitalSignsMutation';
 import type { addVitalSignsFormValues, vitalDateFilter, vitalSortOption, VitalSigns } from '../types/vitalSigns';
@@ -38,24 +38,53 @@ export const useVitalSigns = (): useVitalSignsReturn => {
   const [modalMode, setModalMode] = useState<modalMode>(null);
   const [selectedVital, setSelectedVital] = useState<VitalSigns | null>(null);
 
-  const sort =
-    sortBy === 'newest' ? 'recordedAt,desc' :
-    sortBy === 'oldest' ? 'recordedAt,asc' :
-    'patientName,asc';
-
-  const { data: response, isLoading, refetch } = useVitalSignsQuery({
-    page: page - 1,
-    size: PAGE_SIZE,
-    search: search || undefined,
-    dateFilter: dateFilter === 'all' ? undefined : dateFilter,
-    sort,
-  });
+  const { data: response, isLoading, refetch } = useVitalSignsQuery();
 
   const { data: meta } = useVitalSignsMetaQuery();
   const mutations = useVitalSignsMutation();
 
-  const data = response?.data?.content ?? [];
-  const totalPages = response?.data?.totalPages ?? 1;
+  const filteredData = useMemo(() => {
+    const now = new Date();
+    const weekAgo = new Date(now);
+    weekAgo.setDate(now.getDate() - 7);
+
+    return (response?.data ?? [])
+      .filter((vital) => {
+        const searchTerm = search.trim().toLowerCase();
+        if (!searchTerm) return true;
+
+        return [
+          vital.patientName,
+          vital.patientId,
+          vital.recordedByName,
+          vital.recordedBy,
+        ].some((value) => value?.toLowerCase().includes(searchTerm));
+      })
+      .filter((vital) => {
+        if (dateFilter === 'all') return true;
+
+        const recordedAt = new Date(vital.recordedAt);
+        if (Number.isNaN(recordedAt.getTime())) return false;
+
+        if (dateFilter === 'today') {
+          return recordedAt.toDateString() === now.toDateString();
+        }
+
+        return recordedAt >= weekAgo;
+      })
+      .sort((a, b) => {
+        if (sortBy === 'patient-asc') {
+          return (a.patientName ?? '').localeCompare(b.patientName ?? '');
+        }
+
+        const aTime = new Date(a.recordedAt).getTime();
+        const bTime = new Date(b.recordedAt).getTime();
+        return sortBy === 'oldest' ? aTime - bTime : bTime - aTime;
+      });
+  }, [dateFilter, response?.data, search, sortBy]);
+
+  const totalPages = Math.max(1, Math.ceil(filteredData.length / PAGE_SIZE));
+  const data = filteredData.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
 
   const handleSetSearch = (v: string) => { setSearch(v); setPage(1); };
   const handleSetDateFilter = (v: vitalDateFilter) => { setDateFilter(v); setPage(1); };

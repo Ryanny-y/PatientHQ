@@ -14,6 +14,7 @@ public interface NurseService {
     Page<Nurse> getAllNurses(Boolean isActive, String assignedWard, String search, Pageable pageable);
     NurseMetadataDto getNurseMetadata();
     Nurse getNurseById(UUID id);
+    Nurse getNurseByUserId(UUID userId);
     Nurse updateNurse(UUID id, UpdateNurseRequest request);
     void deleteNurse(UUID id);
 }

@@ -1,17 +1,10 @@
 import { useQuery } from '@tanstack/react-query';
 import { vitalSignsService } from '../services/vitalSignsService';
 
-export const useVitalSignsQuery = (params: {
-  page: number;
-  size: number;
-  search?: string;
-  patientId?: string;
-  dateFilter?: string;
-  sort?: string;
-}) => {
+export const useVitalSignsQuery = () => {
   return useQuery({
-    queryKey: ['vitalSigns', params],
-    queryFn: () => vitalSignsService.getVitalSigns(params),
+    queryKey: ['vitalSigns'],
+    queryFn: () => vitalSignsService.getVitalSigns(),
     placeholderData: (prev) => prev,
   });
 };

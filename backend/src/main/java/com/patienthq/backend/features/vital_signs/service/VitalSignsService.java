@@ -1,5 +1,7 @@
 package com.patienthq.backend.features.vital_signs.service;
 
+import com.patienthq.backend.features.user.model.User;
+import com.patienthq.backend.features.vital_signs.dto.VitalSignsMetadataDto;
 import com.patienthq.backend.features.vital_signs.dto.request.CreateVitalSignsRequest;
 import com.patienthq.backend.features.vital_signs.model.VitalSign;
 
@@ -9,5 +11,6 @@ import java.util.UUID;
 public interface VitalSignsService {
     List<VitalSign> getAllVitalSigns();
     VitalSign getVitalSignsById(UUID id);
-    VitalSign createVitalSigns(CreateVitalSignsRequest request);
+    VitalSignsMetadataDto getVitalSignsMetadata();
+    VitalSign createVitalSigns(CreateVitalSignsRequest request, User currentUser);
 }

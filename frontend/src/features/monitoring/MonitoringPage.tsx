@@ -15,11 +15,13 @@ import {
 } from './components/VitalSignsModals';
 import type { addVitalSignsFormValues } from './types/vitalSigns';
 import { PERMISSIONS, usePermissions } from '@/shared/security/permissions';
+import { useAuth } from '@/shared/context/AuthContext';
 
 const MonitoringPage = (): ReactElement => {
   const { toasts, toast, dismiss } = useToast();
   const { can } = usePermissions();
-  const canCreateVitals = can(PERMISSIONS.VITAL_SIGNS_CREATE);
+  const { user } = useAuth();
+  const canCreateVitals = user?.role === 'NURSE' && can(PERMISSIONS.VITAL_SIGNS_CREATE);
 
   const {
     data,

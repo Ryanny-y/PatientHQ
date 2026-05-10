@@ -9,9 +9,12 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.UUID;
+import java.util.Optional;
 
 @Repository
 public interface NurseRepository extends JpaRepository<Nurse, UUID> {
+    Optional<Nurse> findByUserUserId(UUID userId);
+
     boolean existsByLicenseNumber(String licenseNumber);
 
     boolean existsByLicenseNumberAndNurseIdNot(String licenseNumber, UUID id);

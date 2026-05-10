@@ -17,7 +17,6 @@ public class CreateVitalSignsRequest {
     @NotNull
     private UUID patientId;
 
-    @NotNull
     private UUID recordedBy;
 
     private BigDecimal temperature;

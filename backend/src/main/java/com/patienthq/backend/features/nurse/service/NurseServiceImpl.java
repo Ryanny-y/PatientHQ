@@ -103,6 +103,13 @@ public class NurseServiceImpl implements NurseService {
     }
 
     @Override
+    @Transactional(readOnly = true)
+    public Nurse getNurseByUserId(UUID userId) {
+        return nurseRepository.findByUserUserId(userId)
+                .orElseThrow(() -> new IllegalArgumentException("Nurse profile not found for user id: " + userId));
+    }
+
+    @Override
     @Transactional
     public Nurse updateNurse(UUID id, UpdateNurseRequest request) {
         Nurse nurse = findNurseById(id);

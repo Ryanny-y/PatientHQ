@@ -17,6 +17,8 @@ public class VitalSignsDto {
     private UUID vitalId;
     private UUID patientId;
     private UUID recordedBy;
+    private String patientName;
+    private String recordedByName;
     private BigDecimal temperature;
     private Integer heartRate;
     private Integer respiratoryRate;
