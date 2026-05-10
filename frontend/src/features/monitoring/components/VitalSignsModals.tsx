@@ -49,8 +49,6 @@ export const ViewVitalSignsDrawer = ({ open, onOpenChange, vital }: ViewVitalSig
                 { label: 'Respiratory Rate', value: fmt(vital.respiratoryRate, '/min') },
                 { label: 'Oxygen Saturation', value: fmt(vital.oxygenSaturation, '%') },
                 { label: 'Blood Pressure', value: vital.bloodPressure ?? '—' },
-                { label: 'Weight', value: fmt(vital.weight, 'kg') },
-                { label: 'Height', value: fmt(vital.height, 'cm') },
               ].map(({ label, value }) => (
                 <div key={label} className="rounded-2xl border border-slate-100 bg-white p-4 shadow-sm">
                   <p className="text-xs text-slate-400">{label}</p>

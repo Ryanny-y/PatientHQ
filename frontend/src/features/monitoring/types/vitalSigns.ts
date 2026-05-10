@@ -11,8 +11,6 @@ export interface VitalSigns {
   respiratoryRate: number | null;
   oxygenSaturation: number | null;
   bloodPressure: string | null;
-  weight: number | null;
-  height: number | null;
   notes: string | null;
   recordedAt: string;
 }
