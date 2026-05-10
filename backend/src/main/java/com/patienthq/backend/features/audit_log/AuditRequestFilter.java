@@ -14,12 +14,15 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
+import java.util.Set;
 import java.util.Locale;
 import java.util.UUID;
 
 @Component
 @RequiredArgsConstructor
 public class AuditRequestFilter extends OncePerRequestFilter {
+
+    private static final Set<String> AUDITED_METHODS = Set.of("POST", "PUT", "PATCH", "DELETE");
 
     private final AuditLogRepository auditLogRepository;
 
@@ -29,8 +32,33 @@ public class AuditRequestFilter extends OncePerRequestFilter {
             HttpServletResponse response,
             FilterChain filterChain
     ) throws ServletException, IOException {
-        filterChain.doFilter(request, response);
+        Exception requestException = null;
 
+        try {
+            filterChain.doFilter(request, response);
+        } catch (ServletException | IOException | RuntimeException ex) {
+            requestException = ex;
+            throw ex;
+        } finally {
+            auditRequest(request, response, requestException);
+        }
+    }
+
+    private boolean shouldAudit(HttpServletRequest request) {
+        String method = request.getMethod().toUpperCase(Locale.ROOT);
+        String path = request.getRequestURI();
+
+        return path.startsWith("/api/v1/")
+                && !path.startsWith("/api/v1/audit-logs")
+                && !path.startsWith("/api/v1/auth")
+                && AUDITED_METHODS.contains(method);
+    }
+
+    private void auditRequest(
+            HttpServletRequest request,
+            HttpServletResponse response,
+            Exception requestException
+    ) {
         if (!shouldAudit(request)) {
             return;
         }
@@ -40,31 +68,28 @@ public class AuditRequestFilter extends OncePerRequestFilter {
             return;
         }
 
-        auditLogRepository.save(
-                AuditLog.builder()
-                        .user(userPrincipal.getUser())
-                        .action(resolveAction(request, response))
-                        .entityType(resolveEntityType(request))
-                        .entityId(resolveEntityId(request))
-                        .description(resolveDescription(request, response))
-                        .ipAddress(resolveIpAddress(request))
-                        .build()
-        );
+        try {
+            auditLogRepository.save(
+                    AuditLog.builder()
+                            .user(userPrincipal.getUser())
+                            .action(resolveAction(request, response, requestException))
+                            .entityType(resolveEntityType(request))
+                            .entityId(resolveEntityId(request))
+                            .description(resolveDescription(request, response, requestException))
+                            .ipAddress(resolveIpAddress(request))
+                            .build()
+            );
+        } catch (RuntimeException ignored) {
+            // Auditing must not mask the original request result.
+        }
     }
 
-    private boolean shouldAudit(HttpServletRequest request) {
-        String method = request.getMethod();
-        String path = request.getRequestURI();
-
-        return path.startsWith("/api/v1/")
-                && !path.startsWith("/api/v1/audit-logs")
-                && !path.startsWith("/api/v1/auth/refresh-token")
-                && !method.equalsIgnoreCase("GET")
-                && !method.equalsIgnoreCase("OPTIONS");
-    }
-
-    private String resolveAction(HttpServletRequest request, HttpServletResponse response) {
-        String outcome = response.getStatus() >= 400 ? "FAILED" : "SUCCESS";
+    private String resolveAction(
+            HttpServletRequest request,
+            HttpServletResponse response,
+            Exception requestException
+    ) {
+        String outcome = requestException != null || response.getStatus() >= 400 ? "FAILED" : "SUCCESS";
         return request.getMethod().toUpperCase(Locale.ROOT) + "_" + resolveEntityType(request) + "_" + outcome;
     }
 
@@ -92,12 +117,22 @@ public class AuditRequestFilter extends OncePerRequestFilter {
         return null;
     }
 
-    private String resolveDescription(HttpServletRequest request, HttpServletResponse response) {
-        return "%s %s completed with HTTP %d".formatted(
+    private String resolveDescription(
+            HttpServletRequest request,
+            HttpServletResponse response,
+            Exception requestException
+    ) {
+        String description = "%s %s completed with HTTP %d".formatted(
                 request.getMethod().toUpperCase(Locale.ROOT),
                 request.getRequestURI(),
                 response.getStatus()
         );
+
+        if (requestException == null) {
+            return description;
+        }
+
+        return description + " (" + requestException.getClass().getSimpleName() + ")";
     }
 
     private String resolveIpAddress(HttpServletRequest request) {

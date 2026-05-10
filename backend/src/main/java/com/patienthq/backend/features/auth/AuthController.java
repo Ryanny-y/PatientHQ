@@ -1,5 +1,7 @@
 package com.patienthq.backend.features.auth;
 
+import com.patienthq.backend.features.audit_log.model.AuditLog;
+import com.patienthq.backend.features.audit_log.repository.AuditLogRepository;
 import com.patienthq.backend.features.auth.dto.request.LoginRequest;
 import com.patienthq.backend.features.auth.dto.response.LoginResponse;
 import com.patienthq.backend.features.auth.dto.response.RefreshResponse;
@@ -10,6 +12,7 @@ import com.patienthq.backend.features.user.model.User;
 import com.patienthq.backend.shared.response.ApiResponse;
 import com.patienthq.backend.shared.security.UserPrincipal;
 import com.patienthq.backend.shared.security.jwt.JwtService;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -31,15 +34,18 @@ public class AuthController {
     private final AuthService authService;
     private final JwtService jwtService;
     private final UserService userService;
+    private final AuditLogRepository auditLogRepository;
 
     @PostMapping("/login")
     public ResponseEntity<ApiResponse<LoginResponse>> login (
             @Valid @RequestBody LoginRequest loginRequest,
+            HttpServletRequest httpRequest,
             HttpServletResponse httpResponse
     ) {
         UserDetails userDetails = authService.authenticate(loginRequest, httpResponse);
         String accessToken = jwtService.generateAccessToken(userDetails);
         User user = userService.getUserByUsername(loginRequest.getUsername());
+        saveAuthAuditLog(user, "POST_AUTH_LOGIN_SUCCESS", "User logged in successfully", httpRequest);
         Set<String> permissions = user.getRole().getPermissions().stream().map(Permission::getPermissionName).collect(Collectors.toSet());
 
         LoginResponse loginResponse = new LoginResponse(
@@ -88,13 +94,43 @@ public class AuthController {
     @PostMapping("/logout")
     public ResponseEntity<Void> logout(
             @AuthenticationPrincipal UserPrincipal userPrincipal,
+            HttpServletRequest request,
             HttpServletResponse response
     ) {
         User user = userPrincipal != null ? userPrincipal.getUser() : null;
+        saveAuthAuditLog(user, "POST_AUTH_LOGOUT_SUCCESS", "User logged out successfully", request);
 
         authService.logout(user, response);
         return ResponseEntity.noContent().build();
     }
 
+    private void saveAuthAuditLog(User user, String action, String description, HttpServletRequest request) {
+        if (user == null) {
+            return;
+        }
+
+        try {
+            auditLogRepository.save(
+                    AuditLog.builder()
+                            .user(user)
+                            .action(action)
+                            .entityType("AUTH")
+                            .description(description)
+                            .ipAddress(resolveIpAddress(request))
+                            .build()
+            );
+        } catch (RuntimeException ex) {
+            log.warn("Failed to save auth audit log for user {}", user.getUsername(), ex);
+        }
+    }
+
+    private String resolveIpAddress(HttpServletRequest request) {
+        String forwardedFor = request.getHeader("X-Forwarded-For");
+        if (forwardedFor != null && !forwardedFor.isBlank()) {
+            return forwardedFor.split(",")[0].trim();
+        }
+
+        return request.getRemoteAddr();
+    }
 
 }

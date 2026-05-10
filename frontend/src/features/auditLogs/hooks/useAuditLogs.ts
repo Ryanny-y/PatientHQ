@@ -18,6 +18,8 @@ interface useAuditLogsReturn {
   failedLoginAttempts: number;
   criticalActions: number;
   activeUsersToday: number;
+  isLoading: boolean;
+  errorMessage: string | null;
   // pagination
   page: number;
   pageSize: number;
@@ -68,7 +70,7 @@ export const useAuditLogs = (): useAuditLogsReturn => {
   const [modalMode, setModalMode] = useState<modalMode>(null);
   const [selectedLog, setSelectedLog] = useState<AuditLog | null>(null);
 
-  const { data, refetch } = useAuditLogQuery({
+  const { data, error, isLoading, refetch } = useAuditLogQuery({
     page: page - 1,
     size: PAGE_SIZE,
     search: search.trim() || undefined,
@@ -81,7 +83,7 @@ export const useAuditLogs = (): useAuditLogsReturn => {
     sort: sortOption === 'newest' ? 'createdAt,desc' : 'createdAt,asc',
     autoRefresh,
   });
-  const { data: metaData, refetch: refetchMeta } = useAuditLogMetaQuery(autoRefresh);
+  const { data: metaData, error: metaError, refetch: refetchMeta } = useAuditLogMetaQuery(autoRefresh);
 
   // Reset to page 1 whenever filters change
   const handleSetSearch = (v: string): void => { setSearch(v); setPage(1); };
@@ -125,6 +127,12 @@ export const useAuditLogs = (): useAuditLogsReturn => {
     failedLoginAttempts: meta?.failedLoginAttempts ?? 0,
     criticalActions: meta?.criticalActions ?? 0,
     activeUsersToday: meta?.activeUsersToday ?? 0,
+    isLoading,
+    errorMessage: error instanceof Error
+      ? error.message
+      : metaError instanceof Error
+        ? metaError.message
+        : null,
     // pagination
     page,
     pageSize: PAGE_SIZE,

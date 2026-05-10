@@ -15,6 +15,7 @@ const AuditLogsPage = (): ReactElement => {
   const { toast } = useToast();
   const {
     filtered, allFilteredCount, totalLogsToday, failedLoginAttempts, criticalActions, activeUsersToday,
+    isLoading, errorMessage,
     page, pageSize, totalPages, setPage,
     search, setSearch, dateRange, setDateRange, roleFilter, setRoleFilter,
     entityTypeFilter, setEntityTypeFilter, severityFilter, setSeverityFilter,
@@ -99,6 +100,16 @@ const AuditLogsPage = (): ReactElement => {
       <div className="grid grid-cols-1 xl:grid-cols-4 gap-6">
         {/* Table/Cards - Takes 3 columns on xl */}
         <div className="xl:col-span-3">
+          {errorMessage && (
+            <div className="mb-4 rounded-xl border border-red-200 bg-red-50 p-4 text-sm text-red-700">
+              {errorMessage}
+            </div>
+          )}
+          {isLoading && (
+            <div className="mb-4 rounded-xl border border-slate-100 bg-white p-4 text-sm text-slate-500">
+              Loading audit logs...
+            </div>
+          )}
           {/* Desktop Table */}
           <div className="hidden md:block">
             <AuditLogsTable
