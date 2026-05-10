@@ -25,7 +25,6 @@ const PatientListPage = (): ReactElement => {
   const canEditPatient = can(PERMISSIONS.PATIENT_UPDATE);
   const canAssignDoctor = can(PERMISSIONS.DOCTOR_ASSIGNMENT_ASSIGN);
   const canViewHistory = can(PERMISSIONS.PATIENT_HISTORY_VIEW);
-  const canCreateRecord = can(PERMISSIONS.MEDICAL_RECORD_CREATE);
 
   const {
     metaData,
@@ -134,7 +133,6 @@ const PatientListPage = (): ReactElement => {
           canEditPatient={canEditPatient}
           canViewHistory={canViewHistory}
           canAssignDoctor={canAssignDoctor}
-          canCreateRecord={canCreateRecord}
         />
       </div>
 
