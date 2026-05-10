@@ -9,10 +9,13 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDateTime;
+import java.util.Optional;
 import java.util.UUID;
 
 @Repository
 public interface AdminRepository extends JpaRepository<Admin, UUID> {
+    Optional<Admin> findByUser_UserId(UUID userId);
+
     @Query("""
         SELECT a FROM Admin a
         LEFT JOIN a.user u
