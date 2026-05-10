@@ -18,12 +18,19 @@ import { PERMISSIONS, usePermissions } from "@/shared/security/permissions";
 
 const PAGE_SIZE = 10;
 
+const escapeHtml = (value: string | undefined): string =>
+  (value || "")
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
+
 const MedicalRecordsPage = (): ReactElement => {
   const [currentUserId] = useState<string>("1"); // Mock current user ID
   const { can } = usePermissions();
   const canCreateRecord = can(PERMISSIONS.MEDICAL_RECORD_CREATE);
   const canEditRecord = can(PERMISSIONS.MEDICAL_RECORD_UPDATE);
-  const canGenerateReport = can(PERMISSIONS.REPORT_GENERATE);
 
   const {
     meta,
@@ -116,17 +123,69 @@ const MedicalRecordsPage = (): ReactElement => {
 
   // Event handlers
   const handlePrintRecord = (record: MedicalRecord) => {
-    toast(
-      `Printing clinical summary for Record #${record.recordId}`,
-      "success",
-    );
-  };
+    const printWindow = window.open("", "_blank", "width=900,height=700");
 
-  const handleGenerateReport = (record: MedicalRecord) => {
-    toast(
-      `Patient report for ${record.patientName || 'Patient'} has been generated.`,
-      "success",
-    );
+    if (!printWindow) {
+      toast("Unable to open print preview. Please allow pop-ups and try again.", "error");
+      return;
+    }
+
+    const createdAt = new Date(record.createdAt).toLocaleString();
+    const updatedAt = record.lastUpdated
+      ? new Date(record.lastUpdated).toLocaleString()
+      : "Not updated";
+
+    printWindow.document.write(`
+      <!doctype html>
+      <html>
+        <head>
+          <title>Clinical Summary ${escapeHtml(record.recordId)}</title>
+          <style>
+            body { font-family: Arial, sans-serif; color: #0f172a; margin: 32px; line-height: 1.5; }
+            header { border-bottom: 2px solid #e2e8f0; margin-bottom: 24px; padding-bottom: 16px; }
+            h1 { font-size: 24px; margin: 0 0 4px; }
+            h2 { font-size: 16px; margin: 24px 0 8px; color: #334155; }
+            .meta { color: #64748b; font-size: 13px; }
+            .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px 24px; }
+            .label { color: #64748b; font-size: 12px; text-transform: uppercase; letter-spacing: .04em; }
+            .value { font-weight: 600; margin-top: 2px; }
+            .box { border: 1px solid #e2e8f0; border-radius: 8px; padding: 12px; white-space: pre-wrap; }
+            @media print { body { margin: 20mm; } button { display: none; } }
+          </style>
+        </head>
+        <body>
+          <header>
+            <h1>Clinical Summary</h1>
+            <div class="meta">Medical Record #${escapeHtml(record.recordId)}</div>
+          </header>
+
+          <section class="grid">
+            <div><div class="label">Patient</div><div class="value">${escapeHtml(record.patientName || "Unknown Patient")}</div></div>
+            <div><div class="label">Patient ID</div><div class="value">${escapeHtml(record.patientId)}</div></div>
+            <div><div class="label">Doctor</div><div class="value">${escapeHtml(record.doctorName || "Unknown Doctor")}</div></div>
+            <div><div class="label">Status</div><div class="value">${escapeHtml(record.patientStatus || "Active")}</div></div>
+            <div><div class="label">Created</div><div class="value">${escapeHtml(createdAt)}</div></div>
+            <div><div class="label">Last Updated</div><div class="value">${escapeHtml(updatedAt)}</div></div>
+          </section>
+
+          <h2>Diagnosis</h2>
+          <div class="box">${escapeHtml(record.diagnosis)}</div>
+
+          <h2>Treatment</h2>
+          <div class="box">${escapeHtml(record.treatment)}</div>
+
+          <h2>Prescription</h2>
+          <div class="box">${escapeHtml(record.prescription || "No prescription recorded.")}</div>
+
+          <h2>Clinical Notes</h2>
+          <div class="box">${escapeHtml(record.notes || "No notes recorded.")}</div>
+        </body>
+      </html>
+    `);
+    printWindow.document.close();
+    printWindow.focus();
+    printWindow.print();
+    toast(`Print preview opened for Record #${record.recordId.slice(-8)}.`, "success");
   };
 
   const handleArchiveRecord = (record: MedicalRecord) => {
@@ -176,10 +235,8 @@ const MedicalRecordsPage = (): ReactElement => {
           onViewRecord={handleViewRecord}
           onEditRecord={handleEditRecord}
           onPrintRecord={handlePrintRecord}
-          onGenerateReport={handleGenerateReport}
           onArchiveRecord={handleArchiveRecord}
           canEditRecord={canEditRecord}
-          canGenerateReport={canGenerateReport}
         />
       </div>
 
@@ -189,7 +246,6 @@ const MedicalRecordsPage = (): ReactElement => {
           onViewRecord={handleViewRecord}
           onEditRecord={handleEditRecord}
           onPrintRecord={handlePrintRecord}
-          onGenerateReport={handleGenerateReport}
           onArchiveRecord={handleArchiveRecord}
         />
       </div>
@@ -227,7 +283,6 @@ const MedicalRecordsPage = (): ReactElement => {
         open={modalMode === 'view'}
         onClose={() => setModalMode(null)}
         onPrint={handlePrintRecord}
-        onGenerateReport={handleGenerateReport}
       />
 
       {canCreateRecord && (

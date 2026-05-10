@@ -18,7 +18,6 @@ import {
   Eye,
   Edit,
   Printer,
-  FileText,
 } from "lucide-react";
 import { type ReactElement } from "react";
 import type { MedicalRecord } from "../types/medicalRecord";
@@ -29,10 +28,8 @@ interface MedicalRecordsTableProps {
   onViewRecord: (record: MedicalRecord) => void;
   onEditRecord: (record: MedicalRecord) => void;
   onPrintRecord: (record: MedicalRecord) => void;
-  onGenerateReport: (record: MedicalRecord) => void;
   onArchiveRecord: (record: MedicalRecord) => void;
   canEditRecord?: boolean;
-  canGenerateReport?: boolean;
 }
 
 export const MedicalRecordsTable = ({
@@ -40,9 +37,7 @@ export const MedicalRecordsTable = ({
   onViewRecord,
   onEditRecord,
   onPrintRecord,
-  onGenerateReport,
   canEditRecord = false,
-  canGenerateReport = false,
 }: MedicalRecordsTableProps): ReactElement => {
   const truncateText = (text: string, maxLength: number = 50) => {
     return text.length > maxLength
@@ -148,12 +143,6 @@ export const MedicalRecordsTable = ({
                       <Printer className="mr-2 h-4 w-4" />
                       Print Summary
                     </DropdownMenuItem>
-                    {canGenerateReport && (
-                      <DropdownMenuItem onClick={() => onGenerateReport(record)}>
-                        <FileText className="mr-2 h-4 w-4" />
-                        Generate Report
-                      </DropdownMenuItem>
-                    )}
                   </DropdownMenuContent>
                 </DropdownMenu>
               </TableCell>

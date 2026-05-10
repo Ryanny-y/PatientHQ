@@ -24,7 +24,6 @@ interface ViewMedicalRecordDrawerProps {
   open: boolean;
   onClose: () => void;
   onPrint: (record: MedicalRecord) => void;
-  onGenerateReport: (record: MedicalRecord) => void;
 }
 
 export const ViewMedicalRecordDrawer = ({
@@ -32,7 +31,6 @@ export const ViewMedicalRecordDrawer = ({
   open,
   onClose,
   onPrint,
-  onGenerateReport,
 }: ViewMedicalRecordDrawerProps): ReactElement => {
   if (!record) return <></>;
 
@@ -52,14 +50,6 @@ export const ViewMedicalRecordDrawer = ({
               >
                 <Printer className="h-4 w-4 mr-2" />
                 Print
-              </Button>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => onGenerateReport(record)}
-              >
-                <FileText className="h-4 w-4 mr-2" />
-                Report
               </Button>
             </div>
           </div>

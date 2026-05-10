@@ -69,7 +69,7 @@ const navItems: NavItem[] = [
     children: [
       { label: "Patient List", icon: ClipboardList, path: "/patients", permission: PERMISSIONS.PATIENT_VIEW },
       { label: "Register Patient", icon: UserPlus, path: "/patients/register", permission: PERMISSIONS.PATIENT_CREATE },
-      { label: "Assign Doctor", icon: UserCheck, path: "/patients/assign", permission: PERMISSIONS.DOCTOR_ASSIGNMENT_ASSIGN },
+      { label: "Assigned Doctor", icon: UserCheck, path: "/patients/assign", permission: PERMISSIONS.DOCTOR_ASSIGNMENT_ASSIGN },
     ],
     permission: PERMISSIONS.PATIENT_VIEW,
   },

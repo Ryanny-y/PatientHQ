@@ -72,7 +72,6 @@ public class ReportServiceImpl implements ReportService {
     private String generateSummary(Patient patient, ReportType reportType, String notes) {
         return switch (reportType) {
             case ReportType.PATIENT_SUMMARY -> generatePatientSummary(patient, notes);
-//            case "Medical Summary" -> generateMedicalSummary(patient, notes);
             case ReportType.APPOINTMENT_SUMMARY -> generateAppointmentSummary(patient, notes);
             default -> throw new AppException(HttpStatus.BAD_REQUEST, "Invalid report type");
         };
@@ -98,35 +97,6 @@ public class ReportServiceImpl implements ReportService {
                     notes != null ? notes : "None"
             );
     }
-
-//    private String generateMedicalSummary(Patient patient, String notes) {
-//        List<MedicalRecord> records = medicalRecordRepository.findByPatientId(patient.getUserId());
-//
-//        String diagnoses = records.stream()
-//                .map(MedicalRecord::getDiagnosis)
-//                .distinct()
-//                .reduce((a, b) -> a + ", " + b)
-//                .orElse("No records");
-//
-//        return String.format("""
-//        MEDICAL SUMMARY
-//
-//        Patient: %s
-//
-//        Diagnoses:
-//        %s
-//
-//        Total Records: %d
-//
-//        Notes:
-//        %s
-//        """,
-//                patient.getFullName(),
-//                diagnoses,
-//                records.size(),
-//                notes != null ? notes : "None"
-//        );
-//    }
 
     private String generateAppointmentSummary(Patient patient, String notes) {
         List<Appointment> appointments = appointmentRepository.findAppointmentsByPatientId(patient.getPatientId());

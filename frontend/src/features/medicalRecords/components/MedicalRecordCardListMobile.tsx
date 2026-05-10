@@ -11,7 +11,6 @@ import {
   Eye,
   Edit,
   Printer,
-  FileText,
   User,
 } from "lucide-react";
 import { type ReactElement } from "react";
@@ -23,7 +22,6 @@ interface MedicalRecordCardListMobileProps {
   onViewRecord: (record: MedicalRecord) => void;
   onEditRecord: (record: MedicalRecord) => void;
   onPrintRecord: (record: MedicalRecord) => void;
-  onGenerateReport: (record: MedicalRecord) => void;
   onArchiveRecord: (record: MedicalRecord) => void;
 }
 
@@ -32,7 +30,6 @@ export const MedicalRecordCardListMobile = ({
   onViewRecord,
   onEditRecord,
   onPrintRecord,
-  onGenerateReport,
 }: MedicalRecordCardListMobileProps): ReactElement => {
   const truncateText = (text: string, maxLength: number = 80) => {
     return text.length > maxLength
@@ -77,10 +74,6 @@ export const MedicalRecordCardListMobile = ({
                     <DropdownMenuItem onClick={() => onPrintRecord(record)}>
                       <Printer className="mr-2 h-4 w-4" />
                       Print Summary
-                    </DropdownMenuItem>
-                    <DropdownMenuItem onClick={() => onGenerateReport(record)}>
-                      <FileText className="mr-2 h-4 w-4" />
-                      Generate Report
                     </DropdownMenuItem>
                   </DropdownMenuContent>
                 </DropdownMenu>
