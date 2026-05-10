@@ -10,6 +10,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.UUID;
 
 @Repository
@@ -44,4 +45,13 @@ public interface PatientRepository extends JpaRepository<Patient, UUID> {
     long countByStatusIn(Iterable<PatientStatus> statuses);
 
     long countByCreatedAtBetween(LocalDateTime start, LocalDateTime end);
+
+    @Query("""
+                SELECT p, d.fullName FROM Patient p
+                LEFT JOIN DoctorAssignment da
+                    ON da.patient = p AND da.isActive = true
+                LEFT JOIN da.doctor d
+                ORDER BY p.createdAt DESC
+            """)
+    List<Object[]> findRecentPatientsWithDoctor(Pageable pageable);
 }

@@ -52,4 +52,13 @@ public interface AppointmentRepository extends JpaRepository<Appointment, UUID> 
                 WHERE a.patient.patientId = :patientId
             """)
     List<Appointment> findAppointmentsByPatientId(@Param("patientId") UUID patientId);
+
+    @Query("""
+                SELECT a
+                FROM Appointment a
+                JOIN FETCH a.patient
+                JOIN FETCH a.doctor
+                ORDER BY a.createdAt DESC
+            """)
+    List<Appointment> findRecentAppointments(Pageable pageable);
 }

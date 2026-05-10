@@ -10,6 +10,7 @@ import org.springframework.stereotype.Repository;
 
 import java.util.UUID;
 import java.util.Optional;
+import java.time.LocalDateTime;
 
 @Repository
 public interface NurseRepository extends JpaRepository<Nurse, UUID> {
@@ -41,6 +42,8 @@ public interface NurseRepository extends JpaRepository<Nurse, UUID> {
     long countByUserIsActiveTrue();
 
     long countByUserIsActiveFalse();
+
+    long countByUserCreatedAtAfter(LocalDateTime createdAt);
 
     @Query("SELECT DISTINCT n.assignedWard FROM Nurse n WHERE n.assignedWard IS NOT NULL AND n.assignedWard <> '' ORDER BY n.assignedWard ASC")
     java.util.List<String> findDistinctAssignedWards();

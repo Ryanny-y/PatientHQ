@@ -33,6 +33,13 @@ export interface RecentPatient {
   status: 'Admitted' | 'Outpatient' | 'Discharged' | 'Critical';
 }
 
+export interface DashboardData {
+  stats: StatCardData[];
+  activities: ActivityItem[];
+  securityStatus: SecurityStatusItem[];
+  recentPatients: RecentPatient[];
+}
+
 export type navItem =
   | { type: 'link'; label: string; icon: string; path: string }
   | { type: 'group'; label: string; children: { label: string; icon: string; path: string }[] };
